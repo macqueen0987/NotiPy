@@ -1,0 +1,68 @@
+# the networks should be created before the services
+# enter the command `docker network create NETWORKNAME` to create the network, same for the other networks
+
+services:
+    proxy:
+        # you don't need proxy if you don't have one or more web services
+        container_name: proxy
+        image: nginx:latest
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+        networks:
+            - nginx-proxy
+
+    discordbot:
+        container_name: notipy-discordbot
+        image: notipy
+        restart: unless-stopped
+        volumes:
+            - ./discordbot:/app
+        working_dir: /app
+        command:
+            - python
+            - main.py
+        network_mode: host # use host network mode to access the Discord API, other network will be fine too
+
+    backend:
+        container_name: notipy-backend
+        image: notipy
+        restart: unless-stopped
+        expose:
+            - "5000"
+        volumes:
+            - ./backend:/app
+        working_dir: /app
+        command:
+            - python
+            - main.py
+        networks:
+            - nginx-proxy
+            - notipy_backend
+
+    database:
+        container_name: notipy-database
+        image: mysql:latest
+        restart: unless-stopped
+        expose:
+            - "3306"  # use expose instead of ports to make it unavailable from the outer network
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: notipy
+            MYSQL_USER: notipy
+            MYSQL_PASSWORD: notipy
+        volumes:
+            - ./database:/var/lib/mysql
+        networks:
+            - notipy_backend
+        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+
+networks:
+    nginx-proxy:
+        external: true
+    notipy_backend:
+        external: true

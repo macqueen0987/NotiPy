@@ -1,0 +1,11 @@
+API_ENDPOINT = 'https://discord.com/api/v10'
+CLIENT_ID = '123123'
+CLIENT_SECRET = '123123'
+REDIRECT_URI = 'http://localhost:8080'
+
+dbuser = "notipy"
+dbpassword = "notipy"
+dbhost = "notipy-database"
+dbport = "3306"
+dbname = "notipy"
+

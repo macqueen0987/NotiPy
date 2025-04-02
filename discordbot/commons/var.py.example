@@ -1,0 +1,8 @@
+token = "1234asdf"
+devserver = 1234  # Replace with actual server ID
+
+developers = [1234]  # Replace with actual developer IDs
+
+# logfiles, they will be located at discordbot/logs
+debugfile = "debug.log"  # File to log debug information
+errfile = "error.log"  # File to log error information

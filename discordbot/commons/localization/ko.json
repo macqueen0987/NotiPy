@@ -1,0 +1,7 @@
+{
+    "ping": "핑",
+    "ping_desc": "봇에 핑을 보냅니다",
+    "ping_opt": "옵션",
+    "ping_opt_desc": "핑 옵션",
+    "pong": "퐁!"
+}
