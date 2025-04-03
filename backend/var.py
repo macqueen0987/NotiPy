@@ -11,3 +11,4 @@ dbhost = "notipy-database"
 dbport = os.environ["MYSQL_TCP_PORT"]
 dbname = os.environ["MYSQL_DATABASE"]
 
+app_root = "/api"
