@@ -22,17 +22,27 @@ services:
         volumes:
             - ./discordbot:/app
         working_dir: /app
+        env_file:
+            - var.env
+        environment:
+            - DISCORD_TOKEN=${DISCORD_TOKEN}
+            - DEBUG=1 # set to 1 to enable debug mode
+        expose:
+            - ${DISCORD_PORT}
         command:
             - python
             - main.py
-        network_mode: host # use host network mode to access the Discord API, other network will be fine too
+        networks:
+            - nginx-proxy
 
     backend:
         container_name: notipy-backend
         image: notipy
         restart: unless-stopped
+        env_file:
+            - var.env
         expose:
-            - "5000"
+            - ${MY_BACKEND_PORT}
         volumes:
             - ./backend:/app
         working_dir: /app
@@ -44,21 +54,24 @@ services:
             - notipy_backend
 
     database:
-        container_name: notipy-database
+        container_name: notipy-database # change this -> change backend var.py
         image: mysql:latest
         restart: unless-stopped
+        env_file:
+            - var.env
         expose:
-            - "3306"  # use expose instead of ports to make it unavailable from the outer network
+            - ${MYSQL_TCP_PORT}
         environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: notipy
-            MYSQL_USER: notipy
-            MYSQL_PASSWORD: notipy
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         volumes:
             - ./database:/var/lib/mysql
         networks:
             - notipy_backend
         command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        # this is to make sure the database is utf8mb4, you can use without this, but some letters can break
 
 
 networks:
