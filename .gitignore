@@ -174,9 +174,9 @@ cython_debug/
 .pypirc
 
 .idea
-var.py
 test.py
 migrations
 env.py
 *.ini
 database
+var.env
