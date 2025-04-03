@@ -12,5 +12,5 @@ class User(Base):
     access_token = Column(Text, nullable=True)
     refresh_token = Column(Text, nullable=True)
     token_expires = Column(DateTime, nullable=True)
-    github_id = Column(Text, nullable=True)
+    github_id = Column(VARCHAR(50), nullable=True, unique=True)
     last_check = Column(TIMESTAMP, nullable=True, default=datetime.now)
