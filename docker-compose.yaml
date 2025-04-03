@@ -22,13 +22,11 @@ services:
         volumes:
             - ./discordbot:/app
         working_dir: /app
-        env_file:
-            - var.env
+        env_file: var.env
         environment:
-            - DISCORD_TOKEN=${DISCORD_TOKEN}
             - DEBUG=1 # set to 1 to enable debug mode
         expose:
-            - ${DISCORD_PORT}
+            - 9090
         command:
             - python
             - main.py
@@ -39,10 +37,9 @@ services:
         container_name: notipy-backend
         image: notipy
         restart: unless-stopped
-        env_file:
-            - var.env
+        env_file: var.env
         expose:
-            - ${MY_BACKEND_PORT}
+            - 9091
         volumes:
             - ./backend:/app
         working_dir: /app
@@ -57,15 +54,9 @@ services:
         container_name: notipy-database # change this -> change backend var.py
         image: mysql:latest
         restart: unless-stopped
-        env_file:
-            - var.env
-        expose:
-            - ${MYSQL_TCP_PORT}
-        environment:
-            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
-            - MYSQL_USER=${MYSQL_USER}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        env_file: var.env
+        ports:
+            - "9092:3306" # can't change mysql default port with env file... so i just mapped it
         volumes:
             - ./database:/var/lib/mysql
         networks:
