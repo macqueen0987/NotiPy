@@ -20,8 +20,8 @@ services:
         image: notipy
         restart: unless-stopped
         volumes:
-            - ./discordbot:/app
-        working_dir: /app
+            - ./discordbot:/discordbot
+        working_dir: /discordbot
         env_file: var.env
         environment:
             - DEBUG=1 # set to 1 to enable debug mode
@@ -41,8 +41,8 @@ services:
         expose:
             - 9091
         volumes:
-            - ./backend:/app
-        working_dir: /app
+            - ./backend:/backend
+        working_dir: /backend
         command:
             - python
             - main.py

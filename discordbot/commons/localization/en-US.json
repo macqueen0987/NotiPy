@@ -1,5 +1,5 @@
 {
-    "missing_permission_err": "You do not have permission to use this command.",
+    "missing_permission_err": "The bot does not have permission to execute this command.",
     "command_on_cooldown_err": "This command is on cooldown. Please wait {0} seconds.",
     "max_concurrency_err": "This command is already in use by another user. Please wait until it is finished.",
     "check_failed_err": "Check failed. Likey due to a missing permission.",
