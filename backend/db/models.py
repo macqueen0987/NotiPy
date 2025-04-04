@@ -13,4 +13,5 @@ class User(Base):
     refresh_token = Column(Text, nullable=True)
     token_expires = Column(DateTime, nullable=True)
     github_id = Column(VARCHAR(50), nullable=True, unique=True)
+    notion_id = Column(BigInteger, nullable=True, unique=True)
     last_check = Column(TIMESTAMP, nullable=True, default=datetime.now)
