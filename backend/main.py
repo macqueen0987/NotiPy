@@ -6,14 +6,13 @@ import os
 import uvicorn
 import pkgutil
 
-from var import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, API_ENDPOINT
 from datetime import datetime
 import db.models as models
 from common import get_db
+from CRUDS import usercrud as crud
 
 app = FastAPI()
 api = FastAPI()
-auth = aiohttp.BasicAuth(CLIENT_ID, CLIENT_SECRET)
 
 @app.get("/")
 async def root(request: Request):
@@ -22,9 +21,7 @@ async def root(request: Request):
 
 @app.get("/test")
 async def test(request: Request, conn=Depends(get_db)):
-    query = select(models.User)
-    result = await conn.execute(query)
-    print(result)
+    return JSONResponse(content={"message": "Test!"})
 
 if __name__ == "__main__":
     routers = []
