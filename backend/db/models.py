@@ -12,5 +12,16 @@ class User(Base):
     access_token = Column(Text, nullable=True)
     refresh_token = Column(Text, nullable=True)
     token_expires = Column(DateTime, nullable=True)
-    github_id = Column(Text, nullable=True)
     last_check = Column(TIMESTAMP, nullable=True, default=datetime.now)
+
+class Github(Base):
+    __tablename__ = 'github'
+    id = Column(BigInteger, primary_key=True)  # github id
+    discord_id = Column(BigInteger, ForeignKey('user.discord_id', ondelete='CASCADE'))  # discord id
+    login = Column(Text, nullable=False)
+
+class Notion(Base):
+    __tablename__ = 'notion'
+    id = Column(BigInteger, primary_key=True)  # notion id
+    discord_id = Column(BigInteger, ForeignKey('user.discord_id', ondelete='CASCADE'))  # discord id
+    login = Column(Text, nullable=False)
