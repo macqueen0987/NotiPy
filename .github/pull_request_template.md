@@ -11,7 +11,6 @@
 
 ## ✅ Checklist
 - [ ] All feature requirements are implemented
-- [ ] Code formatting and linting have been applied
 - [ ] Unit and integration tests were executed
 - [ ] Updated `.env.example` or other relevant config files
 - [ ] Documentation (README, comments) has been updated
