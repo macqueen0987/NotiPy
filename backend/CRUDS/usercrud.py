@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional, Any, Sequence
+from typing import Optional, Any, Sequence, Coroutine
 from db.models import User, Github, Notion
-from sqlalchemy import select
+from sqlalchemy import select, Row
 from datetime import datetime, timedelta
 
 class Tokens:
@@ -10,22 +10,25 @@ class Tokens:
         self.refresh_token = refresh_token
         self.expires_in = expires_in
 
-async def get_user(conn: AsyncSession, discordid:int) -> Sequence[Any] | None:
+async def get_user(conn: AsyncSession, discordid:int) -> Row[tuple[User, Github, Notion]] | None:
     """
-    Get user by discord id, github id or notion id
+    Get user by discord id
     :param conn: database connection
     :param discordid: discord id of user
-    :return: user object or None if not found
+    :return: user object, github object and notion object
     """
-    query = select(User).where(User.discord_id == discordid)
+    query = select(User, Github, Notion).outerjoin(Github, User.discord_id == Github.discord_id).outerjoin(Notion, User.discord_id == Notion.discord_id).where(User.discord_id == discordid)
     result = await conn.execute(query)
-    return result.scalars().first()
+    result = result.all()
+    if len(result) < 1:
+        return None
+    return result[0]
 
 async def delete_user(conn: AsyncSession, discordid:int) -> bool:
     """
-    Delete user by discord id, github id or notion id
+    Delete user by discord id
     :param conn: database connection
-    :param user: user object containing discordid, githubid or notionid
+    :param discordid: discord id of user
     :return: True if deleted, False if not found
     """
     query = select(User).where(User.discord_id == discordid)
@@ -113,9 +116,12 @@ async def link_github(conn: AsyncSession, discordid:int, githubid:int, gitlogin:
     result = await conn.execute(query)
     github = result.scalars().first()
     if not github:
-        github = Github(discord_id=discordid, id=githubid, login=gitlogin)
+        github = Github(discord_id=discordid, github_id=githubid, github_login=gitlogin)
         conn.add(github)
-        await conn.commit()
+    else:
+        github.github_id = githubid
+        github.github_login = gitlogin
+    await conn.commit()
     return github
 
 
@@ -132,9 +138,12 @@ async def link_notion(conn: AsyncSession, discordid:int, notionid:int, notionlog
     result = await conn.execute(query)
     notion = result.scalars().first()
     if not notion:
-        notion = Notion(discord_id=discordid, id=notionid, login=notionlogin)
+        notion = Notion(discord_id=discordid, notion_id=notionid, notion_login=notionlogin)
         conn.add(notion)
-        await conn.commit()
+    else:
+        notion.notion_id = notionid
+        notion.notion_login = notionlogin
+    await conn.commit()
     return notion
 
 
