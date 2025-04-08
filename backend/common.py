@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-
+from functools import wraps
 from var import *
+from fastapi.responses import JSONResponse
 import json
 from aiohttp import BasicAuth, ClientSession
 
@@ -27,3 +28,15 @@ async def make_request(method: str, url: str, params: dict = None, data: dict = 
             response_status = response.status
             response_data = await response.json()
             return response_status, response_data
+
+def checkInternalServer(func):
+    """
+    Decorator to check if the request is from the internal server.
+    """
+    @wraps(func)
+    async def wrapper(request, *args, **kwargs):
+        print(request.headers)
+        if request.headers.get("X-Internal-Request") != "true":
+            return JSONResponse(content={"message": "Unauthorized"}, status_code=401)
+        return await func(request, *args, **kwargs)
+    return wrapper
