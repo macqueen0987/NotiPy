@@ -1,19 +1,6 @@
 from interactions import Extension, SlashContext, Client, slash_command, slash_option, OptionType
 import asyncio
-from discordbot.commons import devserver, localize, getname, getdesc
-
-
-def decor():
-    """
-    get ctx
-    :return:
-    """
-    def wrapper(func):
-        async def wrapped_func(self, ctx: SlashContext, *args, **kwargs):
-            print(ctx)
-            return await func(self, ctx, *args, **kwargs)
-        return wrapped_func
-    return wrapper
+from commons import devserver, localize, getname, getdesc
 
 
 class Dev(Extension):
@@ -31,3 +18,9 @@ class Dev(Extension):
     @localize()
     async def hello(self, ctx: SlashContext, _):
         await ctx.send(_("pong"), ephemeral=True)
+
+def setup(bot, functions):
+    Dev(bot)
+
+def teardown():
+    pass
