@@ -1,5 +1,5 @@
 {
-    "missing_permission_err": "You do not have permission to use this command.",
+    "missing_permission_err": "The bot does not have permission to execute this command.",
     "command_on_cooldown_err": "This command is on cooldown. Please wait {0} seconds.",
     "max_concurrency_err": "This command is already in use by another user. Please wait until it is finished.",
     "check_failed_err": "Check failed. Likey due to a missing permission.",
@@ -8,5 +8,16 @@
     "ping_desc": "Ping the bot",
     "ping_opt": "options",
     "ping_opt_desc": "Ping options",
-    "pong": "Pong!"
+    "pong": "Pong!",
+    "github": "github",
+    "github_desc": "Commands related to GitHub",
+    "gitlink": "link",
+    "gitlink_desc": "Link your GitHub account to your Discord account, if linked, shows your GitHub account",
+    "user_not_found": "",
+    "link_github": "Link your GitHub account to your Discord account by clicking the link below.",
+    "link_github_button": "Link GitHub",
+    "check_github_linked_button": "Check if linked",
+    "already_linked_github": "Your GitHub account is already linked to your Discord account.",
+    "not_linked_github": "Your GitHub account is not linked to your Discord account.",
+    "success_linked_github": "Your GitHub account has been successfully linked to your Discord account."
 }
