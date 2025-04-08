@@ -34,7 +34,7 @@ services:
             - nginx-proxy
 
     backend:
-        container_name: notipy-backend
+        container_name: notipy-backend # change this -> change discordbot/commons var.py
         image: notipy
         restart: unless-stopped
         env_file: var.env
@@ -55,8 +55,8 @@ services:
         image: mysql:latest
         restart: unless-stopped
         env_file: var.env
-        ports:
-            - "9092:3306" # can't change mysql default port with env file... so i just mapped it
+        expose:
+            - 3306
         volumes:
             - ./database:/var/lib/mysql
         networks:

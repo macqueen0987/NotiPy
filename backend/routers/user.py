@@ -1,18 +1,39 @@
 from functools import partial
-from fastapi import APIRouter, Depends, Request, BackgroundTasks
+from fastapi import APIRouter, Depends, Request, BackgroundTasks, Response, status
 from fastapi.responses import JSONResponse
-from common import make_request, DISCORD_API_ENDPOINT, REDIRECT_URI, discord_auth, get_db, GITHUB_TOKEN, GITHUB_API_ENDPOINT
 from functools import wraps
 from datetime import datetime
+from common import *
 
 from CRUDS import usercrud as crud
-
 router = APIRouter(prefix="/user", tags=["user"])
 
 
 @router.get("/")
 async def root(request: Request):
+    print(request.headers)
     return JSONResponse(content={"message": "Hello World from User!"})
+
+@router.get("/get")
+@checkInternalServer
+async def get(request:Request, discordid:int, conn=Depends(get_db)):
+    """
+    Get user information by discord id
+    :param discordid: Discord ID of the user
+    :param conn: Database connection
+    :return: JSON response with user information
+    """
+    res = await crud.get_user(conn, discordid)
+    if res is None:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    user, github, notion = res
+    returnval = {"user": user.todict()}
+    if github is not None:
+        returnval["github"] = github.todict()
+    if notion is not None:
+        returnval["notion"] = notion.todict()
+    print(returnval)
+    return JSONResponse(content=returnval)
 
 
 def checkTokenExpired(func):
