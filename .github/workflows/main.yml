@@ -1,28 +1,38 @@
-name: Format Python Code
-on: push
+name: Format Python Code on PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
 jobs:
   python-code-format:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: "3.12"
           architecture: "x64"
-      - name: Display Python version
-        run: python --version
-      - name: Install packages
+
+      - name: Install formatters
         run: pip install black autopep8 isort
-      - name: Formatter
+
+      - name: Run formatters
         run: |
           black .
           autopep8 --recursive --in-place --aggressive --aggressive .
           isort .
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          commit-message: Auto code format
-          title: Fixes by format action
-          body: This is an auto-generated PR with fixes.
-          labels: automated pr
-          branch: python-code-format-patches
+
+      - name: Commit changes (if any)
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git diff-index --quiet HEAD || git commit -m "chore: auto-format code on PR"
+          git push origin HEAD:${{ github.head_ref }}
