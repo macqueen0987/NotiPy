@@ -1,50 +1,63 @@
 import inspect
 import json
+from functools import partial
+from os import listdir
+from os.path import abspath, dirname, isfile, join
+from typing import Any, Awaitable, Callable, Coroutine
 
-from interactions import SlashContext, LocalisedName, LocalisedDesc, ComponentContext
-from typing import Callable, Awaitable, Any, Coroutine
-
+import aiohttp
+from commons.localization import language_codes
+from commons.var import *
+from interactions import (ComponentContext, LocalisedDesc, LocalisedName,
+                          SlashContext)
 from interactions.api.events import CommandError
 
-from commons.var import *
-from os import listdir
-from os.path import dirname, abspath, isfile, join
-from functools import partial
-from commons.localization import language_codes
-import aiohttp
-
-wd = dirname(abspath(__file__))  # 현재 작업 디렉토리 (discordbot/commons/localization.py의 위치)
-rootdir = dirname(dirname(abspath(__file__)))  # 현재 작업 디렉토리 (discordbot/main.py의 위치)
+wd = dirname(
+    abspath(__file__)
+)  # 현재 작업 디렉토리 (discordbot/commons/localization.py의 위치)
+rootdir = dirname(
+    dirname(abspath(__file__))
+)  # 현재 작업 디렉토리 (discordbot/main.py의 위치)
 logfilepath = rootdir + "/logs/"  # 로그 파일 경로
 locales = {}
 default_locale = "en-US"  # 기본 로케일
 AsyncFuncType = Callable[..., Coroutine[Any, Any, Any]]
 
+
 async def is_dev(ctx) -> bool:
     return int(ctx.author.id) in developers
 
-for file in listdir(wd+"/localization"):
-    if file.endswith(".json") and isfile(join(wd+"/localization", file)):
-        with open(join(wd+"/localization", file), "r", encoding="utf-8") as f:
+
+for file in listdir(wd + "/localization"):
+    if file.endswith(".json") and isfile(join(wd + "/localization", file)):
+        with open(join(wd + "/localization", file), "r", encoding="utf-8") as f:
             locales[file[:-5]] = json.load(f)
+
 
 def localize():
     """
     Decorator for localizing slash commands.
     """
+
     def wrapper(func):
-        async def wrapped_func(self, ctx: SlashContext|ComponentContext, *args, **kwargs):
+        async def wrapped_func(
+            self, ctx: SlashContext | ComponentContext, *args, **kwargs
+        ):
             if not ctx.guild:
                 return
             locale = ctx.locale
             if locale not in locales:
                 locale = ctx.guild.preferred_locale
             return await func(self, ctx, localizator(locale), *args, **kwargs)
+
         return wrapped_func
+
     return wrapper
+
 
 def localizator(locale):
     return partial(getlocale, locale=locale)
+
 
 def getlocale(key_, locale) -> str:
     if key_ in locales[locale]:
@@ -66,6 +79,7 @@ def getname(name) -> LocalisedName:
         return LocalisedName(**{language_codes[default_locale]: name})
     return LocalisedName(**names)
 
+
 def getdesc(name) -> LocalisedDesc:
     """
     Create a LocalisedDesc object for the given name.
@@ -79,8 +93,10 @@ def getdesc(name) -> LocalisedDesc:
         return LocalisedDesc(**{language_codes[default_locale]: name})
     return LocalisedDesc(**descs)
 
+
 class MyFunctions:
     logger = None
+
     def __init__(self, logger):
         self.logger = logger
 
@@ -130,7 +146,14 @@ class MyFunctions:
             self.logger.error(f"Error running function {name}: {e}")
             return None
 
-async def apirequest(endpoint: str, method: str = "GET", data: dict = None, headers: dict = None, auth: aiohttp.BasicAuth = None) -> tuple[int, dict | None]:
+
+async def apirequest(
+    endpoint: str,
+    method: str = "GET",
+    data: dict = None,
+    headers: dict = None,
+    auth: aiohttp.BasicAuth = None,
+) -> tuple[int, dict | None]:
     """
     Make an API request to the given endpoint.
     :param endpoint: The API endpoint to call
@@ -143,9 +166,13 @@ async def apirequest(endpoint: str, method: str = "GET", data: dict = None, head
     # add default_header to headers
     if headers is None:
         headers = {}
-    headers["X-Internal-Request"] = "true"  # this is a custom header to identify internal requests
+    headers["X-Internal-Request"] = (
+        "true"  # this is a custom header to identify internal requests
+    )
     async with aiohttp.ClientSession() as session:
-        async with session.request(method, api_root+endpoint, json=data, headers=headers, auth=auth) as response:
+        async with session.request(
+            method, api_root + endpoint, json=data, headers=headers, auth=auth
+        ) as response:
             status = response.status
             json_res = None
             try:

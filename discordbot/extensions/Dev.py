@@ -1,6 +1,8 @@
-from interactions import Extension, SlashContext, Client, slash_command, slash_option, OptionType
 import asyncio
-from commons import devserver, localize, getname, getdesc
+
+from commons import devserver, getdesc, getname, localize
+from interactions import (Client, Extension, OptionType, SlashContext,
+                          slash_command, slash_option)
 
 
 class Dev(Extension):
@@ -13,14 +15,23 @@ class Dev(Extension):
     async def async_init(self):
         pass
 
-    @slash_command(name=getname("ping"), description=getdesc("ping"), scopes=[devserver])
-    @slash_option(name=getname("ping_opt"), description=getdesc("ping_opt"), required=False, opt_type=OptionType.BOOLEAN) # noqa
+    @slash_command(
+        name=getname("ping"), description=getdesc("ping"), scopes=[devserver]
+    )
+    @slash_option(
+        name=getname("ping_opt"),
+        description=getdesc("ping_opt"),
+        required=False,
+        opt_type=OptionType.BOOLEAN,
+    )  # noqa
     @localize()
     async def hello(self, ctx: SlashContext, _):
         await ctx.send(_("pong"), ephemeral=True)
 
+
 def setup(bot, functions):
     Dev(bot)
+
 
 def teardown():
     pass

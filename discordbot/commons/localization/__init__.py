@@ -28,5 +28,5 @@ language_codes = {
     "th": "thai",
     "tr": "turkish",
     "uk": "ukrainian",
-    "vi": "vietnamese"
+    "vi": "vietnamese",
 }

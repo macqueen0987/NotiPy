@@ -1,11 +1,12 @@
-from functools import partial
-from fastapi import APIRouter, Depends, Request, BackgroundTasks, Response, status
-from fastapi.responses import JSONResponse
-from functools import wraps
 from datetime import datetime
-from common import *
+from functools import partial, wraps
 
+from common import *
 from CRUDS import usercrud as crud
+from fastapi import (APIRouter, BackgroundTasks, Depends, Request, Response,
+                     status)
+from fastapi.responses import JSONResponse
+
 router = APIRouter(prefix="/user", tags=["user"])
 
 
@@ -14,9 +15,10 @@ async def root(request: Request):
     print(request.headers)
     return JSONResponse(content={"message": "Hello World from User!"})
 
+
 @router.get("/get")
 @checkInternalServer
-async def get(request:Request, discordid:int, conn=Depends(get_db)):
+async def get(request: Request, discordid: int, conn=Depends(get_db)):
     """
     Get user information by discord id
     :param discordid: Discord ID of the user
@@ -40,8 +42,9 @@ def checkTokenExpired(func):
     """
     Decorator to check if the token is expired.
     """
+
     @wraps(func)
-    async def wrapper(conn, tokens:crud.Tokens):
+    async def wrapper(conn, tokens: crud.Tokens):
         user = await crud.get_user_by_token(conn, access_token=tokens.access_token)
         refreshed = True
         if user:
@@ -51,11 +54,15 @@ def checkTokenExpired(func):
                     tokens = await refresh_token(tokens)
                     refreshed = True
         return await func(conn, tokens, refreshed)
+
     return wrapper
 
 
 @router.get("/auth")
-async def auth(code: str, background_tasks: BackgroundTasks, conn=Depends(get_db)):
+async def auth(
+        code: str,
+        background_tasks: BackgroundTasks,
+        conn=Depends(get_db)):
     """
     Authenticates the user with Discord using the provided code.
     :param code: The authorization code received from Discord
@@ -75,7 +82,13 @@ async def exchange_code(conn, code: str):
         "redirect_uri": REDIRECT_URI,
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    status, response = await make_request("POST", f"{DISCORD_API_ENDPOINT}/oauth2/token", data=data, headers=headers, auth=discord_auth)
+    status, response = await make_request(
+        "POST",
+        f"{DISCORD_API_ENDPOINT}/oauth2/token",
+        data=data,
+        headers=headers,
+        auth=discord_auth,
+    )
     if status != 200:
         return
     access_token = response["access_token"]
@@ -85,7 +98,7 @@ async def exchange_code(conn, code: str):
     await get_user_info(conn, tokens)
 
 
-async def refresh_token(tokens:crud.Tokens) -> crud.Tokens:
+async def refresh_token(tokens: crud.Tokens) -> crud.Tokens:
     """
     Refreshes the access token using the refresh token.
     """
@@ -94,7 +107,13 @@ async def refresh_token(tokens:crud.Tokens) -> crud.Tokens:
         "refresh_token": tokens.refresh_token,
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    status, response = await make_request("POST", f"{DISCORD_API_ENDPOINT}/oauth2/token", data=data, headers=headers, auth=discord_auth)
+    status, response = await make_request(
+        "POST",
+        f"{DISCORD_API_ENDPOINT}/oauth2/token",
+        data=data,
+        headers=headers,
+        auth=discord_auth,
+    )
     if status != 200:
         return
     access_token = response["access_token"]
@@ -114,21 +133,31 @@ async def get_user_info(conn, tokens: crud.Tokens, refreshed: bool = False):
     :param refreshed: if the token was refreshed
     """
     headers = {"Authorization": f"Bearer {tokens.access_token}"}
-    status, response = await make_request("GET", f"{DISCORD_API_ENDPOINT}/users/@me", headers=headers)
-    if status != 200: return
+    status, response = await make_request(
+        "GET", f"{DISCORD_API_ENDPOINT}/users/@me", headers=headers
+    )
+    if status != 200:
+        return
     discordid = int(response["id"])
     if refreshed:
         await crud.setTokens(conn, discordid, tokens)
-    status, response = await make_request("GET", f"{DISCORD_API_ENDPOINT}/users/@me/connections", headers=headers)
-    if status != 200: return
+    status, response = await make_request(
+        "GET", f"{DISCORD_API_ENDPOINT}/users/@me/connections", headers=headers
+    )
+    if status != 200:
+        return
     githubid = None
     for i in response:
         if i["type"] == "github":
             githubid = i["id"]
             break
-    # headers = {"Authorization": "Bearer " + GITHUB_TOKEN} # Works without this... damn
-    status, response = await make_request("GET", f"{GITHUB_API_ENDPOINT}/user/{githubid}")
-    if status != 200: return
+    # headers = {"Authorization": "Bearer " + GITHUB_TOKEN} # Works without
+    # this... damn
+    status, response = await make_request(
+        "GET", f"{GITHUB_API_ENDPOINT}/user/{githubid}"
+    )
+    if status != 200:
+        return
     gitlogin = response["login"]
     await crud.link_github(conn, discordid, githubid, gitlogin)
     return response
