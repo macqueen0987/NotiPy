@@ -7,8 +7,8 @@ last_known_ids = set()
 
 def poll_notion_projects(interval: int = 30):
     """
-    주기적으로 Notion DB를 폴링하여 새로운 프로젝트를 감지합니다.
-    :param interval: 폴링 주기(초)
+    주기적으로 Notion DB를 폴링하여 새로운 프로젝트를 감지함
+    param interval: 폴링 주기(seconds)
     """
     global last_known_ids
 
