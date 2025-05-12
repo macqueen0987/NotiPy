@@ -1,4 +1,10 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+NOTION_TOKEN = os.getenv("NOTION_TOKEN", "")
+NOTION_DB_ID = os.getenv("NOTION_DB_ID", "")
 
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
 GITHUB_API_ENDPOINT = os.environ["GITHUB_API_URL"]

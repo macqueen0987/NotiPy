@@ -10,14 +10,18 @@ from CRUDS import usercrud as crud
 from fastapi import BackgroundTasks, Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import select
+from routers.notion import router as notion_router
 
-app = FastAPI()
+app = FastAPI(title="NotiPy")
+
+app.include_router(notion_router)
+
 api = FastAPI()
 
 
 @app.get("/")
-async def root(request: Request):
-    return JSONResponse(content={"message": "Hello World!"})
+async def root():
+    return {"message": "Hello, NotiPy!"}
 
 
 @app.get("/test")
