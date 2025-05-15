@@ -35,7 +35,7 @@ def poll_notion_projects(interval: int = 30):
                 # TODO: Discord 전송 기능 호출 가능
 
             # 캐시 업데이트
-            last_known_ids = current_ids
+            last_known_ids = current_ids  # TODO: 이거 DB에 입력해야 됩니당
 
         except Exception as e:
             print(f"[⚠️] Error while polling Notion: {e}")

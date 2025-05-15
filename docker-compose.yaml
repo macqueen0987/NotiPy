@@ -61,7 +61,7 @@ services:
             - ./database:/var/lib/mysql
         networks:
             - notipy_backend
-        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1']
         # this is to make sure the database is utf8mb4, you can use without this, but some letters can break
 
 
