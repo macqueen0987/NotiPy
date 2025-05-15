@@ -8,8 +8,8 @@ from typing import Any, Awaitable, Callable, Coroutine
 import aiohttp
 from commons.localization import language_codes
 from commons.var import *
-from interactions import (ComponentContext, LocalisedDesc, LocalisedName,
-                          SlashContext, Client)
+from interactions import (Client, ComponentContext, LocalisedDesc,
+                          LocalisedName, SlashContext)
 from interactions.api.events import CommandError
 
 wd = dirname(
@@ -162,6 +162,7 @@ async def apirequest(
     :return: A tuple containing the status code and the response JSON
     """
     return await makerequest(api_root + endpoint, method, data, headers, auth)
+
 
 async def makerequest(
     url: str,

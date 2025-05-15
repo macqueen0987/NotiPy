@@ -1,9 +1,11 @@
-import requests
 import time
-from var import NOTION_TOKEN, NOTION_DB_ID
+
+import requests
+from var import NOTION_DB_ID, NOTION_TOKEN
 
 # 전역 캐시
 last_known_ids = set()
+
 
 def poll_notion_projects(interval: int = 30):
     """
@@ -16,7 +18,7 @@ def poll_notion_projects(interval: int = 30):
     headers = {
         "Authorization": f"Bearer {NOTION_TOKEN}",
         "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
     }
 
     while True:

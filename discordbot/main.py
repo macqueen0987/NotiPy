@@ -256,7 +256,9 @@ async def discordbot(functionname: str, params: str = None):
     if not hasattr(functions, functionname):
         return JSONResponse({"error": "Function not found"})
     # Run the function
-    result = await functions.run(functionname, bot, json.loads(params))  # this enables function to use params as kwargs
+    result = await functions.run(
+        functionname, bot, json.loads(params)
+    )  # this enables function to use params as kwargs
     return JSONResponse(result)
 
 
