@@ -40,6 +40,8 @@ async def make_request(
     :param auth: Basic authentication credentials
     :return: tuple of response status and response data
     """
+    headers = headers or {}
+    headers["X-Internal-Request"] = "true"  # this is a custom header to identify internal requests
     async with ClientSession() as session:
         async with session.request(
             method, url, headers=headers, params=params, data=data, auth=auth
