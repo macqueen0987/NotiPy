@@ -1,4 +1,10 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+NOTION_TOKEN = os.getenv("NOTION_TOKEN", "")
+NOTION_DB_ID = os.getenv("NOTION_DB_ID", "")
 
 DISCORD_APP_ROOT = os.environ["DISCORD_APP_ROOT"]
 
