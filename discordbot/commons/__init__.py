@@ -8,8 +8,8 @@ from typing import Any, Awaitable, Callable, Coroutine
 import aiohttp
 from commons.localization import language_codes
 from commons.var import *
-from interactions import (ComponentContext, LocalisedDesc, LocalisedName,
-                          SlashContext)
+from interactions import (Client, ComponentContext, LocalisedDesc,
+                          LocalisedName, SlashContext)
 from interactions.api.events import CommandError
 
 wd = dirname(
@@ -117,8 +117,6 @@ class MyFunctions:
         """
         if hasattr(self, name):
             delattr(self, name)
-        print(f"Function {name} removed")
-        print(f"Functions: {dir(self)}")
 
     def get(self, name) -> AsyncFuncType or None:
         """
@@ -128,19 +126,19 @@ class MyFunctions:
         """
         return getattr(self, name)
 
-    async def run(self, name: str, **kwargs):
+    async def run(self, name: str, bot: Client, params: dict):
         """
         Run the function by name
         :param name: name of the function
-        :param args: arguments to pass to the function
-        :param kwargs: keyword arguments to pass to the function
+        :param bot: bot instance
+        :param params: parameters to pass to the function
         :return: result of the function
         """
         func = self.get(name)
         if func is None:
             return None
         try:
-            result = await func(**kwargs)
+            result = await func(bot, params)
             return result
         except Exception as e:
             self.logger.error(f"Error running function {name}: {e}")
@@ -163,6 +161,25 @@ async def apirequest(
     :param auth: The authentication to use (default: None)
     :return: A tuple containing the status code and the response JSON
     """
+    return await makerequest(api_root + endpoint, method, data, headers, auth)
+
+
+async def makerequest(
+    url: str,
+    method: str = "GET",
+    data: dict = None,
+    headers: dict = None,
+    auth: aiohttp.BasicAuth = None,
+) -> tuple[int, dict | None]:
+    """
+    Make an http request to the given url.
+    :param url: The url to call
+    :param method: The HTTP method to use (default: GET)
+    :param data: The data to send in the request (default: None)
+    :param headers: The headers to send in the request (default: None)
+    :param auth: The authentication to use (default: None)
+    :return: A tuple containing the status code and the response JSON
+    """
     # add default_header to headers
     if headers is None:
         headers = {}
@@ -171,7 +188,7 @@ async def apirequest(
     )
     async with aiohttp.ClientSession() as session:
         async with session.request(
-            method, api_root + endpoint, json=data, headers=headers, auth=auth
+            method, url, json=data, headers=headers, auth=auth
         ) as response:
             status = response.status
             json_res = None

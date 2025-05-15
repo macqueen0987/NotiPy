@@ -1,6 +1,7 @@
 import os
 
 token = os.environ["DISCORD_TOKEN"]
+notion_token = os.environ["NOTION_TOKEN"]  # Notion API token
 
 devserver = os.environ["DISCORD_DEVSERVER"]  # Replace with actual server ID
 

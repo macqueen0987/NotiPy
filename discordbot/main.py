@@ -244,15 +244,21 @@ async def discordbot(functionname: str, params: str = None):
     """
     FastAPI endpoint to call discordbot functions
     :param functionname: name of the function to call
-    :param params: parameters to pass to the function, json format
+    :param params: parameters to pass to the function
     :return: result of the function
+
+    진짜 이상한데 일단 되긴 함
+    주로 백엔드에서 디스코드 봇에 있는 함수를 호출할 때 사용됨
     """
-    params: dict = json.loads(params) if params else {}
+    # params: json string
+    params = params or "{}"
     # Check if the function exists in the bot
     if not hasattr(functions, functionname):
         return JSONResponse({"error": "Function not found"})
     # Run the function
-    result = await functions.run(functionname, **params)
+    result = await functions.run(
+        functionname, bot, json.loads(params)
+    )  # this enables function to use params as kwargs
     return JSONResponse(result)
 
 

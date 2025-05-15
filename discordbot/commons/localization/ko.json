@@ -1,7 +1,23 @@
 {
+    "missing_permission_err": "봇이 이 명령을 실행할 권한이 없습니다.",
+    "command_on_cooldown_err": "이 명령은 쿨다운 중입니다. {0}초 후에 다시 시도하세요.",
+    "max_concurrency_err": "이 명령은 다른 사용자가 이미 사용 중입니다. 완료될 때까지 기다려주세요.",
+    "check_failed_err": "검사에 실패했습니다. 권한 부족으로 인해 발생했을 가능성이 높습니다.",
+    "error_occurred_err": "명령을 실행하는 동안 예기치 않은 오류가 발생했습니다.",
     "ping": "핑",
-    "ping_desc": "봇에 핑을 보냅니다",
+    "ping_desc": "봇의 응답 속도를 확인합니다.",
     "ping_opt": "옵션",
     "ping_opt_desc": "핑 옵션",
-    "pong": "퐁!"
+    "pong": "퐁!",
+    "github": "깃허브",
+    "github_desc": "GitHub와 관련된 명령어",
+    "gitlink": "연결",
+    "gitlink_desc": "GitHub 계정을 Discord 계정에 연결하거나, 이미 연결된 경우 GitHub 계정을 표시합니다.",
+    "user_not_found": "",
+    "link_github": "아래 링크를 클릭하여 GitHub 계정을 Discord 계정에 연결하세요.",
+    "link_github_button": "GitHub 연결",
+    "check_github_linked_button": "연결 여부 확인",
+    "already_linked_github": "GitHub 계정이 이미 Discord 계정에 연결되어 있습니다.",
+    "not_linked_github": "GitHub 계정이 Discord 계정에 연결되어 있지 않습니다.",
+    "success_linked_github": "GitHub 계정이 Discord 계정에 성공적으로 연결되었습니다."
 }
