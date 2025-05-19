@@ -84,6 +84,7 @@ async def lifespan(app: FastAPI):
         os.makedirs(commons.logfilepath)
     if debugMode:
         bot.debug_scope = commons.devserver
+        bot.modcache = {}
         logger.info("Bot starting.in debug mode")
     asyncio.create_task(bot.astart(commons.token))
     yield
@@ -240,7 +241,7 @@ functions = MyFunctions(logger)
 
 
 @app.get("/call/{functionname}")
-async def discordbot(functionname: str, params: str = None):
+async def discordbot(request: Request, functionname: str, params: str = None):
     """
     FastAPI endpoint to call discordbot functions
     :param functionname: name of the function to call
@@ -250,6 +251,8 @@ async def discordbot(functionname: str, params: str = None):
     진짜 이상한데 일단 되긴 함
     주로 백엔드에서 디스코드 봇에 있는 함수를 호출할 때 사용됨
     """
+    if request.headers.get("X-Internal-Request") != "true":
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
     # params: json string
     params = params or "{}"
     # Check if the function exists in the bot
