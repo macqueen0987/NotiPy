@@ -1,16 +1,18 @@
 import inspect
-import json
-from functools import partial
-from os import listdir
-from os.path import abspath, dirname, isfile, join
-from typing import Any, Awaitable, Callable, Coroutine
+from http.client import responses
+from os.path import dirname, abspath
+from typing import Any, Awaitable, Callable, Coroutine, Optional, Tuple
 
 import aiohttp
-from commons.localization import language_codes
-from commons.var import *
-from interactions import (Client, ComponentContext, LocalisedDesc,
-                          LocalisedName, SlashContext)
-from interactions.api.events import CommandError
+from interactions import Client, BaseContext, Message, ActionRow, StringSelectMenu, ChannelSelectMenu, RoleSelectMenu, BaseComponent
+import random
+
+from interactions.api.events import Component
+from cachetools import TTLCache
+
+from .var import *
+from .locale import *
+from .Options import *
 
 wd = dirname(
     abspath(__file__)
@@ -19,79 +21,69 @@ rootdir = dirname(
     dirname(abspath(__file__))
 )  # 현재 작업 디렉토리 (discordbot/main.py의 위치)
 logfilepath = rootdir + "/logs/"  # 로그 파일 경로
-locales = {}
-default_locale = "en-US"  # 기본 로케일
 AsyncFuncType = Callable[..., Coroutine[Any, Any, Any]]
 
 
 async def is_dev(ctx) -> bool:
     return int(ctx.author.id) in developers
 
+modcache = TTLCache(maxsize=100, ttl=60 * 60 * 24)  # 1일 캐시
+async def is_moderator(ctx: BaseContext) -> bool:
+    if ctx.guild is None:
+        return False
+    guild = ctx.guild
+    member = await guild.fetch_member(ctx.author.id)
+    if member.guild_permissions.ADMINISTRATOR:
+        return True
+    member_role_ids = [int(role.id) for role in member.roles]
+    cached_modrole_id = modcache.get(guild.id)
+    if cached_modrole_id is not None:
+        return cached_modrole_id in member_role_ids
+    status, response = await apirequest(f"/discord/getmodrole?serverid={guild.id}")
+    if status != 200:
+        return False
+    modrole = response.get("modrole")
+    if modrole is None:
+        return False
+    modrole_id = int(modrole)
+    modcache[guild.id] = modrole_id
+    return modrole_id in member_role_ids
 
-for file in listdir(wd + "/localization"):
-    if file.endswith(".json") and isfile(join(wd + "/localization", file)):
-        with open(join(wd + "/localization", file), "r", encoding="utf-8") as f:
-            locales[file[:-5]] = json.load(f)
-
-
-def localize():
+async def server_only(ctx) -> bool:
     """
-    Decorator for localizing slash commands.
+    Check if the command is used in a server.
     """
+    if ctx.guild is None:
+        return False
+    return True
 
-    def wrapper(func):
-        async def wrapped_func(
-            self, ctx: SlashContext | ComponentContext, *args, **kwargs
-        ):
-            if not ctx.guild:
-                return
-            locale = ctx.locale
-            if locale not in locales:
-                locale = ctx.guild.preferred_locale
-            return await func(self, ctx, localizator(locale), *args, **kwargs)
-
-        return wrapped_func
-
-    return wrapper
-
-
-def localizator(locale):
-    return partial(getlocale, locale=locale)
-
-
-def getlocale(key_, locale) -> str:
-    if key_ in locales[locale]:
-        return locales[locale][key_]
-    if key_ in locales[default_locale]:
-        return locales[default_locale][key_]
-    return key_
-
-
-def getname(name) -> LocalisedName:
+async def wait_for_component_interaction(
+    ctx,
+    component: StringSelectMenu | ChannelSelectMenu | RoleSelectMenu | BaseComponent,
+    message: Message,
+    timeout: int = 60,
+    check: Optional[Callable[[Component], Awaitable[bool]]] = None
+) -> Optional[Tuple[ComponentContext, Any]]:
     """
-    Create a LocalisedName object for the given name.
-    """
-    names = {}
-    for locale in locales:
-        if name in locales[locale]:
-            names[language_codes[locale]] = locales[locale][name]
-    if not names:
-        return LocalisedName(**{language_codes[default_locale]: name})
-    return LocalisedName(**names)
+    지정한 컴포넌트에 대해 유저의 상호작용을 기다립니다.
 
-
-def getdesc(name) -> LocalisedDesc:
+    :param ctx: 상호작용 컨텍스트
+    :param component: Component 또는 ActionRow 또는 그 리스트
+    :param message: 컴포넌트를 포함한 메시지
+    :param timeout: 대기 시간 (초)
+    :param check: (선택) 추가적인 필터 조건 함수. True를 반환해야 유효한 상호작용으로 간주됨
+    :return: 상호작용이 발생한 컴포넌트의 컨텍스트와 값. 타임아웃 시 None을 반환
     """
-    Create a LocalisedDesc object for the given name.
-    """
-    name += "_desc"
-    descs = {}
-    for locale in locales:
-        if name in locales[locale]:
-            descs[language_codes[locale]] = locales[locale][name]
-    if not descs:
-        return LocalisedDesc(**{language_codes[default_locale]: name})
-    return LocalisedDesc(**descs)
+    try:
+        used_component: Component = await ctx.bot.wait_for_component(
+            components=component,
+            timeout=timeout,
+            check=check
+        )
+        return used_component.ctx, used_component.ctx.values[0]  # 보통 Select 메뉴일 경우
+    except TimeoutError:
+        await message.delete()
+        return None
 
 
 class MyFunctions:
@@ -148,38 +140,24 @@ class MyFunctions:
 async def apirequest(
     endpoint: str,
     method: str = "GET",
+    params: dict = None,
     data: dict = None,
+    json: dict = None,
     headers: dict = None,
     auth: aiohttp.BasicAuth = None,
 ) -> tuple[int, dict | None]:
-    """
-    Make an API request to the given endpoint.
-    :param endpoint: The API endpoint to call
-    :param method: The HTTP method to use (default: GET)
-    :param data: The data to send in the request (default: None)
-    :param headers: The headers to send in the request (default: None)
-    :param auth: The authentication to use (default: None)
-    :return: A tuple containing the status code and the response JSON
-    """
-    return await makerequest(api_root + endpoint, method, data, headers, auth)
+    return await makerequest(api_root + endpoint, method, params, data, json, headers, auth)
 
 
 async def makerequest(
     url: str,
     method: str = "GET",
+    params: dict = None,
     data: dict = None,
+    json: dict = None,
     headers: dict = None,
     auth: aiohttp.BasicAuth = None,
 ) -> tuple[int, dict | None]:
-    """
-    Make an http request to the given url.
-    :param url: The url to call
-    :param method: The HTTP method to use (default: GET)
-    :param data: The data to send in the request (default: None)
-    :param headers: The headers to send in the request (default: None)
-    :param auth: The authentication to use (default: None)
-    :return: A tuple containing the status code and the response JSON
-    """
     # add default_header to headers
     if headers is None:
         headers = {}
@@ -188,7 +166,13 @@ async def makerequest(
     )
     async with aiohttp.ClientSession() as session:
         async with session.request(
-            method, url, json=data, headers=headers, auth=auth
+            method,
+            url,
+            params=params,
+            data=data,
+            json=json,
+            headers=headers,
+            auth=auth,
         ) as response:
             status = response.status
             json_res = None
@@ -197,3 +181,11 @@ async def makerequest(
             except aiohttp.ContentTypeError:
                 json_res = None
             return status, json_res
+
+def createRandomColor():
+    """
+    Create a random color in hex format.
+    :return: A string representing the color in hex format
+    """
+
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
