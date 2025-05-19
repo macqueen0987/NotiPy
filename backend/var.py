@@ -4,8 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-NOTION_TOKEN = os.getenv("NOTION_TOKEN", "")
-NOTION_DB_ID = os.getenv("NOTION_DB_ID", "")
+NOTION_API_URL = os.environ["NOTION_API_URL"]
+# NOTION_TOKEN = os.environ["NOTION_TOKEN"]  # Notion API token
+NOTION_API_VERSION = os.environ["NOTION_API_VERSION"]
 
 DISCORD_APP_ROOT = os.environ["DISCORD_APP_ROOT"]
 

@@ -45,3 +45,24 @@ class Notion(Base):
         BigInteger, ForeignKey("user.discord_id", ondelete="CASCADE")
     )  # discord id
     notion_login = Column(Text, nullable=False)
+
+class ServerInfo(Base):
+    __tablename__ = "server_info"
+    server_id = Column(BigInteger, primary_key=True)
+    mod_id = Column(BigInteger, nullable=True)
+    notion_token = Column(Text, nullable=True)
+    webhook_channel_id = Column(BigInteger, nullable=True)
+    updated = Column(DateTime, nullable=True, default=datetime.now)
+
+class NotionDatabase(Base):
+    __tablename__ = "notion_database"
+    server_id = Column(BigInteger, ForeignKey("server_info.server_id", ondelete="CASCADE"))
+    channel_id = Column(BigInteger, nullable=False)
+    database_id = Column(VARCHAR(40), primary_key=True)
+
+class NotionPages(Base):
+    __tablename__ = "notion_pages"
+    page_id = Column(VARCHAR(40), primary_key=True)
+    database_id = Column(VARCHAR(40), ForeignKey("notion_database.database_id", ondelete="CASCADE"))
+    thread_id = Column(BigInteger, nullable=True)
+    updated = Column(Boolean, nullable=False, default=False)
