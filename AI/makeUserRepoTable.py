@@ -1,15 +1,16 @@
-import os
 import json
+import os
 from datetime import datetime, timezone
+
 from github import Github
-from sqlalchemy import (
-    create_engine, Column, Integer, String, DateTime, Float, JSON, ForeignKey
-)
-from sqlalchemy.orm import declarative_base, relationship, Session
 from llm_axe import OllamaChat
-from models import User, Repository, Base
+from models import Base, Repository, User
+from sqlalchemy import (JSON, Column, DateTime, Float, ForeignKey, Integer,
+                        String, create_engine)
+from sqlalchemy.orm import Session, declarative_base, relationship
 
 llm = OllamaChat(model="llama3:instruct")
+
 
 def fill_repo_metadata(name: str, url: str, readme: str) -> dict:
     prompt = (
@@ -23,9 +24,11 @@ def fill_repo_metadata(name: str, url: str, readme: str) -> dict:
         f"README Content:\n```\n{readme}\n```\n"
     )
     resp = llm.ask(
-        [{"role": "system", "content": "You are a helpful assistant."},
-         {"role": "user",   "content": prompt}],
-        format="json"
+        [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ],
+        format="json",
     )
     return json.loads(resp)
 
@@ -48,10 +51,10 @@ Base.metadata.create_all(engine)
 # 4) 데이터 수집 & 저장
 # ----------------------------------------
 TARGET_USERS = [
-    ("DDManager",   "https://github.com/DDManager"),
-    ("Ryan Nielson","https://github.com/RyanNielson"),
-    ("kcy1019",   "https://github.com/kcy1019"),
-    ("insertish",   "https://github.com/insertish")
+    ("DDManager", "https://github.com/DDManager"),
+    ("Ryan Nielson", "https://github.com/RyanNielson"),
+    ("kcy1019", "https://github.com/kcy1019"),
+    ("insertish", "https://github.com/insertish"),
 ]
 project_id_input = int(input("참여중인 프로젝트의 id를 입력하세요: "))
 
@@ -71,7 +74,7 @@ with Session(engine) as session:
 
         # 별·포크 합계
         total_stars = sum(r.stargazers_count for r in repos)
-        total_forks = sum(r.forks_count       for r in repos)
+        total_forks = sum(r.forks_count for r in repos)
 
         # 마지막 활동 날짜 (각 repo의 최신 커밋 일자 중 최대)
         last_dates = []
@@ -85,55 +88,59 @@ with Session(engine) as session:
 
         # User 레코드 생성
         user_rec = User(
-            name               = label,
-            project_id         = project_id_input,
-            github_url         = url,
-            primary_languages  = primary_langs,
-            experience_years   = round((datetime.now(timezone.utc) - user.created_at).days / 365, 1),
-            public_repos       = user.public_repos,
-            total_stars        = total_stars,
-            total_forks        = total_forks,
-            profile_created_at = user.created_at,
-            last_active_date   = last_active  # last_active 역시 aware이면 OK
+            name=label,
+            project_id=project_id_input,
+            github_url=url,
+            primary_languages=primary_langs,
+            experience_years=round(
+                (datetime.now(timezone.utc) - user.created_at).days / 365, 1
+            ),
+            public_repos=user.public_repos,
+            total_stars=total_stars,
+            total_forks=total_forks,
+            profile_created_at=user.created_at,
+            last_active_date=last_active,  # last_active 역시 aware이면 OK
         )
 
         session.add(user_rec)
         session.flush()  # user_rec.developer_id 채번
 
         # 4-2) 상위 5개 레포 저장 (별 수 기준)
-                # 4-2) 상위 5개 레포 저장 (별 수 기준)
-        top5 = sorted(repos, key=lambda r: r.stargazers_count, reverse=True)[:5]
+        # 4-2) 상위 5개 레포 저장 (별 수 기준)
+        top5 = sorted(
+            repos,
+            key=lambda r: r.stargazers_count,
+            reverse=True)[
+            :5]
         for r in top5:
             readme_content = None
             try:
                 readme_file = r.get_readme()
-                readme_content = readme_file.decoded_content.decode('utf-8')
+                readme_content = readme_file.decoded_content.decode("utf-8")
             except Exception:
                 readme_content = "내용이 없거나 불러오기 실패"
 
             repo_rec = Repository(
-                user_id          = user_rec.developer_id,
-                name             = r.name,
-                url              = r.html_url,
-                primary_language = r.language,
-                stars            = r.stargazers_count,
-                forks            = r.forks_count,
-                description      = readme_content,
-                category         = None,       
-                core_features    = []          
+                user_id=user_rec.developer_id,
+                name=r.name,
+                url=r.html_url,
+                primary_language=r.language,
+                stars=r.stargazers_count,
+                forks=r.forks_count,
+                description=readme_content,
+                category=None,
+                core_features=[],
             )
-
 
             # LLM 호출: category & core_features 채우기
             try:
                 meta = fill_repo_metadata(r.name, r.html_url, readme_content)
-                repo_rec.category      = meta.get("category")
+                repo_rec.category = meta.get("category")
                 repo_rec.core_features = meta.get("core_features", [])
             except Exception as e:
                 print(f"LLM 메타데이터 호출 실패 for {r.name}: {e}")
-            
-            session.add(repo_rec)
 
+            session.add(repo_rec)
 
     session.commit()
 
