@@ -119,7 +119,8 @@ Return your response as a valid JSON array in the following structure:
     print(
         f"Successfully created {
             len(roles_created)} roles for project id {
-            project.project_id}.")
+            project.project_id}."
+    )
     return roles_created
 
 

@@ -116,7 +116,8 @@ if __name__ == "__main__":
                 readme_content = None
                 try:
                     readme_file = r.get_readme()
-                    readme_content = readme_file.decoded_content.decode("utf-8")
+                    readme_content = readme_file.decoded_content.decode(
+                        "utf-8")
                 except Exception:
                     readme_content = "내용이 없거나 불러오기 실패"
 
@@ -134,7 +135,8 @@ if __name__ == "__main__":
 
                 # LLM 호출: category & core_features 채우기
                 try:
-                    meta = fill_repo_metadata(r.name, r.html_url, readme_content)
+                    meta = fill_repo_metadata(
+                        r.name, r.html_url, readme_content)
                     repo_rec.category = meta.get("category")
                     repo_rec.core_features = meta.get("core_features", [])
                 except Exception as e:
