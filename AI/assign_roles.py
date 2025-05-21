@@ -1,10 +1,11 @@
+import json
+import re
+
+from llm_axe import OllamaChat  # LLM 호출 클래스
+from models import Base, Project, Role  # 모델 정의를 불러옵니다.
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import json
-from models import Base, Project, Role  # 모델 정의를 불러옵니다.
-from llm_axe import OllamaChat   # LLM 호출 클래스
 
-import re
 
 def generate_roles_for_project(project_id: int, session):
     """
@@ -77,7 +78,9 @@ Return your response as a valid JSON array in the following structure:
         # 마커 이후의 텍스트를 대상으로 추출 시도
         substring = response_text[marker_pos:]
         # 정규표현식으로 객체 배열 형태(여러 객체가 들어있는 배열)를 추출합니다.
-        match = re.search(r"(\[\s*\{.*?\}\s*(?:,\s*\{.*?\}\s*)*\])", substring, re.DOTALL)
+        match = re.search(
+            r"(\[\s*\{.*?\}\s*(?:,\s*\{.*?\}\s*)*\])", substring, re.DOTALL
+        )
 
         if match:
             json_str = match.group(1)
@@ -86,12 +89,12 @@ Return your response as a valid JSON array in the following structure:
             return
     else:
         # 마커를 찾지 못하면 전체 문자열에서 첫번째 JSON 배열 추출 (예외 처리)
-        start_idx = response_text.find('[')
-        end_idx = response_text.rfind(']')
+        start_idx = response_text.find("[")
+        end_idx = response_text.rfind("]")
         if start_idx == -1 or end_idx == -1:
             print("Could not find a valid JSON array in the LLM response.")
             return
-        json_str = response_text[start_idx:end_idx+1]
+        json_str = response_text[start_idx: end_idx + 1]
 
     try:
         roles_data = json.loads(json_str)
@@ -107,13 +110,16 @@ Return your response as a valid JSON array in the following structure:
             name=role_info.get("name"),
             count=role_info.get("count"),
             description=role_info.get("description"),
-            languages_tools=role_info.get("languages_tools")  # 키 이름에 맞게 수정
+            languages_tools=role_info.get("languages_tools"),  # 키 이름에 맞게 수정
         )
         session.add(new_role)
         roles_created.append(new_role)
 
     session.commit()
-    print(f"Successfully created {len(roles_created)} roles for project id {project.project_id}.")
+    print(
+        f"Successfully created {
+            len(roles_created)} roles for project id {
+            project.project_id}.")
     return roles_created
 
 
@@ -122,10 +128,10 @@ if __name__ == "__main__":
     engine = create_engine("sqlite:///github.db", echo=True)
     Session = sessionmaker(bind=engine)
     session = Session()
-    
+
     # 테이블이 존재하지 않을 경우 생성
     Base.metadata.create_all(engine)
-    
+
     try:
         project_input_id = int(input("Enter project id: "))
     except ValueError:
