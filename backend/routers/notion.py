@@ -9,7 +9,7 @@ from common import *
 from cachetools import TTLCache
 from datetime import datetime, timedelta
 
-from services.notionservice import get_notion_database
+from services import notionservice
 
 router = APIRouter(prefix="/notion", tags=["Notion"])
 from services import notionservice, discordservice
@@ -325,7 +325,7 @@ async def notion_webhook_listener(request: Request, serverid: int, conn=Depends(
             if data['data']['parent']['type'] == "database":
                 parentid = data['data']['parent']['id']
                 # 부모 데이터베이스 캐시 조회 + 추후 디스코드에 정보 전송을 위해 업데이트 플래그 설정
-                res = await get_notion_database(conn, parentid)
+                res = await notionservice.get_notion_database(conn, parentid)
                 if res:
                     await updatePage(conn, pageid, parentid)
             # 페이지 정보 가져와서 제목과 URL 파싱

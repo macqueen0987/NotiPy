@@ -193,12 +193,14 @@ class Notion(Extension):
             await apirequest("/notion/notionpage/updated", method="POST", json={"threadids": success})
 
     async def send_to_forum(self, channel: GuildForum, pagedata: dict, embed: Embed):
-        thread = None
+        thread: GuildForumPost = None
         threadid = pagedata.get("threadid")
         if threadid:
             thread = await channel.fetch_post(threadid)
         if thread:
-            await thread.edit(name=pagedata['pagetitle'], content="", embed=embed)
+            await thread.edit(name=pagedata['pagetitle'])
+            message = await thread.fetch_message(threadid) # fetch the message to edit
+            await message.edit(embed=embed)
             return None
         thread = await channel.create_post(name=pagedata['pagetitle'], content="", embed=embed)
         await apirequest(f"/notion/notionpage/{pagedata['pageid']}/threadid", method="POST", json={"threadid": thread.id})

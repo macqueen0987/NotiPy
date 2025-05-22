@@ -47,7 +47,7 @@ async def get_discord_server(conn: AsyncSession, server_id: int) -> ServerInfo:
     """
     server = discordServerCache.get(server_id)
     if server:
-        await conn.merge(server)
+        server = await conn.merge(server)
         return server
     query = select(ServerInfo).where(ServerInfo.server_id == server_id)
     server = await conn.execute(query)

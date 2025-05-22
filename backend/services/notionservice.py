@@ -125,7 +125,7 @@ async def get_notion_page(conn: AsyncSession, pageid: str) -> Optional[NotionPag
     """
     notionpage = notion_page_cache.get(pageid)
     if notionpage:
-        await conn.merge(notionpage)
+        notionpage = await conn.merge(notionpage)
         return notionpage
     query = select(NotionPages).where(NotionPages.page_id == pageid)
     result = await conn.execute(query)
