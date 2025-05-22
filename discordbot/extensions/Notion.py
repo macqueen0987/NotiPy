@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 from typing import Optional
 
 from commons import *
@@ -61,6 +62,14 @@ class Notion(Extension):
 
     def __init__(self, bot):
         self.bot = bot
+        self.update_notion_page.start()
+        asyncio.create_task(self.async_init())
+
+    async def async_init(self):
+        """
+        Async init function.
+        """
+        await self.update_notion_page()
 
     @notionTokenGroup.subcommand(sub_cmd_name=getname("set"), sub_cmd_description=getdesc("set_notion_token"))
     @localize()
@@ -127,7 +136,7 @@ class Notion(Extension):
         if res is None: return
         usedctx, databaseid = res
         # 이제 고른값들을 서버에 저장합니다
-        await usedctx.defer(ephemeral=True, edit_origin=True)
+        await usedctx.defer(edit_origin=True)
         channelid = int(channel.id)
         guildid = int(ctx.guild_id)
         json = {"channelid": channelid, "databaseid": databaseid, "serverid": guildid}
@@ -145,8 +154,70 @@ class Notion(Extension):
         """
         Update the Notion page.
         """
+        status, res = await apirequest("/notion/getallupdated", method="GET")
+        if status == 204:
+            return
+        if status != 200:
+            raise ValueError("Error in /notion/getallupdated")
+        if res['data'] is None:
+            return
+        success = []
+        for result in res['data']:
+            status = result["status"]
+            if not status:
+                continue
+            channelid = result["channelid"]
+            channel = await self.bot.fetch_channel(channelid)
+            if not channel: return # TODO: delete subscription
+            embed = Embed(title=result['pagetitle'], color=createRandomColor())
+            embed.url = result['pageurl']
+            embed.set_footer(text="Updated: " + datetime.now(timezone.utc).strftime("%B %d, %Y, %I:%M %p"))
+            for key, value in result['props'].items():
+                if key == "title":
+                    continue
+                if isinstance(value, list):
+                    value = "\n".join(value)
+                if value is None or value.strip() == "":
+                    value = getlocale("not_set", channel.guild.preferred_locale)
+                embed.add_field(name=key, value=value, inline=False)
+            try:
+                if isinstance(channel, GuildForum):
+                    res = await self.send_to_forum(channel, result, embed)
+                else:
+                    res = await self.send_to_channel(channel, result, embed)
+                if res:
+                    success.append(res)
+            except Exception as e:
+                self.bot.logger.warning("Error in Notion webhook: %s", e)
+        if success:
+            await apirequest("/notion/notionpage/updated", method="POST", json={"threadids": success})
 
+    async def send_to_forum(self, channel: GuildForum, pagedata: dict, embed: Embed):
+        thread = None
+        threadid = pagedata.get("threadid")
+        if threadid:
+            thread = await channel.fetch_post(threadid)
+        if thread:
+            await thread.edit(name=pagedata['pagetitle'], content="", embed=embed)
+            return None
+        thread = await channel.create_post(name=pagedata['pagetitle'], content="", embed=embed)
+        await apirequest(f"/notion/notionpage/{pagedata['pageid']}/threadid", method="POST", json={"threadid": thread.id})
+        return thread.id
 
+    async def send_to_channel(self, channel: GuildText, pagedata: dict, embed: Embed):
+        message = None
+        messageid = pagedata.get("threadid")
+        guild = channel.guild
+        if messageid:
+            message = await guild.fetch_thread(messageid)
+        if message:
+            message = await channel.fetch_message(messageid)
+            await message.edit(embed=embed)
+            return None
+        message = await channel.send(embed=embed)
+        await message.create_thread(name=pagedata['pagetitle'])
+        await apirequest(f"/notion/notionpage/{pagedata['pageid']}/threadid", method="POST", json={"threadid": message.id})
+        return message.id
 
 def setup(bot, functions):
     Notion(bot)

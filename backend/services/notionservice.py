@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Coroutine, Optional, Sequence, Tuple
 
-from sqlalchemy import select
+from sqlalchemy import select, Row, RowMapping
 
 from db.models import *
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -125,6 +125,7 @@ async def get_notion_page(conn: AsyncSession, pageid: str) -> Optional[NotionPag
     """
     notionpage = notion_page_cache.get(pageid)
     if notionpage:
+        await conn.merge(notionpage)
         return notionpage
     query = select(NotionPages).where(NotionPages.page_id == pageid)
     result = await conn.execute(query)
@@ -151,7 +152,7 @@ async def update_notion_page(conn: AsyncSession, pageid: str, databaseid:str) ->
     await conn.commit()
     return notionpage
 
-async def get_all_updated_pages(conn: AsyncSession) -> Sequence[Tuple[NotionPages, int, str]]:
+async def get_all_updated_pages(conn: AsyncSession) -> Sequence[Row[tuple[NotionPages, int, str]]]:
     """
     Get all updated notion pages
     :param conn: database connection
@@ -168,4 +169,41 @@ async def get_all_updated_pages(conn: AsyncSession) -> Sequence[Tuple[NotionPage
         .where(NotionPages.updated == True)
     )
     result = await conn.execute(query)
-    return result.scalars().all()
+    return result.all()
+
+
+async def set_thread_id(conn: AsyncSession, pageid: str, threadid: int) -> Optional[NotionPages]:
+    """
+    Set the thread id for a notion page
+    :param conn: database connection
+    :param pageid: notion page id
+    :param threadid: discord thread id
+    :return: notion page
+    """
+    print("set_thread_id", pageid, threadid)
+    notionpage = await get_notion_page(conn, pageid)
+    print("notionpage", notionpage)
+    if notionpage is None:
+        return None
+    notionpage.thread_id = threadid
+    await conn.commit()
+    notion_page_cache.set(pageid, notionpage)
+    return notionpage
+
+async def set_pages_updated(conn: AsyncSession, threadids: Sequence[int]) -> Sequence[NotionPages] | None:
+    """
+    Set the updated flag for a notion page
+    :param conn: database connection
+    :param threadids: list of discord thread ids
+    :return: notion page
+    """
+    query = select(NotionPages).where(NotionPages.thread_id.in_(threadids))
+    result = await conn.execute(query)
+    notionpages = result.scalars().all()
+    if not notionpages:
+        return None
+    for notionpage in notionpages:
+        notionpage.updated = False
+        notion_page_cache.set(notionpage.page_id, notionpage)
+    await conn.commit()
+    return notionpages
