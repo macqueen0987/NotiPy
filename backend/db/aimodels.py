@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from basemodel import Base
 from sqlalchemy import (JSON, Boolean, Column, DateTime, Float, ForeignKey,
                         Integer, String, Text)
 from sqlalchemy.orm import relationship
-from basemodel import Base
 
 
 class User(Base):
@@ -36,8 +36,8 @@ class Repository(Base):
     stars = Column(Integer, nullable=False)
     forks = Column(Integer, nullable=False)
     description = Column(Text)
-    category = Column(String, nullable=True)          # 프로젝트 분야 태그
-    core_features = Column(JSON, nullable=True)       # 레포지토리 주요 기능들
+    category = Column(String, nullable=True)  # 프로젝트 분야 태그
+    core_features = Column(JSON, nullable=True)  # 레포지토리 주요 기능들
 
     owner = relationship("User", back_populates="repositories")
 
@@ -62,21 +62,32 @@ class Project(Base):
     auth_required = Column(Boolean, default=False)
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow)
 
     owner = relationship("User", back_populates="projects")
-    roles = relationship("Role", back_populates="project", cascade="all, delete-orphan")
+    roles = relationship(
+        "Role",
+        back_populates="project",
+        cascade="all, delete-orphan")
 
 
 class Role(Base):
     __tablename__ = "roles"
 
     role_id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(Integer, ForeignKey("projects.project_id"), nullable=False)
+    project_id = Column(
+        Integer,
+        ForeignKey("projects.project_id"),
+        nullable=False)
 
     name = Column(String, nullable=False)
     count = Column(Integer, nullable=False)
     description = Column(Text, nullable=True)
-    languages_tools = Column(JSON, nullable=True)   # Required programming languages for the role
+    languages_tools = Column(
+        JSON, nullable=True
+    )  # Required programming languages for the role
 
     project = relationship("Project", back_populates="roles")

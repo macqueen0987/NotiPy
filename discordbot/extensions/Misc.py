@@ -7,6 +7,7 @@ from interactions.api.events import GuildJoin, GuildLeft, Ready
 settingsBase = SlashCommand(name=getname("settings"))
 modroleGroup = settingsBase.group(name=getname("modrole"))
 
+
 class Misc(Extension):
     bot: Client = None
 
@@ -42,7 +43,9 @@ class Misc(Extension):
             await apirequest(f"/discord/updateserver?serverid={guildid}")
         await apirequest("/discord/removeoldservers")
 
-    @modroleGroup.subcommand(sub_cmd_name=getname("set"), sub_cmd_description=getdesc("set_modrole"))
+    @modroleGroup.subcommand(
+        sub_cmd_name=getname("set"), sub_cmd_description=getdesc("set_modrole")
+    )
     @localize()
     @roleOption()
     async def set_modrole(self, ctx: SlashContext, _, role):
@@ -51,13 +54,16 @@ class Misc(Extension):
         """
         guildid = int(ctx.guild_id)
         roleid = int(role.id)
-        status, response = await apirequest(f"/discord/setmodrole?serverid={guildid}&roleid={roleid}")
+        status, response = await apirequest(
+            f"/discord/setmodrole?serverid={guildid}&roleid={roleid}"
+        )
         if status != 200:
             raise ValueError("Error in /discord/setmodrole")
         modcache[guildid] = roleid
         await ctx.send(_("set_modrole_success"), ephemeral=True)
 
-    @settingsBase.subcommand(sub_cmd_name=getname("view"), sub_cmd_description=getdesc("view_settings"))
+    @settingsBase.subcommand(sub_cmd_name=getname("view"),
+                             sub_cmd_description=getdesc("view_settings"))
     @localize()
     async def view_settings(self, ctx: SlashContext, _):
         """
@@ -73,7 +79,7 @@ class Misc(Extension):
             return
         server = response["server"]
         mod = server["mod_id"]
-        embed = Embed(title=_("settings_embed_title"), color=0x00ff00)
+        embed = Embed(title=_("settings_embed_title"), color=0x00FF00)
         if mod is None:
             mod = _("not_set")
         else:
@@ -84,9 +90,6 @@ class Misc(Extension):
                 mod = f"<@&{mod.id}>"
         embed.add_field(name=_("modrole"), value=mod, inline=True)
         await ctx.send(embeds=embed, ephemeral=True)
-
-
-
 
 
 def setup(bot, functions):
