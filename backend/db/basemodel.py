@@ -1,6 +1,8 @@
-from datetime import datetime, date, time
+from datetime import date, datetime, time
+
 from sqlalchemy import inspect
 from sqlalchemy.orm import DeclarativeBase
+
 
 class Base(DeclarativeBase):
     def todict(self, exclude=None, datetime_format="%Y-%m-%d %H:%M:%S"):

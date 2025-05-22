@@ -1,6 +1,7 @@
+from typing import Any, Generic, TypeVar
+
 from cachetools import TTLCache
-from typing import TypeVar, Generic, Any
-from db.models import ServerInfo, NotionDatabase, NotionPages
+from db.models import NotionDatabase, NotionPages, ServerInfo
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -23,15 +24,19 @@ class BaseTTLCacheService(Generic[K, V]):
     def getAll(self) -> TTLCache[Any, Any]:
         return self.cache
 
+
 # 각각의 캐시 서비스 정의
 class NotionUserCacheService(BaseTTLCacheService[str, dict]):
     pass
 
+
 class NotionPageCacheService(BaseTTLCacheService[str, NotionPages]):
     pass
 
+
 class DiscordServerCacheService(BaseTTLCacheService[int, ServerInfo]):
     pass
+
 
 class NotionDatabaseCacheService(BaseTTLCacheService[str, NotionDatabase]):
     pass
@@ -46,11 +51,14 @@ _notion_database_cache = NotionDatabaseCacheService(ttl_seconds=12 * 60 * 60)
 def get_notion_user_cache_service() -> NotionUserCacheService:
     return _notion_user_cache
 
+
 def get_notion_page_cache_service() -> NotionPageCacheService:
     return _notion_page_cache
 
+
 def get_discord_server_cache_service() -> DiscordServerCacheService:
     return _discord_server_cache
+
 
 def get_notion_database_cache_service() -> NotionDatabaseCacheService:
     return _notion_database_cache

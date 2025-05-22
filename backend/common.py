@@ -21,6 +21,7 @@ async def get_db():
 
 discord_auth = BasicAuth(CLIENT_ID, CLIENT_SECRET)
 
+
 def notionHeaders(token: str):
     """
     Create headers for Notion API requests.
@@ -32,7 +33,14 @@ def notionHeaders(token: str):
     }
 
 
-async def local_request(method: str, endpoint: str, params: dict = None, data: dict = None, json: dict = None, headers: dict = None) -> (int, dict | str):
+async def local_request(
+    method: str,
+    endpoint: str,
+    params: dict = None,
+    data: dict = None,
+    json: dict = None,
+    headers: dict = None,
+) -> (int, dict | str):
     """
     Make a request to the local server
     :param method: HTTP method (GET, POST, etc.)
@@ -44,8 +52,12 @@ async def local_request(method: str, endpoint: str, params: dict = None, data: d
     :return: tuple of response status and response data
     """
     headers = headers or {}
-    url = f"http://localhost:{os.environ.get("BACKEND_PORT", 9091)}/api" + endpoint
+    url = f"http://localhost:{
+        os.environ.get(
+            "BACKEND_PORT",
+            9091)}/api" + endpoint
     return await make_request(method, url, params, data, json, headers, auth=None)
+
 
 async def make_request(
     method: str,

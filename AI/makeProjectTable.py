@@ -2,8 +2,8 @@ import json
 import os
 from datetime import datetime, timezone
 
-from llm_axe import OllamaChat
 from aimodels import Base, Project  # 미리 정의해 둔 SQLAlchemy 모델
+from llm_axe import OllamaChat
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
