@@ -52,10 +52,13 @@ async def local_request(
     :return: tuple of response status and response data
     """
     headers = headers or {}
-    url = f"http://localhost:{
-        os.environ.get(
-            "BACKEND_PORT",
-            9091)}/api" + endpoint
+    url = (
+        f"http://localhost:{
+            os.environ.get(
+                "BACKEND_PORT",
+                9091)}/api"
+        + endpoint
+    )
     return await make_request(method, url, params, data, json, headers, auth=None)
 
 

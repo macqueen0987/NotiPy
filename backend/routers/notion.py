@@ -9,11 +9,6 @@ from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException,
                      Request, status)
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
-from json import dumps
-from common import *
-from cachetools import TTLCache
-from datetime import datetime, timedelta
-
 from services import notionservice
 
 router = APIRouter(prefix="/notion", tags=["Notion"])
