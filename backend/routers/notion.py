@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, Sequence
 
 import requests
+from fastapi.responses import JSONResponse, Response
 from fastapi import APIRouter, HTTPException, Request, Depends, status, BackgroundTasks
 from pydantic import BaseModel
 from json import dumps
@@ -85,11 +86,14 @@ def fetch_projects():
 class notionItems(BaseModel):
     """
     Pydantic model for Notion items.
+    don't do this. this is a very bad example of how to use pydantic
     """
     token: Optional[str] = None
     databaseid: Optional[str] = None
     serverid: Optional[int] = None
     channelid: Optional[int] = None
+    threadid: Optional[int] = None
+    updated: Optional[bool] = None
 
 @router.post("/databases")
 @checkInternalServer
@@ -192,25 +196,85 @@ async def get_page(request: Request, pageid: str, token: str, forcereload: bool 
         return JSONResponse(content={"status": "success", "data": res})
     return JSONResponse(content={"status": "error", "message": "Page not found"})
 
+@router.post("/notionpage/{pageid}/threadid")
+@checkInternalServer
+async def set_thread_id(request: Request, pageid: str, items: notionItems, conn=Depends(get_db)):
+    """
+    Set the thread ID for the Notion page.
+    """
+    # Update the thread ID in the database
+    res = await notionservice.set_thread_id(conn, pageid, items.threadid)
+    return JSONResponse(content={"status": "success", "message": "Thread ID set successfully"})
+
+class threadIDs(BaseModel):
+    threadids: Sequence[int]
+@router.post("/notionpage/updated")
+@checkInternalServer
+async def set_page_updated(request: Request, items: threadIDs, conn=Depends(get_db)):
+    await notionservice.set_pages_updated(conn, items.threadids)
+    return JSONResponse(content={"status": "success", "message": "Page updated successfully"})
+
 @router.get("/getallupdated")
 @checkInternalServer
-async def get_all_updated(conn=Depends(get_db)):
+async def get_all_updated(request:Request, conn=Depends(get_db)):
     """
     Get all updated pages from the database.
     """
     res = await notionservice.get_all_updated_pages(conn)
-    if not res: return JSONResponse(content="", status_code=status.HTTP_204_NO_CONTENT)
+    if not res: return Response(status_code=status.HTTP_204_NO_CONTENT)
     returndict = []
-    for page, channelid, token in res:
+    for row in res:
+        page, channelid, token = row
         # Notion 페이지 정보 조회
-        pagedict = {}
-        pagedict["channelid"] = channelid
+        pagedict = {'pageid': page.page_id, 'threadid': page.thread_id, "channelid": channelid, 'status': True}
         pagedata = await get_page_func(page.page_id, token, forcereload=True)
         if pagedata:
-            # TODO: 페이지 정보에서 필요한 데이터 추출
-            pass
+            # 페이지 제목과 URL 파싱
+            prop = pagedata['properties']
+            pagedict['pageurl'] = pagedata['url']
+            pagedict['props'] = {}
+            for item in prop:
+                if prop[item]['type'] == "title":
+                    pagedict['pagetitle'] = prop[item]['title'][0]['plain_text']
+                else:
+                    match prop[item]['type']:
+                        case "rich_text":
+                            pagedict['props'][item] = prop[item]['rich_text'][0]['plain_text'] if prop[item]['rich_text'] else ""
+                        case "select":
+                            pagedict['props'][item] = prop[item]['select']['name'] if prop[item]['select'] else ""
+                        case "multi_select":
+                            pagedict['props'][item] = [tag['name'] for tag in prop[item]['multi_select']]
+                        case "checkbox":
+                            pagedict['props'][item] = prop[item]['checkbox']
+                        case "number":
+                            pagedict['props'][item] = prop[item]['number']
+                        case "date":
+                            if prop[item]['date'] is not None:
+                                start = prop[item]['date']['start']
+                                end = prop[item]['date']['end']
+                                if start and end:
+                                    pagedict['props'][item] = f"{start} ~ {end}"
+                                elif start:
+                                    pagedict['props'][item] = start
+                                elif end:
+                                    pagedict['props'][item] = end
+                        case "people":
+                            pagedict['props'][item] = [user['name'] for user in prop[item]['people']]
+                        case "files":
+                            pagedict['props'][item] = [file['name'] for file in prop[item]['files']]
+                        case "url":
+                            pagedict['props'][item] = prop[item]['url']
+                        case 'status':
+                            pagedict['props'][item] = prop[item]['status']['name'] if prop[item]['status'] else ""
+                        case _:
+                            print(f"Unknown type: {prop[item]['type']}")
+                            pagedict['props'][item] = prop[item]['type'] + " under dev"
+            # 페이지 정보 추가
+            returndict.append(pagedict)
         else:
-            pass
+            pagedict["status"] = False
+            # 페이지 정보를 노션에서 가져오지 못한 경우
+            # 주로 페이지가 삭제된 경우 -> 디스코드에서도 적절히 조치
 
     # 결과를 JSON 형식으로 반환
     return JSONResponse(content={"status": "success", "data": returndict})
