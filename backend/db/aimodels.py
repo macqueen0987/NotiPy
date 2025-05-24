@@ -5,8 +5,6 @@ from sqlalchemy import (JSON, Boolean, Column, DateTime, Float, ForeignKey,
                         Integer, String, Table, Text)
 from sqlalchemy.orm import declarative_base, relationship
 
-
-
 # Association table: 역할과 사용자 간의 다대다 관계를 표현
 role_assignments = Table(
     "role_assignments",
@@ -98,6 +96,7 @@ class Project(Base):
         "Role",
         back_populates="project",
         cascade="all, delete-orphan")
+
 
 class Role(Base):
     __tablename__ = "roles"
