@@ -53,7 +53,9 @@ class Misc(Extension):
         """
         guildid = int(ctx.guild_id)
         roleid = int(role.id)
-        status, response = await apirequest(endpoint=f"/discord/{guildid}/modrole", method="PUT", json=roleid)
+        status, response = await apirequest(
+            endpoint=f"/discord/{guildid}/modrole", method="PUT", json=roleid
+        )
         if status != 200:
             raise ValueError(f"Error in /discord/{guildid}/modrole")
         modcache[guildid] = roleid
@@ -69,7 +71,9 @@ class Misc(Extension):
         """
         guild = ctx.guild
         guildid = int(ctx.guild_id)
-        status, response = await apirequest(f"/discord/{guildid}", params={"eager_load": 1})
+        status, response = await apirequest(
+            f"/discord/{guildid}", params={"eager_load": 1}
+        )
         if status != 200:
             raise ValueError(f"Error in /discord/{guildid}")
         if response["server"] is None:
@@ -96,7 +100,10 @@ class Misc(Extension):
                 webhookchannel = _("none_channel")
             else:
                 webhookchannel = webhookchannel.mention
-        embed.add_field(name=_("webhook_channel"), value=webhookchannel, inline=True)
+        embed.add_field(
+            name=_("webhook_channel"),
+            value=webhookchannel,
+            inline=True)
         notiontoken = server["notion_token"]
         if notiontoken is None:
             notiontoken = _("not_set")
@@ -115,7 +122,7 @@ class Misc(Extension):
         notion_databases = server["notion_databases"]
         databases = []
         for database in notion_databases:
-            channel = database['channel_id']
+            channel = database["channel_id"]
             channel = await guild.fetch_channel(channel)
             if channel is None:
                 channel = _("none_channel")
@@ -127,7 +134,10 @@ class Misc(Extension):
             databases = [_("not_set")]
         else:
             databases = "\n".join(databases)
-        embed.add_field(name=_("notion_databases"), value=databases, inline=False)
+        embed.add_field(
+            name=_("notion_databases"),
+            value=databases,
+            inline=False)
         await ctx.send(embeds=embed, ephemeral=True)
 
 

@@ -90,10 +90,7 @@ async def wait_for_component_interaction(
             returnval = used_component.ctx.values[0]
         except IndexError:  # Button 같은 경우
             pass
-        return (
-            used_component.ctx,
-            returnval
-        )  # 보통 Select 메뉴일 경우
+        return (used_component.ctx, returnval)  # 보통 Select 메뉴일 경우
     except TimeoutError:
         await message.delete()
         return None

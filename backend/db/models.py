@@ -2,7 +2,8 @@ import json
 from datetime import date, datetime, time
 
 from sqlalchemy import (TIMESTAMP, VARCHAR, BigInteger, Boolean, Column,
-                        DateTime, ForeignKey, Integer, Text, inspect, UniqueConstraint)
+                        DateTime, ForeignKey, Integer, Text, UniqueConstraint,
+                        inspect)
 from sqlalchemy.orm import relationship
 
 try:
@@ -64,7 +65,9 @@ class ServerInfo(Base):
     notion_databases = relationship(
         "NotionDatabase", back_populates="server", cascade="all, delete-orphan"
     )
-    notion_tags = relationship("NotionTags", back_populates="server", cascade="all, delete-orphan")
+    notion_tags = relationship(
+        "NotionTags", back_populates="server", cascade="all, delete-orphan"
+    )
 
     def todict(self, exclude=None, datetime_format="%Y-%m-%d %H:%M:%S"):
         result = super().todict(exclude, datetime_format)
@@ -73,13 +76,11 @@ class ServerInfo(Base):
                 "database_id": db.database_id,
                 "database_name": db.database_name,
                 "channel_id": db.channel_id,
-            } for db in self.notion_databases
+            }
+            for db in self.notion_databases
         ]
         result["notion_tags"] = [
-            {
-                "idx": tag.idx,
-                "tag": tag.tag
-            } for tag in self.notion_tags
+            {"idx": tag.idx, "tag": tag.tag} for tag in self.notion_tags
         ]
         return result
 
@@ -117,9 +118,14 @@ class NotionPages(Base):
 class NotionTags(Base):
     __tablename__ = "notion_tags"
     idx = Column(Integer, primary_key=True, autoincrement=True)
-    server_id = Column(BigInteger, ForeignKey("server_info.server_id", ondelete="CASCADE"))
+    server_id = Column(
+        BigInteger, ForeignKey("server_info.server_id", ondelete="CASCADE")
+    )
     tag = Column(VARCHAR(100), nullable=False)
     __table_args__ = (
-        UniqueConstraint("server_id", "tag", name="uq_server_tag"),
+        UniqueConstraint(
+            "server_id",
+            "tag",
+            name="uq_server_tag"),
     )
     server = relationship("ServerInfo", back_populates="notion_tags")

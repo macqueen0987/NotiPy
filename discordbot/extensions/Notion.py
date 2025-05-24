@@ -103,7 +103,9 @@ class Notion(Extension):
         await ctx.send_modal(modal=my_modal)
         modalctx: ModalContext = await ctx.bot.wait_for_modal(my_modal)
         notion_token = modalctx.responses["notion_token"]
-        status, response = await apirequest(f"/discord/{ctx.guild_id}/notion/token", method="PUT", json=notion_token)
+        status, response = await apirequest(
+            f"/discord/{ctx.guild_id}/notion/token", method="PUT", json=notion_token
+        )
         if status != 200:
             raise ValueError("Error in /notion/setnotiontoken")
         await modalctx.send(_("notion_token_set"), ephemeral=True)
@@ -115,7 +117,9 @@ class Notion(Extension):
     @check(is_moderator)
     @localize()
     async def remove_notion_token(self, ctx: SlashContext, _):
-        status, response = await apirequest(f"discord/{ctx.guild_id}/notion/token", method="PUT", json=None)
+        status, response = await apirequest(
+            f"discord/{ctx.guild_id}/notion/token", method="PUT", json=None
+        )
         if status != 200:
             raise ValueError(f"Error in /discord/{ctx.guild_id}/notion/token")
         await ctx.send(_("notion_token_removed"), ephemeral=True)
@@ -147,7 +151,10 @@ class Notion(Extension):
                             inline=True)
         await ctx.send(embed=embed, ephemeral=True)
 
-    @notiondbGroup.subcommand(sub_cmd_name=getname("connect"), sub_cmd_description=getdesc("connect_notion_db"),)
+    @notiondbGroup.subcommand(
+        sub_cmd_name=getname("connect"),
+        sub_cmd_description=getdesc("connect_notion_db"),
+    )
     @cooldown(Buckets.USER, 1, 10)
     @check(is_moderator)
     @localize()
@@ -195,7 +202,8 @@ class Notion(Extension):
             "channelid": channelid,
             "databaseid": databaseid,
             "databasename": databasename,
-            "serverid": guildid}
+            "serverid": guildid,
+        }
         status, response = await apirequest(
             "/notion/database", json=json, method="POST"
         )
@@ -207,7 +215,10 @@ class Notion(Extension):
             raise ValueError("Error in /notion/database")
         await usedctx.edit_origin(content=_("notion_db_linked"), components=[])
 
-    @notiondbGroup.subcommand(sub_cmd_name=getname("disconnect"), sub_cmd_description=getdesc("disconnect_notion_db"))
+    @notiondbGroup.subcommand(
+        sub_cmd_name=getname("disconnect"),
+        sub_cmd_description=getdesc("disconnect_notion_db"),
+    )
     @check(is_moderator)
     @localize()
     async def disconnect_notion(self, ctx: SlashContext, _):
@@ -215,46 +226,65 @@ class Notion(Extension):
         Disconnect from a Notion database.
         """
         serverid = int(ctx.guild_id)
-        status, response = await apirequest(f"/discord/{serverid}/notion/database", method="GET")
+        status, response = await apirequest(
+            f"/discord/{serverid}/notion/database", method="GET"
+        )
         if status == 204:
             await ctx.send(_("notion_db_not_linked"), ephemeral=True)
             return
         elif status != 200:
             raise ValueError(f"Error In: /discord/{serverid}/notion/database")
         options = []
-        for database in response['database']:
-            channelid = database['channel_id']
+        for database in response["database"]:
+            channelid = database["channel_id"]
             channel = await ctx.bot.fetch_channel(channelid)
             if channel is None:
                 continue
             channelname = channel.name
-            options.append(StringSelectOption(label=channelname, value=database['database_id']))
+            options.append(
+                StringSelectOption(
+                    label=channelname,
+                    value=database["database_id"]))
         if not options:
             await ctx.send(_("notion_db_not_linked"), ephemeral=True)
             return
         dbselect = StringSelectMenu(*options, placeholder=_("select_channel"))
-        message = await ctx.send(_("select_linked_notion_db_channel"), components=dbselect, ephemeral=True)
+        message = await ctx.send(
+            _("select_linked_notion_db_channel"), components=dbselect, ephemeral=True
+        )
         res = await wait_for_component_interaction(ctx, dbselect, message)
-        if not res: return
+        if not res:
+            return
         usedctx, databaseid = res
         await usedctx.defer(edit_origin=True)
-        status, response = await apirequest(f"/notion/database/{databaseid}", method="DELETE")
+        status, response = await apirequest(
+            f"/notion/database/{databaseid}", method="DELETE"
+        )
         if status == 204:
             await usedctx.edit_origin(content=_("notion_db_not_linked"), components=[])
             return
-        elif status != 200: raise ValueError(f"Error In: DELETE /notion/database/{databaseid}")
-        threadids = response['data']['threads']
-        channelid = response['data']['channelid']
+        elif status != 200:
+            raise ValueError(f"Error In: DELETE /notion/database/{databaseid}")
+        threadids = response["data"]["threads"]
+        channelid = response["data"]["channelid"]
         components = None
-        if threadids: # if there are threads, we need to delete them
-            components = Button(style=ButtonStyle.RED, label=_("remove"), custom_id="remove_notion_db_channels")
-        message = await usedctx.edit_origin(content=_("notion_db_disconnected"), components=components)
+        if threadids:  # if there are threads, we need to delete them
+            components = Button(
+                style=ButtonStyle.RED,
+                label=_("remove"),
+                custom_id="remove_notion_db_channels",
+            )
+        message = await usedctx.edit_origin(
+            content=_("notion_db_disconnected"), components=components
+        )
         res = await wait_for_component_interaction(usedctx, components, message)
-        if not res: return
+        if not res:
+            return
         usedctx, _ = res
         await usedctx.defer(edit_origin=True)
         channel = await ctx.bot.fetch_channel(channelid)
-        if not channel: return
+        if not channel:
+            return
         if isinstance(channel, GuildForum):
             for threadid in threadids:
                 thread = await channel.fetch_post(threadid)
@@ -267,7 +297,8 @@ class Notion(Extension):
                     await message.delete()
         await usedctx.edit_origin(content=_("notion_db_disconnected"), components=[])
 
-    @notiondbGroup.subcommand(sub_cmd_name=getname("list"), sub_cmd_description=getdesc("list_notion_db"))
+    @notiondbGroup.subcommand(sub_cmd_name=getname("list"),
+                              sub_cmd_description=getdesc("list_notion_db"))
     @check(is_moderator)
     @localize()
     async def list_notion(self, ctx: SlashContext, _):
@@ -275,19 +306,24 @@ class Notion(Extension):
         List the Notion databases.
         """
         serverid = int(ctx.guild_id)
-        status, response = await apirequest(f"/discord/{serverid}/notion/database", method="GET")
+        status, response = await apirequest(
+            f"/discord/{serverid}/notion/database", method="GET"
+        )
         if status == 204:
             await ctx.send(_("notion_db_not_linked"), ephemeral=True)
             return
         elif status != 200:
             raise ValueError(f"Error In: /discord/{serverid}/notion/database")
         embed = Embed(title=_("notion_db_list"), color=createRandomColor())
-        for database in response['database']:
-            channelid = database['channel_id']
+        for database in response["database"]:
+            channelid = database["channel_id"]
             channel: GuildForum | GuildText = await ctx.bot.fetch_channel(channelid)
             if channel is None:
                 continue
-            embed.add_field(name=database['database_name'], value=channel.mention, inline=False)
+            embed.add_field(
+                name=database["database_name"],
+                value=channel.mention,
+                inline=False)
         await ctx.send(embed=embed, ephemeral=True)
 
     @component_callback(regex_pattern)
@@ -297,19 +333,31 @@ class Notion(Extension):
         match = self.regex_pattern.match(ctx.custom_id)
         if match:
             page_id = match.group(1)
-            status, response = await apirequest(f"/notion/notionpage/{page_id}/toggleblock", method="PUT")
+            status, response = await apirequest(
+                f"/notion/notionpage/{page_id}/toggleblock", method="PUT"
+            )
             if status == 204:
                 await ctx.send(_("notion_page_not_found"), ephemeral=True)
             if status != 200:
-                raise ValueError(f"Error in /notion/notionpage/{page_id}/toggleblock")
+                raise ValueError(
+                    f"Error in /notion/notionpage/{page_id}/toggleblock")
                 return
             if response["data"]:  # the page is blocked
-                button = Button(style=ButtonStyle.PRIMARY, label=_("notion_unblock_page"), custom_id=f"togglepageblock_{page_id}")
+                button = Button(
+                    style=ButtonStyle.PRIMARY,
+                    label=_("notion_unblock_page"),
+                    custom_id=f"togglepageblock_{page_id}",
+                )
             else:  # the page is unblocked
-                button = Button(style=ButtonStyle.SECONDARY, label=_("notion_block_page"), custom_id=f"togglepageblock_{page_id}")
+                button = Button(
+                    style=ButtonStyle.SECONDARY,
+                    label=_("notion_block_page"),
+                    custom_id=f"togglepageblock_{page_id}",
+                )
             await ctx.edit_origin(components=button)
 
-    @notionTagGroup.subcommand(sub_cmd_name=getname("set"), sub_cmd_description=getdesc("set_notion_tag"))
+    @notionTagGroup.subcommand(sub_cmd_name=getname("set"),
+                               sub_cmd_description=getdesc("set_notion_tag"))
     @check(is_moderator)
     @localize()
     async def set_notion_tag(self, ctx: SlashContext, _):
@@ -328,7 +376,9 @@ class Notion(Extension):
         await ctx.send_modal(modal=my_modal)
         modalctx: ModalContext = await ctx.bot.wait_for_modal(my_modal)
         notion_tag = modalctx.responses["notion_tag"]
-        status, response = await apirequest(f"/discord/{ctx.guild_id}/notion/tag", method="POST", json=notion_tag)
+        status, response = await apirequest(
+            f"/discord/{ctx.guild_id}/notion/tag", method="POST", json=notion_tag
+        )
         if status == 429:
             await modalctx.send(_("notion_tag_limit"), ephemeral=True)
             return
@@ -336,14 +386,17 @@ class Notion(Extension):
             raise ValueError("Error in /notion/setnotiontag")
         await modalctx.send(_("notion_tag_set"), ephemeral=True)
 
-    @notionTagGroup.subcommand(sub_cmd_name=getname("remove"), sub_cmd_description=getdesc("remove_notion_tag"))
+    @notionTagGroup.subcommand(sub_cmd_name=getname("remove"),
+                               sub_cmd_description=getdesc("remove_notion_tag"))
     @check(is_moderator)
     @localize()
     async def remove_notion_tag(self, ctx: SlashContext, _):
         """
         Remove the Notion tag.
         """
-        status, response = await apirequest(f"/discord/{ctx.guild_id}/notion/tag", method="GET")
+        status, response = await apirequest(
+            f"/discord/{ctx.guild_id}/notion/tag", method="GET"
+        )
         if status != 200:
             raise ValueError("Error in /notion/removenotiontag")
         tags = response["tags"]
@@ -354,18 +407,22 @@ class Notion(Extension):
         if not options:
             await ctx.send(_("notion_tag_not_set"), ephemeral=True)
             return
-        tagselect = StringSelectMenu(*options, placeholder=_("select_notion_tag"))
-        message = await ctx.send(_("select_notion_tag"), components=tagselect, ephemeral=True)
+        tagselect = StringSelectMenu(
+            *options, placeholder=_("select_notion_tag"))
+        message = await ctx.send(
+            _("select_notion_tag"), components=tagselect, ephemeral=True
+        )
         res = await wait_for_component_interaction(ctx, tagselect, message)
         if not res:
             return
         usedctx, tagname = res
         await usedctx.defer(edit_origin=True)
-        status, response = await apirequest(f"/discord/{ctx.guild_id}/notion/tag/{tagname}", method="DELETE")
+        status, response = await apirequest(
+            f"/discord/{ctx.guild_id}/notion/tag/{tagname}", method="DELETE"
+        )
         if status != 200:
             raise ValueError("Error in /notion/removenotiontag")
         await usedctx.edit_origin(content=_("notion_tag_removed"), components=[])
-
 
     @Task.create(IntervalTrigger(minutes=5))
     async def update_notion_page(self):
@@ -415,7 +472,11 @@ class Notion(Extension):
         if success:
             await apirequest("/notion/notionpage/updated", method="POST", json=success)
 
-    async def send_to_forum(self, channel: GuildForum, pagedata: dict, embed: Embed):
+    async def send_to_forum(
+            self,
+            channel: GuildForum,
+            pagedata: dict,
+            embed: Embed):
         thread: GuildForumPost = None
         new = True
         threadid = pagedata.get("threadid")
@@ -431,7 +492,9 @@ class Notion(Extension):
             message = await thread.fetch_message(threadid)
             await message.edit(embed=embed)
         else:
-            thread = await channel.create_post(name=pagedata["pagetitle"], content="", embed=embed)
+            thread = await channel.create_post(
+                name=pagedata["pagetitle"], content="", embed=embed
+            )
         for targettag in targettags[:5]:  # limit to 5 tags, Discord API limit
             tag = next((t for t in tags if t.name == targettag), None)
             if not tag:
@@ -439,12 +502,19 @@ class Notion(Extension):
             applytag.append(tag)
             await thread.edit(applied_tags=applytag)
         if new:
-            await apirequest(f"/notion/notionpage/{pagedata['pageid']}/threadid", method="PUT", json=thread.id)
+            await apirequest(
+                f"/notion/notionpage/{pagedata['pageid']}/threadid",
+                method="PUT",
+                json=thread.id,
+            )
             await self.send_block_button(thread, pagedata["pageid"])
         return thread.id
 
-
-    async def send_to_channel(self, channel: GuildText, pagedata: dict, embed: Embed):
+    async def send_to_channel(
+            self,
+            channel: GuildText,
+            pagedata: dict,
+            embed: Embed):
         message = None
         messageid = pagedata.get("threadid")
         guild = channel.guild
@@ -464,13 +534,20 @@ class Notion(Extension):
         await self.send_block_button(channel, pagedata["pageid"])
         return message.id
 
-    async def send_block_button(self, channel: GuildForumPost | GuildText, pageid: str):
+    async def send_block_button(
+            self,
+            channel: GuildForumPost | GuildText,
+            pageid: str):
         """
         Send the block button to the channel.
         """
         local = channel.guild.preferred_locale
         content = getlocale("notion_block_page_msg", local)
-        button = Button(style=ButtonStyle.SECONDARY, label=getlocale("notion_block_page", local), custom_id=f"togglepageblock_{pageid}")
+        button = Button(
+            style=ButtonStyle.SECONDARY,
+            label=getlocale("notion_block_page", local),
+            custom_id=f"togglepageblock_{pageid}",
+        )
         message = await channel.send(content, components=button)
         await message.pin()
 

@@ -1,17 +1,18 @@
 from datetime import datetime, timedelta
 from typing import Any, Coroutine, Optional, Sequence
 
-from sqlalchemy.orm import selectinload
-
 from caches import get_discord_server_cache_service
-from db.models import ServerInfo, NotionTags
-from sqlalchemy import Row, select, update, inspect, func, delete
+from db.models import NotionTags, ServerInfo
+from sqlalchemy import Row, delete, func, inspect, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 discordServerCache = get_discord_server_cache_service()
 
 
-async def update_server_info_fields(conn: AsyncSession, server: ServerInfo, **kwargs) -> None:
+async def update_server_info_fields(
+    conn: AsyncSession, server: ServerInfo, **kwargs
+) -> None:
     """
     Update specified fields of a ServerInfo row in the database.
 
@@ -29,7 +30,10 @@ async def update_server_info_fields(conn: AsyncSession, server: ServerInfo, **kw
     await conn.commit()
     discordServerCache.set(server.server_id, server)
 
-async def mark_and_clean_discord_servers(conn: AsyncSession, active_server_ids: list[int]) -> None:
+
+async def mark_and_clean_discord_servers(
+    conn: AsyncSession, active_server_ids: list[int]
+) -> None:
     """
     - Mark given servers as updated (set updated = now)
     - Delete all other servers that haven't been updated in 24h
@@ -46,7 +50,9 @@ async def mark_and_clean_discord_servers(conn: AsyncSession, active_server_ids: 
     # Step 2: 삭제 기준 시간 계산
     cutoff = datetime.now() - timedelta(days=1)
     # Step 3: 삭제 대상 서버 ID 미리 조회해서 캐시 정리
-    expired_stmt = select(ServerInfo.server_id).where(ServerInfo.updated < cutoff)
+    expired_stmt = select(
+        ServerInfo.server_id).where(
+        ServerInfo.updated < cutoff)
     expired_result = await conn.execute(expired_stmt)
     expired_ids = expired_result.scalars().all()
     for server_id in expired_ids:
@@ -55,6 +61,7 @@ async def mark_and_clean_discord_servers(conn: AsyncSession, active_server_ids: 
     delete_stmt = delete(ServerInfo).where(ServerInfo.updated < cutoff)
     await conn.execute(delete_stmt)
     await conn.commit()
+
 
 async def remove_discord_server(
     conn: AsyncSession, server_id: int
@@ -70,7 +77,9 @@ async def remove_discord_server(
     return server
 
 
-async def create_discord_server(conn: AsyncSession, server_id: int) -> ServerInfo:
+async def create_discord_server(
+        conn: AsyncSession,
+        server_id: int) -> ServerInfo:
     """
     this adds a discord server to the database
     :param conn: database connection
@@ -88,7 +97,9 @@ async def create_discord_server(conn: AsyncSession, server_id: int) -> ServerInf
     return server
 
 
-async def get_discord_server(conn: AsyncSession, server_id: int, eager_load:bool = False) -> ServerInfo:
+async def get_discord_server(
+    conn: AsyncSession, server_id: int, eager_load: bool = False
+) -> ServerInfo:
     """
     this gets a discord server from the database, if it does not exist it will be created
     :param conn: database connection
@@ -101,7 +112,10 @@ async def get_discord_server(conn: AsyncSession, server_id: int, eager_load:bool
         return server
     stmt = select(ServerInfo).where(ServerInfo.server_id == server_id)
     if eager_load:
-        stmt = stmt.options(selectinload(ServerInfo.notion_databases), selectinload(ServerInfo.notion_tags))
+        stmt = stmt.options(
+            selectinload(ServerInfo.notion_databases),
+            selectinload(ServerInfo.notion_tags),
+        )
     result = await conn.execute(stmt)
     server = result.scalar_one_or_none()
     if not server:
@@ -160,6 +174,7 @@ async def get_notion_tag(conn, server_id: int) -> Optional[list[NotionTags]]:
     result = await conn.execute(query)
     return result.scalars().all()
 
+
 async def add_notion_tag(conn, server_id: int, tag: str) -> NotionTags:
     """
     Appends a new Notion tag for a Discord server.
@@ -168,6 +183,7 @@ async def add_notion_tag(conn, server_id: int, tag: str) -> NotionTags:
     conn.add(notion_tag)
     await conn.commit()
     return notion_tag
+
 
 async def remove_notion_tag(conn, server_id: int, tag: str) -> None:
     """
@@ -182,7 +198,8 @@ async def remove_notion_tag(conn, server_id: int, tag: str) -> None:
         await conn.delete(notion_tag)
         await conn.commit()
 
-async def get_notion_database(conn, serverid:int):
+
+async def get_notion_database(conn, serverid: int):
     """
     this gets the notion database for a discord server
     :param conn: database connection
