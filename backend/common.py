@@ -108,8 +108,8 @@ def checkInternalServer(func):
         if request.headers.get("X-Internal-Request") != "true":
             return JSONResponse(
                 content={
-                    "message": "Unauthorized"},
-                status_code=401)
+                    "message": "Forbidden"},
+                status_code=403)
         return await func(request, *args, **kwargs)
 
     return wrapper
