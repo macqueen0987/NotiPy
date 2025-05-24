@@ -2,20 +2,11 @@ import logging
 import os
 import pkgutil
 import sys
-from datetime import datetime
-from threading import Thread
 
-import aiohttp
-import db.models as models
 import uvicorn
-from common import get_db
-from fastapi import BackgroundTasks, Depends, FastAPI, Request, status
+from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from interactions.client.errors import BadRequest
-from routers.notion import router as notion_router
-from services import userservice as crud
-from sqlalchemy import select
 
 # from tasks.notion_poller import poll_notion_projects
 
@@ -31,16 +22,13 @@ logger.info("Starting NotiPy Backend...")
 app = FastAPI()
 api = FastAPI()
 
-# TODO: 지금 API URL 구조가 굉장히 난라닜는데 url 에 막 동사 넣고 그러는게 좋지 않음
-# 이런 구조는 RESTful 하지 않음, 추후 수정 필요
-
 
 @app.get("/")
 async def root():
     return {"message": "Hello, NotiPy!"}
 
 
-# @api.exception_handler(RequestValidationError)
+@api.exception_handler(RequestValidationError)
 async def validation_exception_handler(
         request: Request,
         exc: RequestValidationError):
@@ -50,16 +38,6 @@ async def validation_exception_handler(
     return JSONResponse(
         content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
     )
-
-
-# @api.exception_handler(BadRequest)
-async def bad_request_exception_handler(request: Request, exc: BadRequest):
-    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
-    logging.error(f"{request}: {exc_str}")
-    content = {"status_code": 10422, "message": exc_str, "data": None}
-    return JSONResponse(
-        content=content,
-        status_code=status.HTTP_400_BAD_REQUEST)
 
 
 # 3) 메인 실행부: 자동으로 routers 폴더 내에 존재하는 모든 라우터 api에 장착

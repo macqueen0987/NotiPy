@@ -1,113 +1,25 @@
-from datetime import datetime, timedelta
-from json import dumps
-from typing import Optional, Sequence
+from typing import Optional
 
-import requests
 from cachetools import TTLCache
 from common import *
-from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException,
-                     Request, status)
+from fastapi import (APIRouter, BackgroundTasks, Body, Depends, HTTPException,
+                     Request)
+from fastapi import status as HTTPStatus
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
-from services import notionservice
+from services import discordservice, notionservice
 
 router = APIRouter(prefix="/notion", tags=["Notion"])
 
-"""
-@router.get("/projects")
-def fetch_projects():
-    url = f"https://api.notion.com/v1/databases/{NOTION_DB_ID}/query"
-    headers = {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json",
-    }
 
-    resp = requests.post(url, headers=headers)
-    if not resp.ok:
-        raise HTTPException(status_code=resp.status_code, detail=resp.text)
-
-    data = resp.json()
-    results = []
-
-    for page in data.get("results", []):
-        props = page.get("properties", {})
-
-        name = (
-            props.get(
-                "프로젝트 이름", {}).get(
-                "title", [
-                    {}])[0].get(
-                    "plain_text", "") if props.get(
-                        "프로젝트 이름", {}).get("title") else "")
-
-        status = props.get("상태", {}).get("status", {}).get("name", "")yyy
-
-        people = props.get("담당자", {}).get("people", [])
-        assignee = people[0].get("name", "") if people else ""
-
-        part = [
-            tag.get(
-                "name",
-                "") for tag in props.get(
-                "파트",
-                {}).get(
-                "multi_select",
-                [])]
-
-        priority = props.get("우선순위", {}).get("select", {}).get("name", "")
-
-        rich_text = props.get("PR", {}).get("rich_text", [])
-        pr = rich_text[0].get("plain_text", "") if rich_text else ""
-
-        start_block = props.get("시작일", {}).get("date") or {}
-        start = start_block.get("start", "")
-
-        end_block = props.get("종료일", {}).get("date") or {}
-        end = end_block.get("end", "")
-
-        results.append(
-            {
-                "name": name,
-                "status": status,
-                "assignee": assignee,
-                "part": part,
-                "priority": priority,
-                "pr": pr,
-                "start": start,
-                "end": end,
-            }
-        )
-
-    return {"projects": results}
-"""
-
-
-class notionItems(BaseModel):
-    """
-    Pydantic model for Notion items.
-    don't do this. this is a very bad example of how to use pydantic
-    """
-
-    token: Optional[str] = None
-    databaseid: Optional[str] = None
-    serverid: Optional[int] = None
-    channelid: Optional[int] = None
-    threadid: Optional[int] = None
-    updated: Optional[bool] = None
-
-
-@router.post("/databases")
+@router.post("/external/databases")
 @checkInternalServer
-async def fetch_databases(
-        request: Request,
-        token: notionItems,
-        conn=Depends(get_db)):
+async def fetch_databases(request: Request, token: str = Body(...)):
     """
     get all databases the token has access to
     """
     url = NOTION_API_URL + "/search"
-    headers = notionHeaders(token.token)
+    headers = notionHeaders(token)
     data = {"filter": {"property": "object", "value": "database"}, "query": ""}
     statuscode, response = await make_request(
         url=url, headers=headers, method="POST", json=data, internal=False
@@ -117,12 +29,14 @@ async def fetch_databases(
     return JSONResponse(content={"status": "success", "data": response})
 
 
-@router.post("/database")
+class NotionDatabaseFetchRequest(BaseModel):
+    token: str
+    databaseid: str
+
+
+@router.post("/external/database")
 @checkInternalServer
-async def fetch_database(
-        request: Request,
-        items: notionItems,
-        conn=Depends(get_db)):
+async def fetch_database(request: Request, items: NotionDatabaseFetchRequest):
     """
     Fetch the database from Notion.
     """
@@ -135,56 +49,17 @@ async def fetch_database(
     return JSONResponse(content={"status": "success", "data": response})
 
 
-@router.post("/setnotiontoken")
-@checkInternalServer
-async def set_token(
-        request: Request,
-        items: notionItems,
-        conn=Depends(get_db)):
-    """
-    Set the Notion token.
-    """
-    if not items.token:
-        raise HTTPException(status_code=400, detail="Token is required")
-    # Save the token to the database
-    await notionservice.set_notion_token(conn, items.serverid, items.token)
-    return JSONResponse(
-        content={"status": "success", "message": "Token set successfully"}
-    )
+class NotionDatabaseLinkRequest(BaseModel):
+    serverid: int
+    databaseid: str
+    databasename: str
+    channelid: int
 
 
-@router.get("/getnotiontoken")
-@checkInternalServer
-async def get_token(request: Request, serverid: int, conn=Depends(get_db)):
-    """
-    Get the Notion token.
-    """
-    # Fetch the token from the database
-    token = await notionservice.get_notion_token(conn, serverid)
-    if not token:
-        return JSONResponse(
-            content="", status_code=status.HTTP_204_NO_CONTENT
-        )  # 204 No Content
-    return JSONResponse(content={"status": "success", "token": token})
-
-
-@router.get("/removenotiontoken")
-@checkInternalServer
-async def remove_token(request: Request, serverid: int, conn=Depends(get_db)):
-    """
-    Remove the Notion token.
-    """
-    # Remove the token from the database
-    await notionservice.remove_notion_token(conn, serverid)
-    return JSONResponse(
-        content={"status": "success", "message": "Token removed successfully"}
-    )
-
-
-@router.post("/linknotiondatabase")
+@router.post("/database")
 @checkInternalServer
 async def notion_database_linked(
-    request: Request, items: notionItems, conn=Depends(get_db)
+    request: Request, items: NotionDatabaseLinkRequest, conn=Depends(get_db)
 ):
     """
     Link the Notion database to the server.
@@ -196,7 +71,7 @@ async def notion_database_linked(
             status_code=400,
         )
     await notionservice.link_notion_database(
-        conn, items.serverid, items.databaseid, items.channelid
+        conn, items.serverid, items.databaseid, items.databasename, items.channelid
     )
     return JSONResponse(
         content={
@@ -204,74 +79,71 @@ async def notion_database_linked(
             "message": "Database linked successfully"})
 
 
-@router.get("/getuser")
-async def get_user(
-    request: Request, notionuserid: str, token: str, conn=Depends(get_db)
-):
+@router.delete("/database/{databaseid}")
+@checkInternalServer
+async def delete_database(
+        request: Request,
+        databaseid: str,
+        conn=Depends(get_db)):
     """
-    Get the user information from Notion.
+    Delete the Notion database.
     """
-    res = await get_user_func(notionuserid, token)
-    if res:
-        return JSONResponse(content={"status": "success", "data": res})
+    # Remove the token from the database
+    notiondb = await notionservice.delete_notion_database(conn, databaseid)
+    if not notiondb:
+        return Response(status_code=HTTPStatus.HTTP_204_NO_CONTENT)
+    channelid = notiondb.channel_id
+    threadids = [page.thread_id for page in notiondb.pages]
     return JSONResponse(
         content={
-            "status": "error",
-            "message": "User not found"})
+            "status": "success",
+            "data": {"threads": threadids, "channelid": channelid},
+        }
+    )
 
 
-@router.get("/getpage")
-async def get_page(
-    request: Request,
-    pageid: str,
-    token: str,
-    forcereload: bool = False,
-    conn=Depends(get_db),
-):
-    """
-    Get the page information from Notion.
-    """
-    res = await get_page_func(pageid, token, forcereload)
-    if res:
-        return JSONResponse(content={"status": "success", "data": res})
-    return JSONResponse(
-        content={
-            "status": "error",
-            "message": "Page not found"})
-
-
-@router.post("/notionpage/{pageid}/threadid")
+@router.put("/notionpage/{pageid}/threadid")
 @checkInternalServer
 async def set_thread_id(
-    request: Request, pageid: str, items: notionItems, conn=Depends(get_db)
-):
+        request: Request,
+        pageid: str,
+        threadid: int = Body(...),
+        conn=Depends(get_db)):
     """
     Set the thread ID for the Notion page.
     """
     # Update the thread ID in the database
-    res = await notionservice.set_thread_id(conn, pageid, items.threadid)
+    res = await notionservice.set_thread_id(conn, pageid, threadid)
     return JSONResponse(
         content={"status": "success", "message": "Thread ID set successfully"}
     )
 
 
-class threadIDs(BaseModel):
-    threadids: Sequence[int]
+@router.put("/notionpage/{pageid}/toggleblock")
+@checkInternalServer
+async def toggle_block(request: Request, pageid: str, conn=Depends(get_db)):
+    """
+    Toggle the block status of the Notion page.
+    """
+    # Update the block status in the database
+    res = await notionservice.toggle_block_notion_page(conn, pageid)
+    if not res:
+        return Response(status_code=HTTPStatus.HTTP_204_NO_CONTENT)
+    return JSONResponse(content={"status": "success", "data": res.blocked})
 
 
 @router.post("/notionpage/updated")
 @checkInternalServer
 async def set_page_updated(
-        request: Request,
-        items: threadIDs,
-        conn=Depends(get_db)):
-    await notionservice.set_pages_updated(conn, items.threadids)
+    request: Request, threadids: list[int] = Body(...), conn=Depends(get_db)
+):
+    await notionservice.set_pages_updated(conn, threadids)
     return JSONResponse(
         content={"status": "success", "message": "Page updated successfully"}
     )
 
 
-@router.get("/getallupdated")
+@router.get("/notionpage/updated")
 @checkInternalServer
 async def get_all_updated(request: Request, conn=Depends(get_db)):
     """
@@ -279,16 +151,37 @@ async def get_all_updated(request: Request, conn=Depends(get_db)):
     """
     res = await notionservice.get_all_updated_pages(conn)
     if not res:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=HTTPStatus.HTTP_204_NO_CONTENT)
     returndict = []
+    updateddatabase = []
+    corrupteddatabases = []
     for row in res:
-        page, channelid, token = row
+        page, databaseid, channelid, token, tags = row
+        if databaseid in corrupteddatabases:
+            continue  # Skip if the database is already marked as corrupted
+        if not token:
+            continue  # No token found, skip this page
         # Notion 페이지 정보 조회
+        if databaseid not in updateddatabase:
+            url = NOTION_API_URL + f"/databases/{databaseid}"
+            status, response = await make_request(
+                url=url, headers=notionHeaders(token), method="GET"
+            )
+            if status != 200:
+                corrupteddatabases.append(databaseid)
+                continue
+            databasetitle = response["title"][0]["plain_text"]
+            await notionservice.set_notion_database_name(
+                conn, databaseid, databasetitle
+            )
+            updateddatabase.append(databaseid)
+        # Notion 페이지 정보 파싱
         pagedict = {
             "pageid": page.page_id,
             "threadid": page.thread_id,
             "channelid": channelid,
             "status": True,
+            "tags": [],
         }
         pagedata = await get_page_func(page.page_id, token, forcereload=True)
         if pagedata:
@@ -298,7 +191,11 @@ async def get_all_updated(request: Request, conn=Depends(get_db)):
             pagedict["props"] = {}
             for item in prop:
                 if prop[item]["type"] == "title":
-                    pagedict["pagetitle"] = prop[item]["title"][0]["plain_text"]
+                    if prop[item]["title"]:
+                        pagedict["pagetitle"] = prop[item]["title"][0]["plain_text"]
+                    else:
+                        pagedict["status"] = False
+                        continue
                 else:
                     match prop[item]["type"]:
                         case "rich_text":
@@ -313,6 +210,10 @@ async def get_all_updated(request: Request, conn=Depends(get_db)):
                                 if prop[item]["select"]
                                 else ""
                             )
+                            if item in tags:
+                                pagedict["tags"].append(
+                                    pagedict["props"][item]
+                                )  # tag for discord forum channel
                         case "multi_select":
                             pagedict["props"][item] = [tag["name"]
                                                        for tag in prop[item]["multi_select"]]
@@ -346,8 +247,12 @@ async def get_all_updated(request: Request, conn=Depends(get_db)):
                                 if prop[item]["status"]
                                 else ""
                             )
+                            if item in tags:
+                                pagedict["tags"].append(
+                                    pagedict["props"][item]
+                                )  # tag for discord forum channel
                         case _:
-                            print(f"Unknown type: {prop[item]['type']}")
+                            # print(f"Unknown type: {prop[item]['type']}")
                             pagedict["props"][item] = prop[item]["type"] + \
                                 " under dev"
             # 페이지 정보 추가
@@ -363,20 +268,28 @@ async def get_all_updated(request: Request, conn=Depends(get_db)):
 
 @router.post("/webhook/{serverid}")
 async def notion_webhook_listener(
-    request: Request, serverid: int, conn=Depends(get_db)
+    request: Request,
+    serverid: int,
+    backgroundtask: BackgroundTasks,
+    conn=Depends(get_db),
 ):
     """
     Webhook listener for Notion events, intended to forward the data to a Discord bot.
     """
+    # Webhook 요청 본문을 JSON으로 파싱
+    data = await request.json()
+    backgroundtask.add_task(notion_webhook_handler, data, conn, serverid)
+    # Webhook 인증 요청 처리 (verification_token 포함 여부 확인)
+    return JSONResponse(content={"message": "Webhook received"})
+
+
+async def notion_webhook_handler(data, conn, serverid):
     webhookdata = {}
     # 해당 serverid의 Discord 서버 정보 조회 (DB에서)
     server = await discordservice.get_discord_server(conn, serverid)
     webhookdata["channelid"] = (
         server.webhook_channel_id
     )  # 메시지를 보낼 디스코드 채널 ID
-    # Webhook 요청 본문을 JSON으로 파싱
-    data = await request.json()
-    # Webhook 인증 요청 처리 (verification_token 포함 여부 확인)
     if "verification_token" in data:
         webhookdata["verification_token"] = data["verification_token"]
     else:
@@ -420,12 +333,15 @@ async def notion_webhook_listener(
             pagedata = await get_page_func(pageid, token)
             if pagedata:
                 for item in pagedata["properties"]:
-                    if pagedata["properties"][item]["type"] == "title":
-                        webhookdata["pagetitle"] = pagedata["properties"][item][
-                            "title"
-                        ][0]["text"]["content"]
+                    if pagedata["properties"][item].get("type") == "title":
+                        if pagedata["properties"][item]["title"]:
+                            webhookdata["pagetitle"] = pagedata["properties"][item][
+                                "title"
+                            ][0]["text"]["content"]
                 webhookdata["pageurl"] = pagedata["url"]
     # webhookdata를 JSON 문자열로 직렬화
+    if not webhookdata["pagetitle"]:
+        return JSONResponse(content={"message": "Webhook received"})
     webhookdata = json.dumps(webhookdata)
     # 채널이 연결되어 있는지 확인 (없으면 에러)
     if server.webhook_channel_id is None:
@@ -435,15 +351,13 @@ async def notion_webhook_listener(
                 "message": "No channel linked"},
             status_code=400)
     # Discord bot 서버에 요청 전송 (notion webhook 전달)
-    url = discordbot + DISCORD_APP_ROOT + f"/call/notionwebhook"
-    status_code, response = await make_request(
-        method="GET", url=url, params={"params": webhookdata}
-    )
-    # 요청 결과에 따라 성공/실패 응답 반환
-    if status_code != 200:
-        return JSONResponse(
-            {"status": "error", "message": response}, status_code=status_code
-        )
+    try:
+        url = discordbot + DISCORD_APP_ROOT + f"/call/notionwebhook"
+        await make_request(method="GET", url=url, params={"params": webhookdata})
+        # TODO: 이것도 왜 GET 요청 보냄? 지금 API 설계가 이상함
+    except Exception as e:
+        # 디코 봇이 꺼져 있는 경우인데 그냥 무시
+        pass
     return JSONResponse(content={"message": "Webhook received"})
 
 
@@ -496,7 +410,7 @@ async def updatePage(conn, pageid: str, databaseid: str):
     """
     mark the page need to update
     """
-    await notionservice.update_notion_page(conn, pageid, databaseid)
+    await notionservice.mark_update_notion_page(conn, pageid, databaseid)
     return JSONResponse(
         content={"status": "success", "message": "Page updated successfully"}
     )

@@ -2,10 +2,14 @@ import json
 from datetime import date, datetime, time
 
 from sqlalchemy import (TIMESTAMP, VARCHAR, BigInteger, Boolean, Column,
-                        DateTime, ForeignKey, Integer, String, Text, inspect)
+                        DateTime, ForeignKey, Integer, Text, UniqueConstraint,
+                        inspect)
 from sqlalchemy.orm import relationship
 
-from .basemodel import Base
+try:
+    from .basemodel import Base
+except ImportError:
+    from basemodel import Base
 
 
 class User(Base):
@@ -61,6 +65,24 @@ class ServerInfo(Base):
     notion_databases = relationship(
         "NotionDatabase", back_populates="server", cascade="all, delete-orphan"
     )
+    notion_tags = relationship(
+        "NotionTags", back_populates="server", cascade="all, delete-orphan"
+    )
+
+    def todict(self, exclude=None, datetime_format="%Y-%m-%d %H:%M:%S"):
+        result = super().todict(exclude, datetime_format)
+        result["notion_databases"] = [
+            {
+                "database_id": db.database_id,
+                "database_name": db.database_name,
+                "channel_id": db.channel_id,
+            }
+            for db in self.notion_databases
+        ]
+        result["notion_tags"] = [
+            {"idx": tag.idx, "tag": tag.tag} for tag in self.notion_tags
+        ]
+        return result
 
 
 class NotionDatabase(Base):
@@ -70,6 +92,7 @@ class NotionDatabase(Base):
     )
     channel_id = Column(BigInteger, nullable=False)
     database_id = Column(VARCHAR(40), primary_key=True)
+    database_name = Column(Text, nullable=True)
 
     server = relationship("ServerInfo", back_populates="notion_databases")
     pages = relationship(
@@ -87,5 +110,22 @@ class NotionPages(Base):
             ondelete="CASCADE"))
     thread_id = Column(BigInteger, nullable=True)
     updated = Column(Boolean, nullable=False, default=False)
+    blocked = Column(Boolean, nullable=False, default=False)
 
     database = relationship("NotionDatabase", back_populates="pages")
+
+
+class NotionTags(Base):
+    __tablename__ = "notion_tags"
+    idx = Column(Integer, primary_key=True, autoincrement=True)
+    server_id = Column(
+        BigInteger, ForeignKey("server_info.server_id", ondelete="CASCADE")
+    )
+    tag = Column(VARCHAR(100), nullable=False)
+    __table_args__ = (
+        UniqueConstraint(
+            "server_id",
+            "tag",
+            name="uq_server_tag"),
+    )
+    server = relationship("ServerInfo", back_populates="notion_tags")
