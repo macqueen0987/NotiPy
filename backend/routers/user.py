@@ -2,10 +2,10 @@ from datetime import datetime
 from functools import partial, wraps
 
 from common import *
-from CRUDS import usercrud as crud
 from fastapi import (APIRouter, BackgroundTasks, Depends, Request, Response,
                      status)
 from fastapi.responses import JSONResponse
+from services import userservice as crud
 
 router = APIRouter(prefix="/user", tags=["user"])
 

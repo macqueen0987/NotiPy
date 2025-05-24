@@ -1,10 +1,10 @@
 from datetime import datetime
 
+from basemodel import Base
 from sqlalchemy import (JSON, Boolean, Column, DateTime, Float, ForeignKey,
                         Integer, String, Table, Text)
 from sqlalchemy.orm import declarative_base, relationship
 
-Base = declarative_base()
 
 
 # Association table: 역할과 사용자 간의 다대다 관계를 표현
@@ -52,8 +52,10 @@ class User(Base):
 
 class Repository(Base):
     __tablename__ = "repositories"
+
     repo_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.developer_id"), nullable=False)
+
     name = Column(String, nullable=False)
     url = Column(String, unique=True, nullable=False)
     primary_language = Column(String, nullable=True)
@@ -70,6 +72,8 @@ class Project(Base):
     __tablename__ = "projects"
 
     project_id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_id = Column(Integer, ForeignKey("users.developer_id"), nullable=True)
+
     name = Column(String, nullable=False)
     description = Column(Text, nullable=False)
     category = Column(String, nullable=True)
@@ -89,6 +93,11 @@ class Project(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow)
 
+    owner = relationship("User", back_populates="projects")
+    roles = relationship(
+        "Role",
+        back_populates="project",
+        cascade="all, delete-orphan")
 
 class Role(Base):
     __tablename__ = "roles"
@@ -97,6 +106,7 @@ class Role(Base):
         Integer,
         ForeignKey("projects.project_id"),
         nullable=False)
+
     name = Column(String, nullable=False)
     count = Column(Integer, nullable=False)
     description = Column(Text, nullable=True)
