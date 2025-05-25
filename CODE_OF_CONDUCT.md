@@ -56,7 +56,7 @@ Depending on the severity of the violation, actions may include warnings, tempor
 **Contact Information:**  
 - **Discord:** @ProjectAdmin  
 - **Email:** macqueen0987@cau.ac.kr  
-- **Notion:** [@NotiP](https://www.notion.so/OSSW-NotiPy-1c8ff5afd39d80a1aff5d799c08c5a4b?pvs=4)
+- **Notion:** [@NotiPy](https://www.notion.so/OSSW-NotiPy-1c8ff5afd39d80a1aff5d799c08c5a4b?pvs=4)
 
 ## Attribution
 
