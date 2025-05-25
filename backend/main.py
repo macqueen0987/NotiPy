@@ -9,11 +9,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 # from tasks.notion_poller import poll_notion_projects
-
+os.makedirs("log", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
+    handlers=[logging.StreamHandler(sys.stdout),
+              logging.FileHandler("log/app.log", "a", "utf-8")],
 )
 logger = logging.getLogger("NoityPy-Backend")
 logger.info("Starting NotiPy Backend...")

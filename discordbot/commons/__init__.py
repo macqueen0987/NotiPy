@@ -92,7 +92,7 @@ async def wait_for_component_interaction(
             pass
         return (used_component.ctx, returnval)  # 보통 Select 메뉴일 경우
     except TimeoutError:
-        await message.delete()
+        await message.delete(context=ctx)
         return None
 
 
