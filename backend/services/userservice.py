@@ -15,7 +15,7 @@ class Tokens:
 
 async def get_user(
     conn: AsyncSession, discordid: int
-) -> Row[tuple[User, Github, Notion]] | None:
+) -> tuple[User, Github, Notion] | None:
     """
     Get user by discord id
     :param conn: database connection
@@ -210,3 +210,15 @@ async def get_user_by_token(
     query = select(User).where(User.access_token == access_token)
     result = await conn.execute(query)
     return result.scalars().first()
+
+
+async def update_github(conn: AsyncSession, github: Github) -> Github:
+    """
+    Update github user
+    :param conn: database connection
+    :param github: github object
+    :return: None
+    """
+    github = await conn.merge(github)
+    await conn.commit()
+    return github
