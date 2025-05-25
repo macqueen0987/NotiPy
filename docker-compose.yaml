@@ -73,10 +73,10 @@ services:
         networks:
             - notipy_backend
         volumes:
-            - ollama_data:/root/.ollama
+            - ./ollama_data:/root/.ollama
         entrypoint: [ "/bin/bash", "-c" ]
         command: >
-            "ollama serve & sleep 5 && ollama run llama3 && tail -f /dev/null"
+            "ollama serve & sleep 5 && ollama run llama3:instruct && tail -f /dev/null"
 
 
 networks:
