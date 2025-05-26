@@ -10,9 +10,9 @@ We provide security updates for the following branches and releases:
 
 ## Reporting a Vulnerability
 
-Please report security issues **privately** via email to:
+Please report security issues **privately** via Discord to out admins
 
-macqueen0987@cau.ac.kr
+https://discord.gg/Y7v493UHBQ
 
 
 Include the following information:
