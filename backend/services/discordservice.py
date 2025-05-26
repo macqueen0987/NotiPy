@@ -124,7 +124,6 @@ async def get_discord_server(
     return server
 
 
-
 async def set_mod_role(
     conn: AsyncSession, server_id: int, mod_id: int
 ) -> Optional[ServerInfo]:

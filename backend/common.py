@@ -3,9 +3,9 @@ from functools import wraps
 
 from aiohttp import BasicAuth, ClientSession
 from fastapi.responses import JSONResponse
+from llm_axe import Agent, OllamaChat
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from var import *
-from llm_axe import Agent, OllamaChat
 
 engine = create_async_engine(
     f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}:{dbport}/{dbname}",
@@ -14,14 +14,17 @@ engine = create_async_engine(
 )
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
+
 def get_llm() -> OllamaChat:
     """
     Get an instance of the OllamaChat LLM.
     """
     return OllamaChat(model="llama3:instruct", host="http://ollama:11434")
 
+
 def get_agent() -> Agent:
     return Agent(get_llm(), stream=False, custom_system_prompt="")
+
 
 async def get_db():
     async with async_session() as session:

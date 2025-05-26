@@ -1,17 +1,19 @@
+import json
 import re
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Depends, Request, Response, status, BackgroundTasks, Body
+from common import *
+from fastapi import (APIRouter, BackgroundTasks, Body, Depends, HTTPException,
+                     Request, Response, status)
+from github import Github
 from pydantic import BaseModel
+from services import llmservice, userservice
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
-from services import llmservice, userservice
-from common import *
-import json
-from github import Github
 
 router = APIRouter(prefix="/llm")
+
 
 def build_project_prompt(name: str, description: str) -> str:
     return f"""
@@ -47,9 +49,12 @@ Project name: {name}
 Project Description: {description}
 """
 
+
 @router.get("/projects/{owner_id}/server/{serverid}")
 @checkInternalServer
-async def get_project(request: Request, owner_id: int, serverid: int, conn=Depends(get_db)):
+async def get_project(
+    request: Request, owner_id: int, serverid: int, conn=Depends(get_db)
+):
     """
     주어진 owner_id에 해당하는 프로젝트 정보를 JSON 형식으로 반환합니다.
     """
@@ -59,32 +64,57 @@ async def get_project(request: Request, owner_id: int, serverid: int, conn=Depen
     projects = [proj.todict() for proj in res]
     return JSONResponse(status_code=200, content={"projects": projects})
 
+
 @router.put("/projects/{owner_id}/{project_id}")
-async def update_project(owner_id: int, project_id: int, updates: dict = Body(...), conn = Depends(get_db)):
+async def update_project(
+        owner_id: int,
+        project_id: int,
+        updates: dict = Body(...),
+        conn=Depends(get_db)):
     try:
         updated_project = await llmservice.set_projects(conn, project_id, updates)
-        return {"message": "Project updated successfully", "project": updated_project.todict()}
+        return {
+            "message": "Project updated successfully",
+            "project": updated_project.todict(),
+        }
     except ValueError as e:
         return Response(status_code=204)
 
+
 @router.delete("/projects/{owner_id}/{project_id}")
 @checkInternalServer
-async def delete_project(request: Request, owner_id: int, project_id: int, conn=Depends(get_db)):
+async def delete_project(
+    request: Request, owner_id: int, project_id: int, conn=Depends(get_db)
+):
     """
     주어진 owner_id와 project_id에 해당하는 프로젝트를 삭제합니다.
     """
     res = await llmservice.delete_project(conn, owner_id, project_id)
     if not res:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
-    return JSONResponse(status_code=200, content={"status": "success", "message": "Project deleted successfully"})
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "success",
+            "message": "Project deleted successfully"},
+    )
+
 
 class ProjectItems(BaseModel):
     name: str
     serverid: int
     description: str
+
+
 @router.post("/projects/{owner_id}")
 @checkInternalServer
-async def analyze_project(request: Request, owner_id: int, items: ProjectItems, conn=Depends(get_db), llm: OllamaChat=Depends(get_llm)):
+async def analyze_project(
+    request: Request,
+    owner_id: int,
+    items: ProjectItems,
+    conn=Depends(get_db),
+    llm: OllamaChat = Depends(get_llm),
+):
     """
     LLM에 프로젝트 설명을 보내고, JSON 형식으로 응답을 받아서 파싱합니다.
     """
@@ -116,11 +146,18 @@ async def analyze_project(request: Request, owner_id: int, items: ProjectItems, 
     res = await llmservice.create_project(conn, proj)
     if not res:
         raise HTTPException(status_code=500, detail="Failed to save project")
-    return JSONResponse(status_code=200, content={"status": "success", "data": res.todict()})
+    return JSONResponse(
+        status_code=200, content={"status": "success", "data": res.todict()}
+    )
+
 
 @router.post("/git/{discorduserid}")
 @checkInternalServer
-async def analyze_github_user(request: Request, discorduserid: int, bgtask: BackgroundTasks, conn=Depends(get_db)):
+async def analyze_github_user(
+        request: Request,
+        discorduserid: int,
+        bgtask: BackgroundTasks,
+        conn=Depends(get_db)):
     """
     GitHub 사용자 정보를 분석하여 JSON 형식으로 응답합니다.
     """
@@ -154,7 +191,9 @@ async def analyze_github_user(request: Request, discorduserid: int, bgtask: Back
             pass
     last_active = max(last_dates) if last_dates else None
     git.primary_languages = primary_langs
-    git.experience_years = round((datetime.now(timezone.utc) - user.created_at).days / 365, 1),
+    git.experience_years = (
+        round((datetime.now(timezone.utc) - user.created_at).days / 365, 1),
+    )
     git.public_repos = user.public_repos
     git.total_stars = total_stars
     git.total_forks = total_forks
@@ -162,10 +201,13 @@ async def analyze_github_user(request: Request, discorduserid: int, bgtask: Back
     git.last_active_date = last_active
     res = await userservice.update_github(conn, git)
     if not res:
-        raise HTTPException(status_code=500, detail="Failed to update GitHub user")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to update GitHub user")
     top5 = sorted(repos, key=lambda r: r.stargazers_count, reverse=True)[:5]
     bgtask.add_task(analyze_github_repo, conn, top5, res)
     return JSONResponse(status_code=200, content={"data": git.todict()})
+
 
 def fill_repo_metadata(name: str, url: str, readme: str, llm) -> dict:
     prompt = (
@@ -187,14 +229,14 @@ def fill_repo_metadata(name: str, url: str, readme: str, llm) -> dict:
     )
     return json.loads(resp)
 
+
 async def analyze_github_repo(conn, top5, user_rec):
     llm = get_llm()
     for r in top5:
         readme_content = None
         try:
             readme_file = r.get_readme()
-            readme_content = readme_file.decoded_content.decode(
-                "utf-8")
+            readme_content = readme_file.decoded_content.decode("utf-8")
         except Exception:
             readme_content = "내용이 없거나 불러오기 실패"
 
@@ -224,7 +266,9 @@ async def analyze_github_repo(conn, top5, user_rec):
 
 @router.get("/project/{owner_id}/{projectid}/member")
 @checkInternalServer
-async def get_project_members(request: Request, owner_id: int, projectid: int, conn=Depends(get_db)):
+async def get_project_members(
+    request: Request, owner_id: int, projectid: int, conn=Depends(get_db)
+):
     """
     주어진 프로젝트 ID에 해당하는 프로젝트의 멤버 목록을 JSON 형식으로 반환합니다.
     """
@@ -234,36 +278,63 @@ async def get_project_members(request: Request, owner_id: int, projectid: int, c
     returndict = []
     for res in result:
         member, discord_id = res
-        returndict.append({"githubid": member.user_id, "discordid": discord_id})
+        returndict.append(
+            {"githubid": member.user_id, "discordid": discord_id})
     return JSONResponse(status_code=200, content={"members": returndict})
+
 
 @router.post("/project/{owner_id}/{projectid}/member")
 @checkInternalServer
-async def add_member_to_project(request: Request, owner_id: int, projectid: int, user_id: int = Body(...), conn=Depends(get_db), llm=Depends(get_llm)):
+async def add_member_to_project(
+    request: Request,
+    owner_id: int,
+    projectid: int,
+    user_id: int = Body(...),
+    conn=Depends(get_db),
+    llm=Depends(get_llm),
+):
     """
     주어진 사용자 ID를 프로젝트에 추가합니다.
     """
     user = await userservice.get_user(conn, discordid=user_id)
     discord, github, notion = user
     if not github:
-        return JSONResponse(status_code=400, content={"message": "User does not have a linked GitHub account"})
+        return JSONResponse(
+            status_code=400,
+            content={"message": "User does not have a linked GitHub account"},
+        )
 
     project = await llmservice.get_project(conn, project_id=projectid, eager_load=True)
     if not project:
         return Response(status_code=204)
 
     # 프로젝트 멤버가 이미 존재하는지 확인
-    existing_member = next((m for m in project.members if m.user_id == github.github_id), None)
+    existing_member = next(
+        (m for m in project.members if m.user_id == github.github_id), None
+    )
     if existing_member:
-        return JSONResponse(status_code=409, content={"message": "User is already a member of the project"})
+        return JSONResponse(
+            status_code=409,
+            content={"message": "User is already a member of the project"},
+        )
 
     # 멤버 추가 로직
     member = await llmservice.add_member_to_project(conn, projectid, github.github_id)
-    return JSONResponse(status_code=200, content={"message": "User added to project successfully"})
+    return JSONResponse(
+        status_code=200, content={
+            "message": "User added to project successfully"})
+
 
 @router.delete("/project/{owner_id}/{projectid}/member/{user_id}")
 @checkInternalServer
-async def remove_member_from_project(request: Request, owner_id: int, projectid: int, user_id: int, conn=Depends(get_db), llm=Depends(get_llm)):
+async def remove_member_from_project(
+    request: Request,
+    owner_id: int,
+    projectid: int,
+    user_id: int,
+    conn=Depends(get_db),
+    llm=Depends(get_llm),
+):
     """
     주어진 사용자 ID를 프로젝트에서 제거합니다.
     """
@@ -272,18 +343,30 @@ async def remove_member_from_project(request: Request, owner_id: int, projectid:
         return Response(status_code=204)
 
     # 프로젝트 멤버가 존재하는지 확인
-    existing_member = next((m for m in project.members if m.user_id == user_id), None)
+    existing_member = next(
+        (m for m in project.members if m.user_id == user_id), None)
     if not existing_member:
-        return JSONResponse(status_code=404, content={"message": "User is not a member of the project"})
+        return JSONResponse(
+            status_code=404, content={
+                "message": "User is not a member of the project"})
 
     # 멤버 제거 로직 (예: DB에서 삭제)
     await llmservice.remove_member_from_project(conn, projectid, user_id)
 
-    return JSONResponse(status_code=200, content={"message": "User removed from project successfully"})
+    return JSONResponse(
+        status_code=200, content={
+            "message": "User removed from project successfully"})
+
 
 @router.post("/project/{owner_id}/{projectid}/assign/auto")
 @checkInternalServer
-async def assign_users_to_roles(request: Request, owner_id: int, projectid: int, conn: AsyncSession = Depends(get_db), agent = Depends(get_agent)):
+async def assign_users_to_roles(
+    request: Request,
+    owner_id: int,
+    projectid: int,
+    conn: AsyncSession = Depends(get_db),
+    agent=Depends(get_agent),
+):
     # 1. 프로젝트 조회 (eager load)
     project = await llmservice.get_project(conn, projectid, eager_load=True)
     if not project or project.owner_id != owner_id:
@@ -313,18 +396,22 @@ async def assign_users_to_roles(request: Request, owner_id: int, projectid: int,
             "public_repos": user.public_repos,
             "total_stars": user.total_stars,
             "total_forks": user.total_forks,
-            "profile_created_at": user.profile_created_at.isoformat() if user.profile_created_at else None,
-            "last_active_date": user.last_active_date.isoformat() if user.last_active_date else None,
+            "profile_created_at": (
+                user.profile_created_at.isoformat() if user.profile_created_at else None
+            ),
+            "last_active_date": (
+                user.last_active_date.isoformat() if user.last_active_date else None
+            ),
             "repositories": [
                 {
                     "name": repo.name,
                     "url": repo.url,
                     "primary_language": repo.primary_language,
                     "stars": repo.stars,
-                    "forks": repo.forks
+                    "forks": repo.forks,
                 }
                 for repo in user_repos
-            ]
+            ],
         }
 
         for idx, role in enumerate(roles):
@@ -333,25 +420,31 @@ async def assign_users_to_roles(request: Request, owner_id: int, projectid: int,
                     "role_id": role.role_id,
                     "name": role.name,
                     "description": role.description,
-                    "languages_tools": role.languages_tools
+                    "languages_tools": role.languages_tools,
                 },
                 "user": user_data,
                 "project": {
                     "name": project.name,
                     "description": project.description,
-                    "tech_stack": project.tech_stack
-                }
+                    "tech_stack": project.tech_stack,
+                },
             }
             prompt_message = (
                 "Using the provided user, role, and project information in JSON format, "
                 "evaluate the user's suitability for the role. "
-                "Return ONLY a JSON object like this: {\"score\": <integer>}. "
-                "Data: " + json.dumps(prompt_data, ensure_ascii=False)
-            )
+                'Return ONLY a JSON object like this: {"score": <integer>}. '
+                "Data: " +
+                json.dumps(
+                    prompt_data,
+                    ensure_ascii=False))
 
             response = await agent.ask_async(prompt_message)
             match = re.search(r"```json(.*?)```", response, re.DOTALL)
-            json_str = match.group(1).strip() if match else response[response.find("{"):response.rfind("}") + 1]
+            json_str = (
+                match.group(1).strip()
+                if match
+                else response[response.find("{"): response.rfind("}") + 1]
+            )
             try:
                 result = json.loads(json_str)
                 score = result.get("score", 0)
@@ -399,8 +492,11 @@ async def assign_users_to_roles(request: Request, owner_id: int, projectid: int,
     result = {}
     for i, github_ids in assignments.items():
         role_name = roles[i].name
-        discord_ids = [github_to_discord.get(gid) for gid in github_ids if github_to_discord.get(gid)]
+        discord_ids = [
+            github_to_discord.get(gid)
+            for gid in github_ids
+            if github_to_discord.get(gid)
+        ]
         result[role_name] = discord_ids
 
     return JSONResponse(status_code=200, content={"data": result})
-
