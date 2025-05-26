@@ -64,6 +64,20 @@ services:
         command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1']
         # this is to make sure the database is utf8mb4, you can use without this, but some letters can break
 
+    ollama:
+        container_name: ollama
+        image: ollama/ollama
+        restart: unless-stopped
+        expose:
+            - 11434  # 내부 서비스용
+        networks:
+            - notipy_backend
+        volumes:
+            - ./ollama_data:/root/.ollama
+        entrypoint: [ "/bin/bash", "-c" ]
+        command: >
+            "ollama serve & sleep 5 && ollama run llama3:instruct && tail -f /dev/null"
+
 
 networks:
     nginx-proxy:

@@ -1,18 +1,23 @@
 import asyncio
 import os
+import re
 
-from commons import (apirequest, devserver, getdesc, getname, githuburl,
-                     localize)
-from emoji.unicode_codes.data_dict import component
-from interactions import (Button, ButtonStyle, Client, ComponentContext,
-                          Extension, OptionType, SlashCommand, SlashContext,
-                          component_callback, slash_command, slash_option)
+from commons import *
+from interactions import *
 
 oauth2_url = os.environ["DISCORD_OAUTH2_URL"]
 
 githubBase = SlashCommand(
     name=getname("github"),
     description=getdesc("github"))
+
+
+def llmbutton(_):
+    return Button(
+        style=ButtonStyle.PRIMARY,
+        label=_("llm_analyze_do"),
+        custom_id=f"llm_github_analyze",
+    )
 
 
 class User(Extension):
@@ -48,11 +53,17 @@ class User(Extension):
             return
         if status != 200:
             raise ValueError("Error in /user/get")
-        if response["github"] is not None:
+        if response.get("github") is not None:
+            embed = None
+            button = None
             github = response["github"]
             mainurl = githuburl + "/" + github["github_login"]
+            if github["primary_languages"]:
+                embed = create_git_embed(github, _)
+            else:
+                button = llmbutton(_)
             msg = _("already_linked_github") + "\n" + mainurl
-            await ctx.send(msg, ephemeral=True)
+            await ctx.send(msg, ephemeral=True, embed=embed, component=button)
             return
         await ctx.send(_("link_github"), ephemeral=True, components=gitbuttons)
 
@@ -66,11 +77,64 @@ class User(Extension):
             return
         if status != 200:
             raise ValueError("Error in /user/get")
-        github = response["github"]
+        github = response.get("github")
+        if not github:
+            await ctx.send(_("not_linked_github"), ephemeral=True)
+            return
         mainurl = githuburl + "/" + github["github_login"]
         await ctx.edit_origin(
-            content=_("success_linked_github") + "\n" + mainurl, components=[]
+            content=_("success_linked_github") + "\n" + mainurl,
+            components=[llmbutton(_)],
         )
+
+    @component_callback("llm_github_analyze")
+    @cooldown(Buckets.USER, 1, 300)  # 5 minutes cooldown
+    @localize()
+    async def llm_github_analyze_callback(self, ctx: ComponentContext, _):
+        await ctx.defer(edit_origin=True)
+        discordid = int(ctx.author.id)
+        status, response = await apirequest(f"/llm/git/{discordid}", method="POST")
+        if status == 204:
+            await ctx.send(_("not_linked_github"), ephemeral=True)
+            return
+        if status != 200:
+            raise ValueError("Error in /llm/git")
+        data = response["data"]
+        embed = create_git_embed(data, _)
+        await ctx.edit_origin(
+            content=_("llm_github_analyze_content"), embed=embed, components=[]
+        )
+
+
+def create_git_embed(data, _):
+    """
+    Create an embed for GitHub user data.
+    """
+    embed = Embed(title=_("llm_analyze_res"), color=createRandomColor())
+    embed.add_field(
+        _("primary_languages"),
+        ", ".join(
+            data["primary_languages"]),
+        inline=True)
+    embed.add_field(
+        _("experience_years"),
+        data["experience_years"],
+        inline=True)
+    embed.add_field(_("total_stars"), data["total_stars"], inline=True)
+    embed.add_field(_("public_repos"), data["public_repos"], inline=True)
+    embed.add_field(_("total_forks"), data["total_forks"], inline=True)
+    embed.set_footer(
+        text=_("profile_created_at")
+        + ": "
+        + data["profile_created_at"]
+        + "\n"
+        + _("last_active_date")
+        + ": "
+        + data["last_active_date"]
+    )
+    # embed.add_field(_("profile_created_at"), data["profile_created_at"], inline=True)
+    # embed.add_field(_("last_active_date"), data["last_active_date"], inline=True)
+    return embed
 
 
 def setup(bot, functions):

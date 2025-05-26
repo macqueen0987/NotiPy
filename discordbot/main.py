@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 from interactions import (AutocompleteContext, Client, Intents, OptionType,
                           SlashContext, check, global_autocomplete, listen,
                           slash_command, slash_option)
-from interactions.api.events import CommandError, Startup
+from interactions.api.events import CommandError, ComponentError, Startup
 from interactions.client.errors import (CommandCheckFailure, CommandOnCooldown,
                                         Forbidden, MaxConcurrencyReached)
 
@@ -84,13 +84,54 @@ async def lifespan(app: FastAPI):
         os.makedirs(commons.logfilepath)
     if debugMode:
         bot.debug_scope = commons.devserver
-        bot.modcache = {}
         logger.info("Bot starting.in debug mode")
     asyncio.create_task(bot.astart(commons.token))
     yield
 
 
 app = FastAPI(lifespan=lifespan, root_path=commons.app_root)
+
+
+@listen(ComponentError, disable_default_listeners=True)
+async def my_component_error_handler(event: ComponentError):
+    """
+    Handles component errors.
+    """
+    ctx = event.ctx
+    locale = ctx.locale
+    _ = localizator(locale)
+    error = event.error
+    bot.logger.warning(error)
+    if isinstance(event.error, CommandCheckFailure):
+        await ctx.send(_("check_failed_err"), ephemeral=True, components=[])
+        return
+    elif isinstance(event.error, Forbidden):
+        await ctx.send(_("missing_permission_err"), ephemeral=True, components=[])
+        return
+    elif isinstance(event.error, CommandOnCooldown):
+        err: CommandOnCooldown = event.error
+        await ctx.send(
+            _("command_on_cooldown_err").format(
+                round(err.cooldown.get_cooldown_time())
+            ),
+            ephemeral=True,
+        )
+        return
+    else:
+        logger.error(error)
+        logger.error(traceback.print_exception(error))
+        json = {
+            "serverid": ctx.guild.id,
+            "userid": ctx.author.id,
+            "component": ctx.component.custom_id,
+            "error": str(error),
+        }
+        # erridx = await apirequest("/error/add", json=json)
+        # await ctx.send(f"에러가 발생했습니다.\n에러번호: `{erridx['data']}`",
+        # ephemeral=True)
+        await ctx.send(_("error_occurred_err"), ephemeral=True, components=[])
+        logger.error("에러가 발생했습니다.")
+        logger.error(json)
 
 
 @listen(CommandError, disable_default_listeners=True)
@@ -102,8 +143,9 @@ async def my_error_handler(event: CommandError):
     locale = ctx.locale
     _ = localizator(locale)
     error = event.error
+    bot.logger.warning(error)
     if isinstance(event.error, CommandCheckFailure):
-        await ctx.send(_("check_failed_err"), ephemeral=True)
+        await ctx.send(_("check_failed_err"), ephemeral=True, components=[])
         return
     elif isinstance(event.error, CommandOnCooldown):
         err: CommandOnCooldown = event.error
@@ -115,10 +157,10 @@ async def my_error_handler(event: CommandError):
         )
         return
     elif isinstance(event.error, MaxConcurrencyReached):
-        await ctx.send(_("max_concurrency_err"), ephemeral=True)
+        await ctx.send(_("max_concurrency_err"), ephemeral=True, components=[])
         return
     elif isinstance(event.error, Forbidden):
-        await ctx.send(_("missing_permission_err"), ephemeral=True)
+        await ctx.send(_("missing_permission_err"), ephemeral=True, components=[])
     else:
         logger.error(error)
         logger.error(traceback.print_exception(error))
@@ -165,6 +207,11 @@ async def on_startup():
         bot.load_extension(temp, functions=functions)
     logger.info("Bot is ready")
     logger.error("Bot is ready")
+    if debugMode:
+        for guild in bot.guilds:
+            if int(guild.id) != int(commons.devserver):
+                logger.info(f"Leaving guild {guild.name} ({guild.id})")
+                await guild.leave()
 
 
 @slash_command(name="hello", description="Hello", scopes=[commons.devserver])

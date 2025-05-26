@@ -34,7 +34,6 @@ async def get(request: Request, discordid: int, conn=Depends(get_db)):
         returnval["github"] = github.todict()
     if notion is not None:
         returnval["notion"] = notion.todict()
-    print(returnval)
     return JSONResponse(content=returnval)
 
 

@@ -93,6 +93,7 @@ async def create_discord_server(
         server = ServerInfo(server_id=server_id)
         conn.add(server)
         await conn.commit()
+        await conn.refresh(server)
         discordServerCache.set(server_id, server)
     return server
 
@@ -100,28 +101,25 @@ async def create_discord_server(
 async def get_discord_server(
     conn: AsyncSession, server_id: int, eager_load: bool = False
 ) -> ServerInfo:
-    """
-    this gets a discord server from the database, if it does not exist it will be created
-    :param conn: database connection
-    :param server_id: discord server id
-    :param eager_load: if True, it will load the notion databases
-    :return: server info object
-    """
     server = discordServerCache.get(server_id)
     if server and not eager_load:
         return server
+    # 1. 쿼리 작성
     stmt = select(ServerInfo).where(ServerInfo.server_id == server_id)
     if eager_load:
         stmt = stmt.options(
             selectinload(ServerInfo.notion_databases),
             selectinload(ServerInfo.notion_tags),
         )
+    # 2. DB에서 조회
     result = await conn.execute(stmt)
     server = result.scalar_one_or_none()
+    # 3. 없으면 생성
     if not server:
         server = ServerInfo(server_id=server_id)
         conn.add(server)
         await conn.commit()
+    # 4. 캐시에 저장 후 리턴
     discordServerCache.set(server_id, server)
     return server
 
