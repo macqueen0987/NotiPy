@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Coroutine, Optional, Sequence
 
-from db.models import Github, Notion, User
+from db.models import DMchannel, Github, Notion, Repository, ShowGithub, User
 from sqlalchemy import Row, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -222,3 +222,136 @@ async def update_github(conn: AsyncSession, github: Github) -> Github:
     github = await conn.merge(github)
     await conn.commit()
     return github
+
+
+async def get_forum_channel(conn: AsyncSession, userid: int) -> DMchannel:
+    """
+    Get the forum channel for a user.
+    :param conn: Database connection
+    :param userid: Discord ID of the user
+    :return: Forum channel ID or None if not found
+    """
+    query = select(DMchannel).where(DMchannel.user_id == userid)
+    result = await conn.execute(query)
+    dm_channel = result.scalars().first()
+    if not dm_channel:
+        new_dm_channel = DMchannel(user_id=userid)
+        conn.add(new_dm_channel)
+        await conn.commit()
+        dm_channel = new_dm_channel
+    return dm_channel
+
+
+async def toggle_block_forum_channel(
+        conn: AsyncSession,
+        userid: int) -> DMchannel:
+    """
+    Block the forum channel for a user.
+    :param conn: Database connection
+    :param userid: Discord ID of the user
+    """
+    forumchannel = await get_forum_channel(conn, userid)
+    forumchannel.block = not forumchannel.block
+    await conn.commit()
+    return forumchannel
+
+
+async def get_forum_thread_by_channel(
+    conn: AsyncSession, channelid: int
+) -> Optional[DMchannel]:
+    """
+    Get the forum thread by channel ID.
+    :param conn: Database connection
+    :param channelid: Channel ID of the forum thread
+    :return: Forum thread object or None if not found
+    """
+    query = select(DMchannel).where(DMchannel.channel_id == channelid)
+    result = await conn.execute(query)
+    return result.scalars().first()
+
+
+async def delete_forum_thread(conn: AsyncSession, userid: int) -> bool:
+    """
+    Delete the forum thread for a user.
+    :param conn: Database connection
+    :param userid: Discord ID of the user
+    :return: True if deleted, False if not found
+    """
+    query = select(DMchannel).where(DMchannel.user_id == userid)
+    result = await conn.execute(query)
+    forumthread = result.scalars().first()
+    if not forumthread:
+        return False
+    await conn.delete(forumthread)
+    await conn.commit()
+    return True
+
+
+async def set_forum_thread_channel(
+    conn: AsyncSession, userid: int, channelid: int
+) -> DMchannel:
+    """
+    Set the forum thread channel for a user.
+    :param conn: Database connection
+    :param userid: Discord ID of the user
+    :param channelid: Channel ID to set for the forum thread
+    :return: Updated forum thread object
+    """
+    forumthread = await get_forum_channel(conn, userid)
+    forumthread.channel_id = channelid
+    await conn.commit()
+    return forumthread
+
+
+async def get_repositories(
+    conn: AsyncSession, github_id: int
+) -> Sequence[Row[Repository]]:
+    """
+    Get all repositories for a GitHub user.
+    :param conn: Database connection
+    :param github_id: GitHub ID of the user
+    :return: List of repositories
+    """
+    query = select(Repository).where(Repository.user_id == github_id)
+    result = await conn.execute(query)
+    return result.scalars().all()
+
+
+async def get_git_show(conn: AsyncSession, discord_id: int) -> Optional[bool]:
+    """
+    Get the GitHub show status for a Discord server.
+    :param conn: Database connection
+    :param discord_id: Discord ID of the server
+    :return: True if GitHub show is enabled, False if disabled, None if not found
+    """
+    query = select(ShowGithub).where(ShowGithub.server_id == discord_id)
+    result = await conn.execute(query)
+    show_github = result.scalars().first()
+    if show_github is None:
+        return None
+    return show_github.show
+
+
+async def toggle_github_show(
+    conn: AsyncSession, serverid: int, discord_id: int
+) -> ShowGithub:
+    """
+    Toggle the GitHub show status for a Discord server.
+    :param conn: Database connection
+    :param serverid: Server ID of the Discord server
+    :param discord_id: Discord ID of the server
+    :return: Updated ShowGithub object
+    """
+    query = select(ShowGithub).where(ShowGithub.server_id == discord_id)
+    result = await conn.execute(query)
+    show_github = result.scalars().first()
+    if not show_github:
+        show_github = ShowGithub(
+            server_id=serverid,
+            user_id=discord_id,
+            show=True)
+        conn.add(show_github)
+    else:
+        show_github.show = not show_github.show
+    await conn.commit()
+    return show_github

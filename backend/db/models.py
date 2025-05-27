@@ -115,6 +115,22 @@ class ServerInfo(Base):
         return result
 
 
+class ShowGithub(Base):
+    __tablename__ = "show_github"
+    server_id = Column(
+        BigInteger,
+        ForeignKey("server_info.server_id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    user_id = Column(
+        BigInteger,
+        ForeignKey(
+            "user.discord_id",
+            ondelete="CASCADE"),
+        primary_key=True)
+    show = Column(Boolean, nullable=False, default=False)
+
+
 class NotionDatabase(Base):
     __tablename__ = "notion_database"
     server_id = Column(
@@ -242,3 +258,10 @@ class ProjectMember(Base):
 
     project = relationship("Project", back_populates="members")
     github_account = relationship("Github", back_populates="memberof")
+
+
+class DMchannel(Base):
+    __tablename__ = "dm_channels"
+    user_id = Column(BigInteger, primary_key=True)
+    channel_id = Column(BigInteger, nullable=True)
+    blocked = Column(Boolean, nullable=False, default=False)

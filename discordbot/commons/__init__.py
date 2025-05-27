@@ -11,6 +11,7 @@ from interactions import (ActionRow, BaseComponent, BaseContext,
                           StringSelectMenu)
 from interactions.api.events import Component
 
+from .cache import BiDirectionalTTLCache
 from .locale import *
 from .Options import *
 from .var import *
@@ -53,15 +54,6 @@ async def is_moderator(ctx: BaseContext) -> bool:
     modrole_id = int(modrole)
     modcache[guild.id] = modrole_id
     return modrole_id in member_role_ids
-
-
-async def server_only(ctx) -> bool:
-    """
-    Check if the command is used in a server.
-    """
-    if ctx.guild is None:
-        return False
-    return True
 
 
 async def wait_for_component_interaction(

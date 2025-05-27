@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth 인증 완료</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('/static/img/discord-bot-success2.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Noto Sans KR', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+    }
+
+    .button-container {
+      margin: 40px;
+      display: flex;
+      flex-direction: row;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .button-container a {
+      padding: 18px 32px;
+      font-size: 1.1rem;
+      background-color: #5865F2;
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s ease;
+      text-align: center;
+    }
+
+    .button-container a:hover {
+      background-color: #4752c4;
+    }
+
+    .close-message {
+      margin-top: 12px;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    @media (max-width: 768px) {
+      .button-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 24px;
+      }
+
+      .button-container a {
+        font-size: 1rem;
+        padding: 14px 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .button-container a {
+        font-size: 0.95rem;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <a href="https://sejin-1457.github.io/discord-bot-landingpages/">🏠 홈페이지로 돌아가기</a>
+    <a href="https://sejin-1457.github.io/discord-bot-landingpages/guidebook.html">📘 가이드북 보기</a>
+    <div class="close-message">이제 창을 닫으셔도 됩니다.</div>
+  </div>
+</body>
+</html>
