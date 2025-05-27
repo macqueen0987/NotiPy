@@ -332,12 +332,11 @@ async def get_git_show(conn: AsyncSession, discord_id: int) -> Optional[bool]:
     return show_github.show
 
 
-async def toggle_github_show(
-        conn: AsyncSession,
-        discord_id: int) -> ShowGithub:
+async def toggle_github_show(conn: AsyncSession, serverid: int, discord_id: int) -> ShowGithub:
     """
     Toggle the GitHub show status for a Discord server.
     :param conn: Database connection
+    :param serverid: Server ID of the Discord server
     :param discord_id: Discord ID of the server
     :return: Updated ShowGithub object
     """
@@ -345,7 +344,7 @@ async def toggle_github_show(
     result = await conn.execute(query)
     show_github = result.scalars().first()
     if not show_github:
-        show_github = ShowGithub(server_id=discord_id, show=True)
+        show_github = ShowGithub(server_id=serverid, user_id=discord_id,show=True)
         conn.add(show_github)
     else:
         show_github.show = not show_github.show
