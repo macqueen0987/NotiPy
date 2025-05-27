@@ -286,6 +286,18 @@ async def get_project_members(
             {"githubid": member.user_id, "discordid": discord_id})
     return JSONResponse(status_code=200, content={"members": returndict})
 
+@router.get("/project/participating/{user_id}/{serverid}")
+@checkInternalServer
+async def get_participated_projects(request: Request, user_id: int, serverid: int, conn=Depends(get_db)):
+    """
+    주어진 사용자 ID에 해당하는 사용자가 참여한 프로젝트 목록을 JSON 형식으로 반환합니다.
+    """
+    projects = await llmservice.get_participating_project(conn, user_id, serverid)
+    if not projects:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    project_list = [project.todict() for project in projects]
+    return JSONResponse(status_code=200, content={"projects": project_list})
 
 @router.post("/project/{owner_id}/{projectid}/member")
 @checkInternalServer
@@ -311,6 +323,12 @@ async def add_member_to_project(
     project = await llmservice.get_project(conn, project_id=projectid, eager_load=True)
     if not project:
         return Response(status_code=204)
+
+    if project.owner_id == user_id:
+        return JSONResponse(
+            status_code=409,
+            content={"message": "Project owner cannot be added as a member"},
+        )
 
     # 프로젝트 멤버가 이미 존재하는지 확인
     existing_member = next(
