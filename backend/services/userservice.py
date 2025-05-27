@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Any, Coroutine, Optional, Sequence
 
-from db.models import Github, Notion, User, DMchannel, Repository, ShowGithub
+from db.models import DMchannel, Github, Notion, Repository, ShowGithub, User
 from sqlalchemy import Row, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -223,6 +223,7 @@ async def update_github(conn: AsyncSession, github: Github) -> Github:
     await conn.commit()
     return github
 
+
 async def get_forum_channel(conn: AsyncSession, userid: int) -> DMchannel:
     """
     Get the forum channel for a user.
@@ -240,7 +241,10 @@ async def get_forum_channel(conn: AsyncSession, userid: int) -> DMchannel:
         dm_channel = new_dm_channel
     return dm_channel
 
-async def toggle_block_forum_channel(conn: AsyncSession, userid: int) -> DMchannel:
+
+async def toggle_block_forum_channel(
+        conn: AsyncSession,
+        userid: int) -> DMchannel:
     """
     Block the forum channel for a user.
     :param conn: Database connection
@@ -251,7 +255,10 @@ async def toggle_block_forum_channel(conn: AsyncSession, userid: int) -> DMchann
     await conn.commit()
     return forumchannel
 
-async def get_forum_thread_by_channel(conn: AsyncSession, channelid: int) -> Optional[DMchannel]:
+
+async def get_forum_thread_by_channel(
+    conn: AsyncSession, channelid: int
+) -> Optional[DMchannel]:
     """
     Get the forum thread by channel ID.
     :param conn: Database connection
@@ -261,6 +268,7 @@ async def get_forum_thread_by_channel(conn: AsyncSession, channelid: int) -> Opt
     query = select(DMchannel).where(DMchannel.channel_id == channelid)
     result = await conn.execute(query)
     return result.scalars().first()
+
 
 async def delete_forum_thread(conn: AsyncSession, userid: int) -> bool:
     """
@@ -278,7 +286,10 @@ async def delete_forum_thread(conn: AsyncSession, userid: int) -> bool:
     await conn.commit()
     return True
 
-async def set_forum_thread_channel(conn: AsyncSession, userid: int, channelid: int) -> DMchannel:
+
+async def set_forum_thread_channel(
+    conn: AsyncSession, userid: int, channelid: int
+) -> DMchannel:
     """
     Set the forum thread channel for a user.
     :param conn: Database connection
@@ -291,7 +302,10 @@ async def set_forum_thread_channel(conn: AsyncSession, userid: int, channelid: i
     await conn.commit()
     return forumthread
 
-async def get_repositories(conn: AsyncSession, github_id: int) -> Sequence[Row[Repository]]:
+
+async def get_repositories(
+    conn: AsyncSession, github_id: int
+) -> Sequence[Row[Repository]]:
     """
     Get all repositories for a GitHub user.
     :param conn: Database connection
@@ -301,6 +315,7 @@ async def get_repositories(conn: AsyncSession, github_id: int) -> Sequence[Row[R
     query = select(Repository).where(Repository.user_id == github_id)
     result = await conn.execute(query)
     return result.scalars().all()
+
 
 async def get_git_show(conn: AsyncSession, discord_id: int) -> Optional[bool]:
     """
@@ -316,7 +331,10 @@ async def get_git_show(conn: AsyncSession, discord_id: int) -> Optional[bool]:
         return None
     return show_github.show
 
-async def toggle_github_show(conn: AsyncSession, discord_id: int) -> ShowGithub:
+
+async def toggle_github_show(
+        conn: AsyncSession,
+        discord_id: int) -> ShowGithub:
     """
     Toggle the GitHub show status for a Discord server.
     :param conn: Database connection

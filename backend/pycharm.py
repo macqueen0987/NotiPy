@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import discord, notion, user, llm
+from routers import discord, llm, notion, user
 
 """
 이 파일은 FastAPI 를 파이참 환경에서 테스트하고 수정하기 위한 파일입니다.

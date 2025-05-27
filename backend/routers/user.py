@@ -2,8 +2,8 @@ from datetime import datetime
 from functools import partial, wraps
 
 from common import *
-from fastapi import (APIRouter, BackgroundTasks, Depends, Request, Response,
-                     status, Body)
+from fastapi import (APIRouter, BackgroundTasks, Body, Depends, Request,
+                     Response, status)
 from fastapi.responses import JSONResponse
 from services import userservice as crud
 
@@ -18,7 +18,9 @@ async def root(request: Request):
 
 @router.get("/get")
 @checkInternalServer
-async def get(request: Request, discordid: int, other: bool = False,conn=Depends(get_db)):
+async def get(
+    request: Request, discordid: int, other: bool = False, conn=Depends(get_db)
+):
     """
     Get user information by discord id
     :param discordid: Discord ID of the user
@@ -36,7 +38,11 @@ async def get(request: Request, discordid: int, other: bool = False,conn=Depends
     if res is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     user, github, notion = res
-    returnval = {"user": user.todict(), "github": None, "notion": None, "repos": None}
+    returnval = {
+        "user": user.todict(),
+        "github": None,
+        "notion": None,
+        "repos": None}
     if github.primary_languages:
         repos = await crud.get_repositories(conn, github.github_id)
         returnval["repos"] = [repo.todict() for repo in repos]
@@ -174,7 +180,10 @@ async def get_user_info(conn, tokens: crud.Tokens, refreshed: bool = False):
 
 @router.get("/forumthread")
 @checkInternalServer
-async def get_forum_channel(request: Request, userid: int, conn=Depends(get_db)):
+async def get_forum_channel(
+        request: Request,
+        userid: int,
+        conn=Depends(get_db)):
     """
     Get the forum channel for a user.
     :param userid: Discord ID of the user
@@ -184,9 +193,12 @@ async def get_forum_channel(request: Request, userid: int, conn=Depends(get_db))
     channel = await crud.get_forum_channel(conn, userid)
     return JSONResponse({"success": True, "channel": channel.channel_id})
 
+
 @router.put("/forumthread/{userid}/block")
 @checkInternalServer
-async def toggle_block_forum_channel(request: Request, userid: int, conn=Depends(get_db)):
+async def toggle_block_forum_channel(
+    request: Request, userid: int, conn=Depends(get_db)
+):
     """
     Block the forum thread for a user.
     :param userid: Discord ID of the user
@@ -196,9 +208,14 @@ async def toggle_block_forum_channel(request: Request, userid: int, conn=Depends
     await crud.toggle_block_forum_channel(conn, userid)
     return JSONResponse({"success": True, "message": "Forum thread blocked"})
 
+
 @router.put("/forumthread/{userid}/channelid")
 @checkInternalServer
-async def set_forum_thread_channel(request: Request, userid: int, channelid: int = Body(...), conn=Depends(get_db)):
+async def set_forum_thread_channel(
+        request: Request,
+        userid: int,
+        channelid: int = Body(...),
+        conn=Depends(get_db)):
     """
     Set the forum thread channel for a user.
     :param userid: Discord ID of the user
@@ -207,11 +224,15 @@ async def set_forum_thread_channel(request: Request, userid: int, channelid: int
     :return: JSON response indicating success
     """
     await crud.set_forum_thread_channel(conn, userid, channelid)
-    return JSONResponse({"success": True, "message": "Forum thread channel set"})
+    return JSONResponse(
+        {"success": True, "message": "Forum thread channel set"})
+
 
 @router.get("/forumthread/bychannel")
 @checkInternalServer
-async def get_forum_thread_by_channel(request: Request, channelid: int, conn=Depends(get_db)):
+async def get_forum_thread_by_channel(
+    request: Request, channelid: int, conn=Depends(get_db)
+):
     """
     Get the forum thread by channel ID.
     :param channelid: Channel ID of the forum thread
@@ -223,9 +244,13 @@ async def get_forum_thread_by_channel(request: Request, channelid: int, conn=Dep
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     return JSONResponse({"success": True, "userid": thread.user_id})
 
+
 @router.delete("/forumthread/{userid}")
 @checkInternalServer
-async def delete_forum_thread(request: Request, userid: int, conn=Depends(get_db)):
+async def delete_forum_thread(
+        request: Request,
+        userid: int,
+        conn=Depends(get_db)):
     """
     Delete the forum thread for a user.
     :param userid: Discord ID of the user
@@ -234,6 +259,7 @@ async def delete_forum_thread(request: Request, userid: int, conn=Depends(get_db
     """
     await crud.delete_forum_thread(conn, userid)
     return JSONResponse({"success": True, "message": "Forum thread deleted"})
+
 
 @router.put("/github/{userid}/toggle")
 @checkInternalServer

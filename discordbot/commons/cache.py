@@ -1,5 +1,7 @@
-from cachetools import TTLCache
 from time import time
+
+from cachetools import TTLCache
+
 
 class BiDirectionalTTLCache(TTLCache):
     def __init__(self, maxsize: int, ttl: int, timer=time):

@@ -3,6 +3,7 @@ import random
 from http.client import responses
 from os.path import abspath, dirname
 from typing import Any, Awaitable, Callable, Coroutine, Optional, Tuple
+
 import aiohttp
 from cachetools import TTLCache
 from interactions import (ActionRow, BaseComponent, BaseContext,
@@ -53,6 +54,7 @@ async def is_moderator(ctx: BaseContext) -> bool:
     modrole_id = int(modrole)
     modcache[guild.id] = modrole_id
     return modrole_id in member_role_ids
+
 
 async def wait_for_component_interaction(
     ctx,

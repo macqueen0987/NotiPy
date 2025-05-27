@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
-from typing import Any, Coroutine, Optional, Sequence, Dict, Tuple, List
-
-from sqlalchemy.orm import selectinload
+from typing import Any, Coroutine, Dict, List, Optional, Sequence, Tuple
 
 from db.models import *
 from sqlalchemy import Row, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 
 async def create_project(conn: AsyncSession, project: Project) -> Project:
     """
@@ -19,7 +19,11 @@ async def create_project(conn: AsyncSession, project: Project) -> Project:
     await conn.refresh(project)
     return project
 
-async def delete_project(conn: AsyncSession, owner_id: int, project_id: int) -> bool:
+
+async def delete_project(
+        conn: AsyncSession,
+        owner_id: int,
+        project_id: int) -> bool:
     """
     Delete project by id
     :param conn: database connection
@@ -39,7 +43,9 @@ async def delete_project(conn: AsyncSession, owner_id: int, project_id: int) -> 
     return True
 
 
-async def set_projects(conn: AsyncSession, project_id: int, updates: Dict[str, Any]) -> Project:
+async def set_projects(
+    conn: AsyncSession, project_id: int, updates: Dict[str, Any]
+) -> Project:
     """
     Update the fields of a project dynamically based on the provided updates dict.
 
@@ -55,8 +61,18 @@ async def set_projects(conn: AsyncSession, project_id: int, updates: Dict[str, A
         raise ValueError(f"Project with id {project_id} not found")
     # 업데이트 가능 필드 목록
     updatable_fields = {
-        "name", "description", "category", "team_size", "core_features", "tech_stack",
-        "complexity", "database", "platform", "notifications", "map_integration", "auth_required"
+        "name",
+        "description",
+        "category",
+        "team_size",
+        "core_features",
+        "tech_stack",
+        "complexity",
+        "database",
+        "platform",
+        "notifications",
+        "map_integration",
+        "auth_required",
     }
     # 불리언 토글 대상 필드
     boolean_fields = {"notifications", "map_integration", "auth_required"}
@@ -73,20 +89,28 @@ async def set_projects(conn: AsyncSession, project_id: int, updates: Dict[str, A
     await conn.refresh(project)
     return project
 
-async def get_projects_by_owner(conn: AsyncSession, discordid: int, serverid:int) -> Sequence[Project]:
+
+async def get_projects_by_owner(
+    conn: AsyncSession, discordid: int, serverid: int
+) -> Sequence[Project]:
     """
     Get projects by discord id
     :param conn: database connection
     :param discordid: discord id of user
     :return: list of project objects
     """
-    query = select(Project).where(
-        Project.owner_id == discordid, Project.server_id == serverid
-    ).order_by(Project.created_at.desc())
+    query = (
+        select(Project)
+        .where(Project.owner_id == discordid, Project.server_id == serverid)
+        .order_by(Project.created_at.desc())
+    )
     result = await conn.execute(query)
     return result.scalars().all()
 
-async def get_project(conn: AsyncSession, project_id: int, eager_load: bool = False) -> Optional[Project]:
+
+async def get_project(
+    conn: AsyncSession, project_id: int, eager_load: bool = False
+) -> Optional[Project]:
     """
     Get project by id
     :param conn: database connection
@@ -95,9 +119,12 @@ async def get_project(conn: AsyncSession, project_id: int, eager_load: bool = Fa
     """
     query = select(Project).where(Project.project_id == project_id)
     if eager_load:
-        query = query.options(selectinload(Project.owner), selectinload(Project.members))
+        query = query.options(
+            selectinload(Project.owner), selectinload(Project.members)
+        )
     result = await conn.execute(query)
     return result.scalars().first()
+
 
 async def update_project_team_size(conn, project_id: int) -> Optional[Project]:
     """
@@ -113,6 +140,7 @@ async def update_project_team_size(conn, project_id: int) -> Optional[Project]:
     await conn.refresh(project)
     return project
 
+
 async def save_repository(conn, repo: Repository) -> Repository:
     """
     Save repo to database
@@ -124,7 +152,10 @@ async def save_repository(conn, repo: Repository) -> Repository:
     await conn.commit()
     return repo
 
-async def add_member_to_project(conn: AsyncSession, project_id: int, github_id: int) -> Optional[ProjectMember]:
+
+async def add_member_to_project(
+    conn: AsyncSession, project_id: int, github_id: int
+) -> Optional[ProjectMember]:
     """
     Add a member to a project
     :param conn: database connection
@@ -138,13 +169,18 @@ async def add_member_to_project(conn: AsyncSession, project_id: int, github_id: 
         return None  # Member already exists
 
     # Create a new ProjectMember object
-    new_member = ProjectMember(project_id=project_id, user_id=github_id)  # Default role_id is set to 1
+    new_member = ProjectMember(
+        project_id=project_id, user_id=github_id
+    )  # Default role_id is set to 1
     conn.add(new_member)
     await conn.commit()
     await conn.refresh(new_member)
     return new_member
 
-async def get_project_member(conn: AsyncSession, project_id: int, user_id: int) -> Optional[ProjectMember]:
+
+async def get_project_member(
+    conn: AsyncSession, project_id: int, user_id: int
+) -> Optional[ProjectMember]:
     """
     Get project member by project id and user id
     :param conn: database connection
@@ -153,12 +189,15 @@ async def get_project_member(conn: AsyncSession, project_id: int, user_id: int) 
     :return: project member object or None if not found
     """
     query = select(ProjectMember).where(
-        ProjectMember.project_id == project_id, ProjectMember.user_id == user_id
-    )
+        ProjectMember.project_id == project_id,
+        ProjectMember.user_id == user_id)
     result = await conn.execute(query)
     return result.scalars().first()
 
-async def get_project_members(conn: AsyncSession, project_id: int) -> Sequence[Tuple[ProjectMember, int]]:
+
+async def get_project_members(
+    conn: AsyncSession, project_id: int
+) -> Sequence[Tuple[ProjectMember, int]]:
     """
     Get all members of a project
     :param conn: database connection
@@ -173,10 +212,14 @@ async def get_project_members(conn: AsyncSession, project_id: int) -> Sequence[T
     )
     result = await conn.execute(query)
     rows = result.all()
-    return [(row[0], row[1]) for row in rows]  # Return a list of tuples (ProjectMember, discord_id)
+    return [
+        (row[0], row[1]) for row in rows
+    ]  # Return a list of tuples (ProjectMember, discord_id)
 
 
-async def remove_member_from_project(conn: AsyncSession, project_id: int, user_id: int) -> bool:
+async def remove_member_from_project(
+    conn: AsyncSession, project_id: int, user_id: int
+) -> bool:
     """
     Remove a member from a project
     :param conn: database connection
@@ -191,10 +234,11 @@ async def remove_member_from_project(conn: AsyncSession, project_id: int, user_i
     await conn.commit()
     return True
 
+
 async def assign_role_to_members(
     conn: AsyncSession,
     project_id: int,
-    role_assignments: Dict[int, List[int]]  # role_id -> [github_id, ...]
+    role_assignments: Dict[int, List[int]],  # role_id -> [github_id, ...]
 ) -> None:
     """
     Assign multiple members to roles for a given project.
@@ -208,11 +252,15 @@ async def assign_role_to_members(
                 update(ProjectMember)
                 .where(
                     ProjectMember.project_id == project_id,
-                    ProjectMember.user_id == github_id
+                    ProjectMember.user_id == github_id,
                 )
                 .values(role_id=role_id)
             )
             await conn.execute(stmt)
-    stmt = update(Project).where(Project.project_id == project_id).values(member_assigned=True)
+    stmt = (
+        update(Project)
+        .where(Project.project_id == project_id)
+        .values(member_assigned=True)
+    )
     await conn.execute(stmt)
     await conn.commit()

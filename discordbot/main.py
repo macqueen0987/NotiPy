@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 from interactions import (AutocompleteContext, Client, Intents, OptionType,
                           SlashContext, check, global_autocomplete, listen,
                           slash_command, slash_option)
-from interactions.api.events import CommandError, Startup, ComponentError
+from interactions.api.events import CommandError, ComponentError, Startup
 from interactions.client.errors import (CommandCheckFailure, CommandOnCooldown,
                                         Forbidden, MaxConcurrencyReached)
 
@@ -91,6 +91,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, root_path=commons.app_root)
 
+
 @listen(ComponentError, disable_default_listeners=True)
 async def my_component_error_handler(event: ComponentError):
     """
@@ -131,6 +132,7 @@ async def my_component_error_handler(event: ComponentError):
         await ctx.send(_("error_occurred_err"), ephemeral=True, components=[])
         logger.error("에러가 발생했습니다.")
         logger.error(json)
+
 
 @listen(CommandError, disable_default_listeners=True)
 async def my_error_handler(event: CommandError):

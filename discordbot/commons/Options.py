@@ -38,13 +38,15 @@ def plainTextOption(name: str = "text", required: bool = True):
 
     return wrapper
 
+
 def UserOption(required: bool = True):
-    """ Decorator to create a slash command option for a user.
+    """Decorator to create a slash command option for a user.
     Args:
         required (bool): Whether the user option is required. Defaults to True.
     Returns:
         function: Decorated function with the user option.
     """
+
     def wrapper(func):
         return slash_option(
             name=getname("user"),

@@ -13,6 +13,7 @@ settingsBase = SlashCommand(name=getname("settings"))
 modroleGroup = settingsBase.group(name=getname("modrole"))
 blockuserregex = re.compile(r"^blockuserdm_(\d+)$")
 
+
 class Misc(Extension):
     bot: Client = None
     ownerdm = None
@@ -63,8 +64,9 @@ class Misc(Extension):
             params = {"channelid": channelid}
             status, res = await apirequest("/user/forumthread/bychannel", params=params)
             if status != 200 and status != 204:
-                raise ValueError(f"Error in /user/forumthread/bychannel with params {params}")
-            authorid = res.get('userid')
+                raise ValueError(
+                    f"Error in /user/forumthread/bychannel with params {params}")
+            authorid = res.get("userid")
         if not authorid:  # authorid가 없으면
             await channel.send("This channel is not linked to a user.")
             return
@@ -87,7 +89,9 @@ class Misc(Extension):
                     await dmchannel.send(attachment.url)
             await message.add_reaction(self.emoji)
         except Exception as e:
-            await channel.send(f"Failed to send message to DM: {e}\n Deleting forum thread.")
+            await channel.send(
+                f"Failed to send message to DM: {e}\n Deleting forum thread."
+            )
             await apirequest("/user/forumthread/{authorid}", method="DELETE")
             return
 
@@ -106,18 +110,34 @@ class Misc(Extension):
             params = {"userid": authorid}
             status, res = await apirequest("/user/forumthread", params=params)
             if status != 200 and status != 204:
-                raise ValueError(f"Error in /user/forumthread with params {params}")
-            forumthreadid = res['channel']
+                raise ValueError(
+                    f"Error in /user/forumthread with params {params}")
+            forumthreadid = res["channel"]
         # 여기까지 왔는데 forumthread id가 없으면 새로 생성해야 하는거
         if forumthreadid:
-            forumthread = await self.supportchannel.fetch_post(forumthreadid)  # forumthreadid로 가져오기, 만일 없으면 None
+            forumthread = await self.supportchannel.fetch_post(
+                forumthreadid
+            )  # forumthreadid로 가져오기, 만일 없으면 None
         if not forumthread:  # forumthread 가 None 이다: 없거나 삭제된 경우
-            name = f"DM: {author.display_name}#{author.discriminator} ({authorid})"
-            content = f"DM from {author.mention} ({authorid})\nUse the button below to toggle block for the user."
-            component = Button(style=ButtonStyle.SECONDARY, label="Toggle Block User", custom_id=f"blockuserdm_{authorid}")
-            forumthread = await self.supportchannel.create_post(name=name, content=content, components=[component])
+            name = f"DM: {
+                author.display_name}#{
+                author.discriminator} ({authorid})"
+            content = f"DM from {
+                author.mention} ({authorid})\nUse the button below to toggle block for the user."
+            component = Button(
+                style=ButtonStyle.SECONDARY,
+                label="Toggle Block User",
+                custom_id=f"blockuserdm_{authorid}",
+            )
+            forumthread = await self.supportchannel.create_post(
+                name=name, content=content, components=[component]
+            )
             dmCache[authorid] = int(forumthread.id)
-            await apirequest(f"/user/forumthread/{authorid}/channelid", method="PUT", json=int(forumthread.id))
+            await apirequest(
+                f"/user/forumthread/{authorid}/channelid",
+                method="PUT",
+                json=int(forumthread.id),
+            )
         # await forumthread.edit(locked=True)
         try:
             if message.content != "":
@@ -139,7 +159,9 @@ class Misc(Extension):
         """
         userid = ctx.custom_id
         userid = int(userid.split("_")[-1])
-        status, response = await apirequest(f"/user/forumthread/{userid}/block", method="PUT")
+        status, response = await apirequest(
+            f"/user/forumthread/{userid}/block", method="PUT"
+        )
         if status != 200:
             raise ValueError(f"Error in /user/forumthread/{userid}/block")
         if response.get("blocked") is True:
@@ -147,24 +169,38 @@ class Misc(Extension):
         else:
             await ctx.send(_("User Unblocked"), ephemeral=True)
 
-    @slash_command(name=getname("create_ticket"), description=getdesc("create_ticket"))
+    @slash_command(name=getname("create_ticket"),
+                   description=getdesc("create_ticket"))
     @check(is_moderator)
     @localize(True)
     async def create_ticket(self, ctx: SlashContext, _):
         """
         Create a ticket for the user.
         """
-        modal = Modal(ParagraphText(label=_("create_ticket_modal_label"), required=True, custom_id="content"),
-                      ShortText(label=_("create_ticket_modal_shorttext_label"), required=True, custom_id="label"),
-                      title=_("create_ticket_modal_title"),)
+        modal = Modal(
+            ParagraphText(
+                label=_("create_ticket_modal_label"),
+                required=True,
+                custom_id="content"),
+            ShortText(
+                label=_("create_ticket_modal_shorttext_label"),
+                required=True,
+                custom_id="label",
+            ),
+            title=_("create_ticket_modal_title"),
+        )
         await ctx.send_modal(modal)
         modal_ctx: ModalContext = await ctx.bot.wait_for_modal(modal)
         if modal_ctx is None:
             await ctx.send(_("modal_timeout"), ephemeral=True)
             return
-        content = modal_ctx.responses['content']
-        label = modal_ctx.responses['label']
-        button = Button(style=ButtonStyle.PRIMARY, label=label, emoji="📤", custom_id=f"open_ticket")
+        content = modal_ctx.responses["content"]
+        label = modal_ctx.responses["label"]
+        button = Button(
+            style=ButtonStyle.PRIMARY,
+            label=label,
+            emoji="📤",
+            custom_id=f"open_ticket")
         try:
             await ctx.channel.send(content, components=[button])
         except Exception as e:
@@ -183,7 +219,7 @@ class Misc(Extension):
             return
         elif status != 200:
             raise ValueError(f"Error in /discord/{ctx.guild_id}/modrole")
-        modrole = res['modrole']
+        modrole = res["modrole"]
         modrole = await ctx.guild.fetch_role(modrole)
         if not modrole:
             await ctx.send(_("ticket_create_fail_no_modrole"), ephemeral=True)
@@ -192,19 +228,54 @@ class Misc(Extension):
         if category is None:
             await ctx.send(_("ticket_create_fail_no_category"), ephemeral=True)
             return
-        allow_overrides = Permissions.VIEW_CHANNEL | Permissions.SEND_MESSAGES | Permissions.EMBED_LINKS | Permissions.ATTACH_FILES | Permissions.ADD_REACTIONS
+        allow_overrides = (
+            Permissions.VIEW_CHANNEL
+            | Permissions.SEND_MESSAGES
+            | Permissions.EMBED_LINKS
+            | Permissions.ATTACH_FILES
+            | Permissions.ADD_REACTIONS
+        )
         bot_overrides = allow_overrides | Permissions.MANAGE_CHANNELS
         permission_overwrites = []
         try:
             for role in ctx.guild.roles:
-                if Permissions.VIEW_CHANNEL in ctx.channel.permissions_for(role) and role != modrole:
-                    permission_overwrites.append(PermissionOverwrite(id=role.id, type=OverwriteType.ROLE, deny=Permissions.VIEW_CHANNEL))
-            permission_overwrites.append(PermissionOverwrite(id=ctx.guild.default_role.id, type=OverwriteType.ROLE, deny=Permissions.VIEW_CHANNEL))
-            permission_overwrites.append(PermissionOverwrite(id=modrole.id, type=OverwriteType.ROLE, allow=allow_overrides))
-            permission_overwrites.append(PermissionOverwrite(id=ctx.author.id, type=OverwriteType.MEMBER, allow=allow_overrides))
-            permission_overwrites.append(PermissionOverwrite(id=self.bot.user.id, type=OverwriteType.MEMBER, allow=bot_overrides))
-            channel = await category.create_text_channel(f"ticket-{str(ctx.author.id)[6:]}", permission_overwrites=permission_overwrites)
-            msg = ctx.author.mention + _("ticket_create_success_msg") + channel.mention
+                if (Permissions.VIEW_CHANNEL in ctx.channel.permissions_for(
+                        role) and role != modrole):
+                    permission_overwrites.append(
+                        PermissionOverwrite(
+                            id=role.id,
+                            type=OverwriteType.ROLE,
+                            deny=Permissions.VIEW_CHANNEL,
+                        )
+                    )
+            permission_overwrites.append(
+                PermissionOverwrite(
+                    id=ctx.guild.default_role.id,
+                    type=OverwriteType.ROLE,
+                    deny=Permissions.VIEW_CHANNEL,
+                )
+            )
+            permission_overwrites.append(
+                PermissionOverwrite(
+                    id=modrole.id,
+                    type=OverwriteType.ROLE,
+                    allow=allow_overrides))
+            permission_overwrites.append(
+                PermissionOverwrite(
+                    id=ctx.author.id,
+                    type=OverwriteType.MEMBER,
+                    allow=allow_overrides))
+            permission_overwrites.append(
+                PermissionOverwrite(
+                    id=self.bot.user.id,
+                    type=OverwriteType.MEMBER,
+                    allow=bot_overrides))
+            channel = await category.create_text_channel(
+                f"ticket-{str(ctx.author.id)[6:]}",
+                permission_overwrites=permission_overwrites,
+            )
+            msg = ctx.author.mention + \
+                _("ticket_create_success_msg") + channel.mention
             await ctx.send(msg, ephemeral=True)
             await channel.send(ctx.author.mention + _("ticket_created_channel"))
         except Exception as e:
