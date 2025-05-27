@@ -46,10 +46,12 @@
     "not_linked_github": "GitHub 계정이 Discord 계정에 연결되어 있지 않습니다.",
     "success_linked_github": "GitHub 계정이 Discord 계정에 성공적으로 연결되었습니다.",
     "toggle_git_show": "공개 여부 토글",
-    "not_linked_github_other": "해당 사용자의 GitHub 계정이 Discord 계정에 연결되어 있지 않습니다.",
+    "not_linked_github_other": "해당 사용자의 GitHub 계정이 Discord 계정에 연결되어 있지 않거나 비공개 상태입니다.",
     "not_allowed_other": "해당 사용자가 프로필을 비공개 설정했습니다.",
     "git_show_enabled": "해당 서버에 대한 GitHub 프로필 공개 설정이 활성화되었습니다.",
     "git_show_disabled": "해당 서버에 대한 GitHub 프로필 공개 설정이 비활성화되었습니다.",
+    "top_repos": "인기 레포지토리",
+    "repo_not_analyzed": "유저의 레포지토리는 아직 분석되지 않았습니다.",
 
     "create_ticket": "티켓생성",
     "create_ticket_desc": "티켓을 생성합니다.",
@@ -102,7 +104,11 @@
     "notion_tag_placeholder": "선택 형의 노션 태그를 입력하세요.",
     "notion_tag_set": "노션 태그가 설정되었습니다. \n단일 선택형 속성이 아닐 경우 태그가 정상적으로 설정되지 않을 수 있습니다.",
     "notion_tags": "노션 태그",
+    "select_notion_tag": "노션 태그 선택",
     "notion_databases": "노션 데이터베이스",
+    "notion_tag_removed": "노션 태그가 제거되었습니다.",
+    "max_tags_exceeded": "최대 태그 수를 초과했습니다. 최대 3개의 태그만 설정할 수 있습니다.",
+    "duplicate_tag": "이미 설정된 태그입니다. 중복된 태그를 제거해주세요.",
 
 
     "settings": "설정",
@@ -126,6 +132,8 @@
     "projects_create_desc": "새로운 프로젝트를 생성합니다.",
     "projects_remove_desc": "프로젝트를 제거합니다.",
     "no_projects_found": "프로젝트를 찾을 수 없습니다.",
+    "set_prject_member_desc": "프로젝트 멤버를 설정합니다.",
+    "list_projects_desc": "✅ 버튼을 눌러 프로젝트를 수정하세요",
 
     "llm_analyze_do": "AI로 분석하기 (느려요)",
     "llm_analyze_res": "AI 분석 결과",

@@ -53,18 +53,14 @@ def localizator(locale) -> Callable[[str], str]:
 
 
 def getlocale(key_: str, locale: str) -> str:
-    # global _write_counter
     used_keys.add(key_)
-    # _write_counter += 1
 
-    # if _write_counter >= WRITE_EVERY:
-    if debug:
-        try:
-            with open(USED_KEYS_LOG_PATH, "w", encoding="utf-8") as f:
-                json.dump(sorted(used_keys), f, ensure_ascii=False, indent=2)
-            # _write_counter = 0
-        except Exception as e:
-            print(f"⚠️ Failed to write used keys: {e}")
+    try:
+        with open(USED_KEYS_LOG_PATH, "w", encoding="utf-8") as f:
+            json.dump(sorted(used_keys), f, ensure_ascii=False, indent=2)
+        # _write_counter = 0
+    except Exception as e:
+        print(f"⚠️ Failed to write used keys: {e}")
 
     if key_ in locales.get(locale, {}):
         return locales[locale][key_]

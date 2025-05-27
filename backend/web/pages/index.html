@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord Landing</title>
+  <link rel="stylesheet" href="/static/css/style.css?v=1" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="background">
+    <div id="features" style="position: absolute; top: 23%;"></div>
+
+<!--    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="top: 0.96%; left: 36%;">주요기능</a>-->
+<!--    <a href="policy" class="nav-link" style="top: 0.96%; left: 44%;">이용정책</a>-->
+<!--    <a href="cases" class="nav-link" style="top: 0.96%; left: 52%;">활용사례</a>-->
+<!--    <a href="roadmap" class="nav-link" style="top: 0.96%; left: 60%;">로드맵</a>-->
+<!--    <a href="community" class="nav-link" style="top: 0.96%; left: 68%;">커뮤니티</a>-->
+
+    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="top: 0.96%; left: 38%;">주요기능</a>
+    <a href="policy" class="nav-link" style="top: 0.96%; left: 46%;">이용정책</a>
+    <a href="roadmap" class="nav-link" style="top: 0.96%; left: 54%;">로드맵</a>
+    <a href="community" class="nav-link" style="top: 0.96%; left: 62%;">커뮤니티</a>
+
+
+    <a href="terms-consent" class="cta-button" data-pos="top" style="top: 15.65%; left:17%">디스코드봇 불러오기</a>
+    <a href="terms-consent" class="cta-button" data-pos="bottom" style="top: 89.5%; left: 50%">디스코드봇 불러오기</a>
+  </div>
+
+
+<!--  <nav>-->
+<!--    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="bottom: -486%; left: 36%; position: absolute;">주요기능</a>-->
+<!--    <a href="policy" class="nav-link" style="bottom: -486%; left: 44%; position: absolute;">이용정책</a>-->
+<!--    <a href="cases" class="nav-link" style="bottom: -486%; left: 52%; position: absolute;">활용사례</a>-->
+<!--    <a href="roadmap" class="nav-link" style="bottom: -486%; left: 60%; position: absolute;">로드맵</a>-->
+<!--    <a href="community" class="nav-link" style="bottom: -486%; left: 68%; position: absolute;">커뮤니티</a>-->
+<!--  </nav>-->
+
+  <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
+      <path d="M12 4l-8 8h5v8h6v-8h5z"/>
+    </svg>
+  </button>
+
+  <script>
+    function scrollToFeatures() {
+      const target = document.getElementById("features");
+      if (target) {
+        const offsetTop = target.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      }
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener("scroll", () => {
+      const btn = document.getElementById("scrollToTopBtn");
+      if (window.scrollY > window.innerHeight * 0.5) {
+        btn.classList.add("show");
+      } else {
+        btn.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>

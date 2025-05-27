@@ -380,7 +380,7 @@ class Notion(Extension):
             f"/discord/{ctx.guild_id}/notion/tag", method="POST", json=notion_tag
         )
         if status == 429:
-            await modalctx.send(_("notion_tag_limit"), ephemeral=True)
+            await modalctx.send(_(response["detail"]), ephemeral=True)
             return
         elif status != 200:
             raise ValueError("Error in /notion/setnotiontag")
@@ -399,10 +399,10 @@ class Notion(Extension):
         )
         if status != 200:
             raise ValueError("Error in /notion/removenotiontag")
-        tags = response["tags"]
+        tags = response["tag"]
         options = []
         for tag in tags:
-            tagname = tag["tagname"]
+            tagname = tag["tag"]
             options.append(StringSelectOption(label=tagname, value=tagname))
         if not options:
             await ctx.send(_("notion_tag_not_set"), ephemeral=True)
