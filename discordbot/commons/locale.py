@@ -1,10 +1,12 @@
 import json
 from functools import partial, wraps
-from os import listdir, getenv
+from os import getenv, listdir
 from os.path import abspath, dirname, isfile, join
 from typing import Callable, Union
 
-from interactions import (ComponentContext, LocalisedDesc, LocalisedName, SlashContext)
+from interactions import (ComponentContext, LocalisedDesc, LocalisedName,
+                          SlashContext)
+
 from .localization import language_codes
 
 locales = {}
@@ -28,7 +30,9 @@ for file in listdir(wd + "/localization"):
 def localize(server_only: bool = True):
     def decorator(func):
         @wraps(func)
-        async def wrapped_func(self, ctx: Union[SlashContext, ComponentContext], *args, **kwargs):
+        async def wrapped_func(
+            self, ctx: Union[SlashContext, ComponentContext], *args, **kwargs
+        ):
             if server_only and not ctx.guild:
                 _ = localizator(ctx.locale)
                 await ctx.send(_("server_only_error"), ephemeral=True)
@@ -38,7 +42,9 @@ def localize(server_only: bool = True):
             if locale not in locales:
                 locale = ctx.guild.preferred_locale if ctx.guild else "en"
             return await func(self, ctx, localizator(locale), *args, **kwargs)
+
         return wrapped_func
+
     return decorator
 
 

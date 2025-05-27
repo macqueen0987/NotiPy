@@ -115,7 +115,6 @@ class ServerInfo(Base):
         return result
 
 
-
 class ShowGithub(Base):
     __tablename__ = "show_github"
     server_id = Column(
@@ -260,9 +259,9 @@ class ProjectMember(Base):
     project = relationship("Project", back_populates="members")
     github_account = relationship("Github", back_populates="memberof")
 
+
 class DMchannel(Base):
     __tablename__ = "dm_channels"
     user_id = Column(BigInteger, primary_key=True)
     channel_id = Column(BigInteger, nullable=True)
     blocked = Column(Boolean, nullable=False, default=False)
-

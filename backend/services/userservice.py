@@ -223,6 +223,7 @@ async def update_github(conn: AsyncSession, github: Github) -> Github:
     await conn.commit()
     return github
 
+
 async def get_forum_channel(conn: AsyncSession, userid: int) -> DMchannel:
     """
     Get the forum channel for a user.
@@ -350,4 +351,3 @@ async def toggle_github_show(
         show_github.show = not show_github.show
     await conn.commit()
     return show_github
-
