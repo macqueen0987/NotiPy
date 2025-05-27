@@ -206,7 +206,11 @@ async def analyze_github_user(
             detail="Failed to update GitHub user")
     top5 = sorted(repos, key=lambda r: r.stargazers_count, reverse=True)[:5]
     bgtask.add_task(analyze_github_repo, conn, top5, res)
-    return JSONResponse(status_code=200, content={"data": git.todict()})
+    return JSONResponse(
+        status_code=200,
+        content={
+            "data": git.todict(),
+            "repos": None})
 
 
 def fill_repo_metadata(name: str, url: str, readme: str, llm) -> dict:

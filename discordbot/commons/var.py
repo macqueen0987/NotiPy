@@ -7,6 +7,9 @@ notion_api_version = os.environ["NOTION_API_VERSION"]
 
 # Replace with actual server ID
 devserver = int(os.environ["DISCORD_DEVSERVER"])
+supportchannelid = int(
+    os.environ.get("DISCORD_SUPPORT_CHANNEL")
+)  # Replace with actual support channel ID
 
 # Replace with actual developer IDs
 developers = os.environ["DISCORD_DEVELOPERS"]
