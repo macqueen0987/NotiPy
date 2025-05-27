@@ -380,7 +380,7 @@ class Notion(Extension):
             f"/discord/{ctx.guild_id}/notion/tag", method="POST", json=notion_tag
         )
         if status == 429:
-            await modalctx.send(_(response['detail']), ephemeral=True)
+            await modalctx.send(_(response["detail"]), ephemeral=True)
             return
         elif status != 200:
             raise ValueError("Error in /notion/setnotiontag")

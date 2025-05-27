@@ -263,7 +263,11 @@ async def delete_forum_thread(
 
 @router.put("/github/{userid}/toggle")
 @checkInternalServer
-async def toggle_github(request: Request, userid: int, serverid: int = Body(...), conn=Depends(get_db)):
+async def toggle_github(
+        request: Request,
+        userid: int,
+        serverid: int = Body(...),
+        conn=Depends(get_db)):
     """
     Toggle the GitHub connection for a user.
     :param userid: Discord ID of the user

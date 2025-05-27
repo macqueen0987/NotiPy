@@ -172,13 +172,15 @@ async def add_notion_tag(
     if len(current_tags) >= 3:
         raise HTTPException(
             status_code=429,
-            detail="max_tags_exceeded",)
+            detail="max_tags_exceeded",
+        )
     # 태그가 이미 존재하는지 확인
     existing_tag = next((t for t in current_tags if t.tag == tag), None)
     if existing_tag:
         raise HTTPException(
             status_code=429,
-            detail="duplicate_tag",)
+            detail="duplicate_tag",
+        )
     # 태그 추가
     tag_obj = await discordservice.add_notion_tag(conn, serverid, tag)
     if not tag_obj:
