@@ -7,6 +7,9 @@ import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.exceptions import HTTPException
 
 # from tasks.notion_poller import poll_notion_projects
 os.makedirs("log", exist_ok=True)
@@ -25,10 +28,28 @@ logger.info("Starting NotiPy Backend...")
 app = FastAPI()
 api = FastAPI()
 
+app.mount("/static", StaticFiles(directory="web/static"), name="static")
+templates = Jinja2Templates(directory="web/pages")
 
 @app.get("/")
-async def root():
-    return {"message": "Hello, NotiPy!"}
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/{page}")
+async def page_handler(request: Request, page: str):
+    """
+    Handles requests for pages that are not explicitly defined.
+    This will render the page if it exists, otherwise it will return a 404 error.
+    """
+    try:
+        return templates.TemplateResponse(f"{page}.html", {"request": request})
+    except Exception as e:
+        logger.error(f"Error rendering page {page}: {e}")
+        raise HTTPException(status_code=404, detail="Page not found")
+
+@app.exception_handler(404)
+async def custom_404_handler(request, __):
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 
 @api.exception_handler(RequestValidationError)

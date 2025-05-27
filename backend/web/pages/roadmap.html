@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로드맵</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #5865F2;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.5em;
+      color: white;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .back-button:hover {
+      color: #ddd;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    .content {
+      padding: 40px 20px;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 100px;
+    }
+
+    .content h2 {
+      color: #333;
+      margin-top: 24px;
+    }
+
+    .content p {
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    ul {
+      list-style: disc;
+      padding-left: 20px;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-top: 24px;
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .sub-section {
+      margin-bottom: 24px;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+    }
+
+    /* 📱 반응형 모바일 대응 */
+    @media (max-width: 768px) {
+      .content {
+        padding: 24px 16px;
+        border-radius: 0;
+        margin-bottom: 120px;
+      }
+
+      header h1 {
+        font-size: 1.2em;
+      }
+
+      .section-title {
+        font-size: 1.1em;
+      }
+
+      .content p,
+      .content ul li {
+        font-size: 1em;
+      }
+
+      .back-button {
+        font-size: 1.3em;
+        top: 16px;
+        left: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+    <h1>로드맵</h1>
+  </header>
+
+  <div class="content">
+    <h2>프로젝트 목표 및 기술 스택</h2>
+    <p>본 프로젝트의 목표는 협업 흐름을 자동화하여 디스코드, GitHub, Notion 등의 다양한 플랫폼 간에 효율적인 정보 공유와 관리 시스템을 제공하는 것입니다.</p>
+
+    <div class="section-title">기술 스택</div>
+    <div class="sub-section">
+      <p><strong>1. Python 3.12</strong></p>
+      <ul>
+        <li><strong>Discord-py-interactions</strong>: 디스코드 챗봇 개발용</li>
+        <li><strong>SQLAlchemy</strong>: ORM 기반 DB 연동</li>
+        <li><strong>FastAPI</strong>: Python 기반 고속 웹 프레임워크</li>
+        <li><strong>Alembic</strong>: DB 마이그레이션 관리 도구</li>
+      </ul>
+    </div>
+
+    <div class="sub-section">
+      <p><strong>2. APIs</strong></p>
+      <ul>
+        <li><strong>Discord API</strong>: 챗봇 기능 연동</li>
+        <li><strong>Notion API</strong>: 페이지 정보 입출력</li>
+        <li><strong>GitHub API</strong>: 사용자 및 저장소 정보 조회</li>
+      </ul>
+    </div>
+
+    <div class="sub-section">
+      <p><strong>3. 기타 도구</strong></p>
+      <ul>
+        <li><strong>Nginx</strong>: Reverse Proxy 운영</li>
+        <li><strong>Docker</strong>: 컨테이너 기반 테스트/배포</li>
+        <li><strong>MySQL</strong>: 관계형 데이터 저장소</li>
+      </ul>
+    </div>
+
+    <div class="section-title">배포 환경 및 협업 도구</div>
+    <div class="sub-section">
+      <p><strong>1. 배포 환경</strong></p>
+      <ul>
+        <li><strong>GitHub</strong>: 코드 배포 및 버전 관리</li>
+        <li><strong>Docker</strong>: 일관된 테스트 및 배포 환경</li>
+        <li><strong>Nginx</strong>: 프록시 및 트래픽 처리</li>
+      </ul>
+    </div>
+
+    <div class="sub-section">
+      <p><strong>2. 협업 도구</strong></p>
+      <ul>
+        <li><strong>Notion</strong>: 문서화 및 일정 관리</li>
+        <li><strong>Discord</strong>: 커뮤니케이션 및 실시간 피드백</li>
+        <li><strong>GitHub</strong>: 개발 협업 및 코드 공유</li>
+      </ul>
+    </div>
+
+    <p>이 프로젝트는 오픈소스로 제공되며, 누구나 자유롭게 활용할 수 있도록 설계되었습니다.</p>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Discord Bot. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>

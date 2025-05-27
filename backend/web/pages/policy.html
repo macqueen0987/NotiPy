@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>이용정책</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f4f4;
+      height: 100%;
+    }
+
+    header {
+      background-color: #5865F2;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.5em;
+      color: white;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .back-button:hover {
+      color: #ddd;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .content {
+      padding: 40px;
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      flex-grow: 1;
+      margin-bottom: 80px;
+      box-sizing: border-box;
+    }
+
+    .content h2 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .content p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    ul {
+      list-style: disc;
+      padding-left: 20px;
+      color: #555;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 24px;
+        margin: 0 16px 100px 16px;
+      }
+
+      .content p {
+        font-size: 1rem;
+      }
+
+      .content h2 {
+        font-size: 1.2rem;
+      }
+
+      header h1 {
+        font-size: 1.2rem;
+      }
+
+      .back-button {
+        font-size: 1.2rem;
+        top: 16px;
+        left: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 16px;
+      }
+
+      .content p {
+        font-size: 0.95rem;
+      }
+
+      .content h2 {
+        font-size: 1.1rem;
+      }
+
+      header h1 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+    <h1>이용정책</h1>
+  </header>
+
+  <div class="content">
+    <h2>제1조 (이용 목적)</h2>
+    <p>본 서비스는 협업 플랫폼 간 정보 연동, 자동화 메시지 전송 및 구조화된 커뮤니케이션 흐름을 제공하여, 프로젝트 협업의 효율성을 높이는 데 목적이 있습니다.</p>
+    <p>이용자는 본 서비스를 자유롭게 사용할 수 있으며, 다음과 같은 용도로는 사용할 수 없습니다:</p>
+    <ul>
+      <li>타인의 권리를 침해하거나 불법적 활동을 위한 목적</li>
+      <li>Discord API, GitHub API, Notion API 등의 이용약관 위반 행위</li>
+    </ul>
+
+    <h2>제2조 (서비스 내용)</h2>
+    <p>본 서비스는 다음 기능을 포함합니다:</p>
+    <ul>
+      <li>Notion 페이지 생성 시 Discord 포럼 스레드 자동 생성</li>
+      <li>GitHub 커밋 또는 Notion 문서 변경 시 Discord 채널에 자동 알림 전송</li>
+    </ul>
+    <p>본 서비스는 GitHub, Notion, Discord API 연동을 기반으로 하며, 운영자에 의해 기능 개선 또는 변경될 수 있습니다.</p>
+    <p>서비스는 비상업적이며, 지속적인 운영 및 개선을 보장하지 않습니다.</p>
+
+    <h2>제3조 (책임의 한계)</h2>
+    <p>본 서비스는 "있는 그대로(As-Is)" 제공됩니다. 개발자는 기능의 오류, 외부 API 정책 변경, 이용자 간 분쟁 등으로 인해 발생하는 직접적 또는 간접적인 피해에 대해 어떠한 법적 책임도 지지 않습니다.</p>
+
+    <h2>제4조 (이용자의 의무)</h2>
+    <p>이용자는 서비스 이용 과정에서 다음을 준수해야 합니다:</p>
+    <ul>
+      <li>타인의 정보나 시스템을 침해하거나, 부정한 접근 또는 조작을 하지 않을 것</li>
+      <li>불법 프로그램 사용 또는 자동화된 악성 호출 등을 하지 않을 것</li>
+    </ul>
+    <p>위반 시, 서비스 제공이 중단되거나 Discord 측의 제재가 발생할 수 있습니다.</p>
+
+    <h2>제5조 (지식재산권 및 오픈소스 라이선스)</h2>
+    <p>본 서비스의 코드, 기능, 문서 등은 MIT License 하에 오픈소스로 제공됩니다.</p>
+    <p>누구나 자유롭게 사용, 수정, 배포할 수 있으며, 사용 시 출처 명시 및 라이선스 고지를 포함해야 합니다.</p>
+    <p>서비스 내 사용된 Discord, GitHub, Notion 등의 로고 및 상표권은 각 사의 자산이며, 본 서비스는 해당 플랫폼의 공식 제품이 아닙니다.</p>
+
+    <h2>제6조 (문의처)</h2>
+    <p>서비스 관련 문의는 아래 연락처를 통해 가능합니다:</p>
+    <ul>
+      <li>이메일: NotiPy@gmail.com</li>
+    </ul>
+    <p>최종 업데이트일: 2025년 5월 14일</p>
+    <hr />
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Discord Bot. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>

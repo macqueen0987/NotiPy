@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>커뮤니티</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #5865F2;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.5em;
+      color: white;
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      color: #ddd;
+    }
+
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 40px 20px;
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      flex-grow: 1;
+      margin-bottom: 100px;
+    }
+
+    .section {
+      flex: 1 1 45%;
+      min-width: 300px;
+    }
+
+    .section h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    ul.notice, ul.qa {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul.notice li, ul.qa li {
+      margin-bottom: 15px;
+      background-color: #e6f2ff;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    ul.notice li h3, ul.qa li h3 {
+      margin: 0 0 6px;
+      color: #333;
+    }
+
+    ul.notice li p, ul.qa li p {
+      color: #555;
+      margin: 4px 0;
+    }
+
+    .qa-form textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: none; /* ❌ 크기 조절 비활성화 */
+    }
+
+    .qa-form select,
+    .qa-form button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .qa-form button {
+      background-color: #5865F2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    .qa-form button:hover {
+      background-color: #4752c4;
+    }
+
+    .answer-status {
+      color: #5865F2;
+      font-weight: bold;
+    }
+
+    .waiting-status {
+      color: #a6a5a4;
+      font-weight: bold;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* 📱 반응형 */
+    @media (max-width: 768px) {
+      .content {
+        flex-direction: column;
+        padding: 24px 16px;
+      }
+
+      .section {
+        flex: 1 1 100%;
+      }
+
+      header h1 {
+        font-size: 1.2rem;
+      }
+
+      .back-button {
+        top: 16px;
+        left: 16px;
+        font-size: 1.3em;
+      }
+
+      .qa-form button {
+        font-size: 1rem;
+      }
+    }
+
+    /* 모달 창 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+    <h1>커뮤니티</h1>
+  </header>
+
+  <div class="content">
+    <!-- 공지사항 -->
+    <div class="section">
+      <h2>공지사항</h2>
+      <ul class="notice">
+        <li>
+          <h3>디스코드 봇 업데이트 안내</h3>
+          <p>새로운 기능이 추가되었습니다.</p>
+          <p class="time">작성일: 2025-05-12</p>
+        </li>
+        <li>
+          <h3>서비스 점검 예정 안내</h3>
+          <p>2025년 5월 20일 오전 2시부터 4시까지 점검 예정입니다.</p>
+          <p class="time">작성일: 2025-05-10</p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Q&A -->
+    <div class="section">
+      <h2>Q&A</h2>
+      <ul class="qa" id="qa-list">
+        <li class="answered" onclick="openModal()">
+          <h3>디스코드 봇 설정 방법</h3>
+          <p>디스코드 봇을 어떻게 설정하나요?</p>
+          <p class="time">작성일: 2025-05-10</p>
+          <span class="answer-status">[답변완료]</span>
+        </li>
+      </ul>
+
+      <div class="qa-form">
+        <textarea id="qa-input" placeholder="여기에 질문을 작성하세요..."></textarea>
+        <select id="category">
+          <option value="일반">일반 문의</option>
+          <option value="기능">기능 문의</option>
+          <option value="버그">버그 신고</option>
+        </select>
+        <button onclick="submitQA()">질문 제출</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Discord Bot. All Rights Reserved.</p>
+  </footer>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>관리자의 답변</h2>
+      <p>디스코드 봇 불러오기 버튼을 통해 인증을 진행하시면 됩니다.</p>
+      <p>감사합니다!</p>
+    </div>
+  </div>
+
+  <script>
+    function submitQA() {
+      const input = document.getElementById('qa-input');
+      const category = document.getElementById('category').value;
+      const questionText = input.value.trim();
+      if (questionText === '') {
+        alert('질문을 입력해주세요!');
+        return;
+      }
+
+      const qaList = document.getElementById('qa-list');
+      const newQA = document.createElement('li');
+      const time = new Date().toLocaleDateString();
+
+      newQA.classList.add('waiting');
+      newQA.innerHTML = `
+        <h3>${category} - 새로운 질문</h3>
+        <p>${questionText}</p>
+        <p class="time">작성일: ${time}</p>
+        <span class="waiting-status">[답변 대기중]</span>
+      `;
+      qaList.appendChild(newQA);
+      input.value = '';
+    }
+
+    function openModal() {
+      document.getElementById("myModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
