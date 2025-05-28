@@ -38,19 +38,23 @@ class Dev(Extension):
         if not content:
             await ctx.send(_("메시지 내용이 없습니다."), ephemeral=True)
             return
-        modal = Modal(ShortText(label="공지 제목", custom_id="notice_title", required=True),
-                      title="공지 작성",)
+        modal = Modal(
+            ShortText(label="공지 제목", custom_id="notice_title", required=True),
+            title="공지 작성",
+        )
         await ctx.send_modal(modal)
         modal_response: ModalContext = await ctx.bot.wait_for_modal(modal, timeout=60)
         if modal_response is None:
             await ctx.send("모달 응답이 없습니다.", ephemeral=True)
             return
-        title = modal_response.responses['notice_title']
+        title = modal_response.responses["notice_title"]
         json = {"title": title, "message": content}
         await apirequest("/discord/notification", method="POST", json=json)
         await ctx.send("공지 등록 완료!", ephemeral=True)
 
-    @slash_command(name="view_token", description="View the current token", scopes=[devserver])
+    @slash_command(name="view_token",
+                   description="View the current token",
+                   scopes=[devserver])
     @check(is_dev)
     async def view_token(self, ctx: SlashContext):
         """
@@ -61,7 +65,7 @@ class Dev(Extension):
         if status != 200:
             await ctx.send("token fetch failed", ephemeral=True)
             return
-        token = res['token']
+        token = res["token"]
         await ctx.send(f"Current token: ||`{token}`||", ephemeral=True)
 
 

@@ -199,14 +199,20 @@ async def remove_notion_tag(
     await discordservice.remove_notion_tag(conn, serverid, tagname)
     return JSONResponse({"success": True})
 
+
 class notificationClass(BaseModel):
     title: str
     body: str
+
+
 @router.post("/notification")
 @checkInternalServer
-async def post_notification(request: Request, notification: notificationClass, conn=Depends(get_db)):
+async def post_notification(
+    request: Request, notification: notificationClass, conn=Depends(get_db)
+):
     """
     create a notification for the webpabe.
     """
     await webservice.notification_post(conn, notification.title, notification.body)
-    return JSONResponse({"success": True, "message": "Notification sent successfully"})
+    return JSONResponse(
+        {"success": True, "message": "Notification sent successfully"})

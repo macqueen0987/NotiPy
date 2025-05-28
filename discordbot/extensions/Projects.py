@@ -301,8 +301,8 @@ class Projects(Extension):
         """
         await send_project_paginator(ctx, _, "list_projects_desc", editproject)
 
-    @projectBase.subcommand(sub_cmd_name=getname("view")
-                            , sub_cmd_description=getdesc("projects_view"))
+    @projectBase.subcommand(sub_cmd_name=getname("view"),
+                            sub_cmd_description=getdesc("projects_view"))
     @localize()
     async def view_project(self, ctx: SlashContext, _):
         """
@@ -310,12 +310,16 @@ class Projects(Extension):
         """
         authorid = int(ctx.author_id)
         guildid = int(ctx.guild_id)
-        status, repsonse = await apirequest(f"/llm/project/participating/{authorid}/{guildid}")
+        status, repsonse = await apirequest(
+            f"/llm/project/participating/{authorid}/{guildid}"
+        )
         if status == 204:
             await ctx.send(_("no_projects_found"), ephemeral=True)
             return
         elif status != 200:
-            raise ValueError(f"Error in /llm/project/participating/{authorid}/{guildid}")
+            raise ValueError(
+                f"Error in /llm/project/participating/{authorid}/{guildid}"
+            )
         projects = repsonse["projects"]
         if not projects:
             await ctx.send(_("no_projects_found"), ephemeral=True)
@@ -324,7 +328,6 @@ class Projects(Extension):
         paginator = Paginator.create_from_embeds(ctx.bot, *embeds, timeout=160)
         paginator.show_select_menu = True
         await paginator.send(ctx, content=_("view_projects_content"), ephemeral=True)
-
 
     @projectBase.subcommand(sub_cmd_name=getname("create"),
                             sub_cmd_description=getdesc("projects_create"))

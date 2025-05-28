@@ -4,6 +4,7 @@ import pkgutil
 import sys
 
 import uvicorn
+from common import templates
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import JSONResponse

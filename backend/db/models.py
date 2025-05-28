@@ -267,12 +267,14 @@ class DMchannel(Base):
     channel_id = Column(BigInteger, nullable=True)
     blocked = Column(Boolean, nullable=False, default=False)
 
+
 class Notification(Base):
     __tablename__ = "notifications"
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
 
 class Admin(Base):
     __tablename__ = "admin"

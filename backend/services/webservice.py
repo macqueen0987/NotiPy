@@ -1,14 +1,13 @@
-from datetime import datetime, timezone, timedelta
-from typing import Sequence
 import secrets
+from datetime import datetime, timedelta, timezone
+from typing import Sequence
 
+from db.models import Admin, Notification
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import Notification, Admin
 
-
-async def notification_post(conn: AsyncSession, title:str, msg:str):
+async def notification_post(conn: AsyncSession, title: str, msg: str):
     """
     Post a notification for webpage
     :param conn: database connection
@@ -31,6 +30,7 @@ async def get_notification(conn: AsyncSession) -> Sequence[Notification]:
     result = await conn.execute(query)
     return result.scalars().all()
 
+
 async def get_token(conn: AsyncSession) -> str:
     """
     Get the token for the webpage.
@@ -47,7 +47,9 @@ async def get_token(conn: AsyncSession) -> str:
         # Create a new admin entry if it doesn't exist
         admin = Admin(token=secrets.token_urlsafe(32), created_at=now)
         conn.add(admin)
-    elif not admin.token or admin.created_at.replace(tzinfo=timezone.utc) < now - timedelta(hours=1):
+    elif not admin.token or admin.created_at.replace(
+        tzinfo=timezone.utc
+    ) < now - timedelta(hours=1):
         admin.token = secrets.token_urlsafe(32)
         admin.created_at = now
     else:
