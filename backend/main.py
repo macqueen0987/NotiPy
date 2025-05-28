@@ -9,7 +9,6 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from common import templates
 
 # from tasks.notion_poller import poll_notion_projects
 os.makedirs("log", exist_ok=True)
@@ -29,6 +28,7 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 api = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
+
 
 @app.get("/")
 async def root(request: Request):
