@@ -82,6 +82,7 @@ class ServerInfo(Base):
     server_id = Column(BigInteger, primary_key=True)
     mod_id = Column(BigInteger, nullable=True)
     notion_token = Column(Text, nullable=True)
+    notification_channel_id = Column(BigInteger, nullable=True)
     webhook_channel_id = Column(BigInteger, nullable=True)
     updated = Column(DateTime, nullable=True, default=datetime.now)
 
@@ -265,3 +266,16 @@ class DMchannel(Base):
     user_id = Column(BigInteger, primary_key=True)
     channel_id = Column(BigInteger, nullable=True)
     blocked = Column(Boolean, nullable=False, default=False)
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class Admin(Base):
+    __tablename__ = "admin"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    token = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
