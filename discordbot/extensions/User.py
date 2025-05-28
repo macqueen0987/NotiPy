@@ -138,7 +138,9 @@ class User(Extension):
         Toggle the visibility of GitHub repositories in the embed.
         """
         discordid = int(ctx.author.id)
-        status, reponse = await apirequest(f"/user/github/{discordid}/toggle")
+        status, reponse = await apirequest(
+            f"/user/github/{discordid}/toggle", method="PUT", json=int(ctx.guild_id)
+        )
         if status == 204:
             await ctx.send(_("not_linked_github"), ephemeral=True)
             return

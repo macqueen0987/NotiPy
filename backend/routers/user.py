@@ -4,7 +4,7 @@ from functools import partial, wraps
 from common import *
 from fastapi import (APIRouter, BackgroundTasks, Body, Depends, Request,
                      Response, status)
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from services import userservice as crud
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -43,12 +43,12 @@ async def get(
         "github": None,
         "notion": None,
         "repos": None}
-    if github.primary_languages:
-        repos = await crud.get_repositories(conn, github.github_id)
-        returnval["repos"] = [repo.todict() for repo in repos]
-    if github is not None:
+    if github:
         returnval["github"] = github.todict()
-    if notion is not None:
+        if github.primary_languages:
+            repos = await crud.get_repositories(conn, github.github_id)
+            returnval["repos"] = [repo.todict() for repo in repos]
+    if notion:
         returnval["notion"] = notion.todict()
     return JSONResponse(content=returnval)
 
@@ -84,7 +84,7 @@ async def auth(
     :return: JSON response with the access token and user information
     """
     background_tasks.add_task(exchange_code, conn=conn, code=code)
-    return JSONResponse(content={"message": "Success!"})
+    return RedirectResponse(url="/oauth-success")
 
 
 async def exchange_code(conn, code: str):
@@ -263,14 +263,18 @@ async def delete_forum_thread(
 
 @router.put("/github/{userid}/toggle")
 @checkInternalServer
-async def toggle_github(request: Request, userid: int, conn=Depends(get_db)):
+async def toggle_github(
+        request: Request,
+        userid: int,
+        serverid: int = Body(...),
+        conn=Depends(get_db)):
     """
     Toggle the GitHub connection for a user.
     :param userid: Discord ID of the user
     :param conn: Database connection
     :return: JSON response indicating success
     """
-    show = await crud.toggle_github_show(conn, userid)
+    show = await crud.toggle_github_show(conn, serverid, userid)
     if show is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     return JSONResponse({"success": True, "data": show.show})

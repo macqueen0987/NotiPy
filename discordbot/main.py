@@ -269,6 +269,25 @@ async def unloadext(ctx: SlashContext, extension: str):
 
 
 @check(commons.is_dev)
+@slash_command(name="reload_ext",
+               description="reload extension",
+               scopes=[commons.devserver])
+@extension()
+async def reloaddext(ctx: SlashContext, extension: str):
+    reloadpip()
+    if extension == "all":
+        for temp in Extensions:
+            if temp == "all":
+                continue
+            bot.unload_extension(temp)
+            bot.load_extension(temp, functions=functions)
+    else:
+        bot.unload_extension(extension)
+        bot.load_extension(extension, functions=functions)
+    await ctx.send("Done", ephemeral=True)
+
+
+@check(commons.is_dev)
 @slash_command(
     name="reload_extensionlist",
     description="reloads list of extensions",

@@ -31,7 +31,7 @@ class Misc(Extension):
         guilds = self.bot.guilds
         guilids = [int(guild.id) for guild in guilds]
         await apirequest(f"/discord/clean", json=guilids, method="POST")
-        self.ownerdm = self.bot.owner.fetch_dm(force=True)
+        self.ownerdm = await self.bot.owner.fetch_dm(force=True)
         self.emoji = PartialEmoji.from_str(":white_check_mark:")
         if supportchannelid:
             self.supportchannel = await self.bot.fetch_channel(supportchannelid)
