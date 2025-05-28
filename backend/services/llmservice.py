@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Any, Coroutine, Dict, List, Optional, Sequence, Tuple
 
 from db.models import *
-from sqlalchemy import Row, select, update, or_
+from sqlalchemy import Row, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -266,7 +266,9 @@ async def assign_role_to_members(
     await conn.commit()
 
 
-async def get_participating_project(conn: AsyncSession, discord_id: int, serverid:int) -> List[Project]:
+async def get_participating_project(
+    conn: AsyncSession, discord_id: int, serverid: int
+) -> List[Project]:
     """
     Get all projects that a user is participating in.
     :param conn: database connection
@@ -274,14 +276,11 @@ async def get_participating_project(conn: AsyncSession, discord_id: int, serveri
     :param serverid: server id of the user
     :return: list of Project objects
     """
-    query = (
-        select(Project)
-        .join(ProjectMember, Project.project_id == ProjectMember.project_id, isouter=True)
-        .where(
-            or_(ProjectMember.user_id == discord_id, Project.owner_id == discord_id),
-            Project.server_id == serverid
-        )
-        .order_by(Project.created_at.desc())
-    )
+    query = (select(Project) .join(ProjectMember,
+                                   Project.project_id == ProjectMember.project_id,
+                                   isouter=True) .where(or_(ProjectMember.user_id == discord_id,
+                                                            Project.owner_id == discord_id),
+                                                        Project.server_id == serverid,
+                                                        ) .order_by(Project.created_at.desc()))
     result = await conn.execute(query)
     return result.scalars().all()

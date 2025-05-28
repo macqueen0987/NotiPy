@@ -208,4 +208,3 @@ async def get_notion_database(conn, serverid: int):
     if not server:
         return None
     return server.notion_databases
-
