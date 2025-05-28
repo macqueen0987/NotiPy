@@ -3,61 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Discord Landing</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=1" />
+  <title>Discord Bot Landing</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      font-family: 'Noto Sans KR', sans-serif;
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-text {
+      max-width: 600px;
+    }
+    .hero-text p {
+      font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+    }
+    .hero-image img {
+      max-width: 100%;
+      height: auto;
+    }
+    .btn-primary {
+      background-color: #5865F2;
+      color: white;
+      font-size: clamp(1rem, 1.8vw, 1.1rem);
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 28px;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #404bba;
     }
   </style>
 </head>
 <body>
-  <div class="background">
-    <div id="features" style="position: absolute; top: 23%;"></div>
 
-<!--    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="top: 0.96%; left: 36%;">주요기능</a>-->
-<!--    <a href="policy" class="nav-link" style="top: 0.96%; left: 44%;">이용정책</a>-->
-<!--    <a href="cases" class="nav-link" style="top: 0.96%; left: 52%;">활용사례</a>-->
-<!--    <a href="roadmap" class="nav-link" style="top: 0.96%; left: 60%;">로드맵</a>-->
-<!--    <a href="community" class="nav-link" style="top: 0.96%; left: 68%;">커뮤니티</a>-->
-
-    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="top: 0.96%; left: 38%;">주요기능</a>
-    <a href="policy" class="nav-link" style="top: 0.96%; left: 46%;">이용정책</a>
-    <a href="roadmap" class="nav-link" style="top: 0.96%; left: 54%;">로드맵</a>
-    <a href="community" class="nav-link" style="top: 0.96%; left: 62%;">커뮤니티</a>
-
-
-    <a href="terms-consent" class="cta-button" data-pos="top" style="top: 15.65%; left:17%">디스코드봇 불러오기</a>
-    <a href="terms-consent" class="cta-button" data-pos="bottom" style="top: 89.5%; left: 50%">디스코드봇 불러오기</a>
+  <div class="navbar">
+    <a href="#features">주요기능</a>
+    <a href="policy">이용정책</a>
+    <a href="#">활용사례</a>
+    <a href="roadmap">로드맵</a>
+    <a href="community">커뮤니티</a>
   </div>
 
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-text">
+        <h1>협업은 그대로<br />
+          연결은 더<br />
+          스마트하게
+        </h1>
+        <p>
+          노션, 깃허브, 디스코드가 하나로 연결되어 팀의 흐름이 자동으로 이어집니다. 이제부터 당신의 워크플로우를 디스코드 위에서 완성하세요.<br />
+        </p>
+        <button class="btn-primary" onclick="location.href='terms-consent'">
+          디스코드 봇 불러오기
+        </button>
+      </div>
+      <div class="hero-image">
+        <img src="/static/img/discord.png" alt="디스코드 이미지" />
+      </div>
+    </div>
+  </section>
 
-<!--  <nav>-->
-<!--    <a href="#" onclick="scrollToFeatures()" class="nav-link" style="bottom: -486%; left: 36%; position: absolute;">주요기능</a>-->
-<!--    <a href="policy" class="nav-link" style="bottom: -486%; left: 44%; position: absolute;">이용정책</a>-->
-<!--    <a href="cases" class="nav-link" style="bottom: -486%; left: 52%; position: absolute;">활용사례</a>-->
-<!--    <a href="roadmap" class="nav-link" style="bottom: -486%; left: 60%; position: absolute;">로드맵</a>-->
-<!--    <a href="community" class="nav-link" style="bottom: -486%; left: 68%; position: absolute;">커뮤니티</a>-->
-<!--  </nav>-->
+  <section id="features" class="features">
+    <div class="glass-box">
+      <div class="feature-row">
+        <div class="feature-text">
+          <h3>
+            노션 페이지 <br />
+            디스코드 포럼 스레드로<br />
+            자동 전환!<br />
+          </h3>
+          <p>
+            노션에 새 프로젝트를 만들면,  
+            디스코드에 해당 프로젝트를 위한 대화공간이 자동으로 생성됩니다.  
+            실시간 협업, 이제 더는 놓치지 마세요!
+          </p>
+        </div>
+        <div class="feature-image">
+          <img src="/static/img/first-features.png" alt="자동 전환 이미지" />
+        </div>
+      </div>
+    </div>
 
-  <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
-      <path d="M12 4l-8 8h5v8h6v-8h5z"/>
-    </svg>
-  </button>
+    <div class="glass-box">
+      <div class="feature-row reverse">
+        <div class="feature-text">
+          <h3>
+            손 안 대도 전해지는 소식! <br />
+            모든 변경사항, <br />
+            디스코드로 바로 전달됩니다.
+          </h3>
+          <p>
+            노션이나 깃허브에서 수정이 이뤄지면, 봇이 자동으로 알려드립니다.  
+            디스코드에서 더 쉽고 빠르게 소통하세요!
+          </p>
+        </div>
+        <div class="feature-image">
+          <img src="/static/img/second-features.png" alt="자동 전송 이미지" />
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-box">
+      <div class="feature-row">
+        <div class="feature-text">
+          <h3>
+            AI가 <br />
+            프로젝트 관리도 <br />
+            도와드립니다!
+          </h3>
+          <p>
+            진행 중인 노션의 내용을 분석해, 디스코드 봇이 우선순위 예측과 일정 추천을 제공합니다.  
+            관리 부담은 줄이고, 실행력을 높여보세요!
+          </p>
+        </div>
+        <div class="feature-image">
+          <img src="/static/img/second-features.png" alt="AI 분석 이미지" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>지금 체험해보세요!</h2>
+    <button onclick="location.href='terms-consent'" class="btn-primary">디스코드 봇 불러오기</button>
+  </section>
+
+  <footer>
+    &copy; 2025 Discord Bot. All Rights Reserved.
+  </footer>
+
+  <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">⬆</button>
 
   <script>
-    function scrollToFeatures() {
-      const target = document.getElementById("features");
-      if (target) {
-        const offsetTop = target.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-      }
-    }
-
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -71,5 +152,6 @@
       }
     });
   </script>
+
 </body>
 </html>

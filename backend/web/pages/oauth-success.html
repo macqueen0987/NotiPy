@@ -2,83 +2,85 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OAuth 인증 완료</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      background-image: url('/static/img/discord-bot-success2.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      height: 100%;
       font-family: 'Noto Sans KR', sans-serif;
-      height: 100vh;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-end;
     }
 
-    .button-container {
-      margin: 40px;
+    body {
+      background-image: url('/static/img/discord-bot-success2.png');
+      background-size: cover;              /* ✅ 꽉 채우되 잘리는 건 허용 */
+      background-position: center center;  /* ✅ 중심부 고정 */
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-color: black;
+
       display: flex;
-      flex-direction: row;
-      gap: 16px;
+      justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
+      min-height: 100vh;
     }
 
-    .button-container a {
-      padding: 18px 32px;
-      font-size: 1.1rem;
+    .modal-box {
+      background-color: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      padding: 28px 24px;
+      border-radius: 16px;
+      text-align: center;
+      color: white;
+      width: clamp(280px, 80%, 480px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-box h1 {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      margin-bottom: 20px;
+      color: #00FFCC;
+    }
+
+    .modal-box p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      margin-bottom: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn-group a {
+      padding: clamp(10px, 2vw, 14px) clamp(16px, 4vw, 28px);
       background-color: #5865F2;
       color: white;
-      border-radius: 12px;
       text-decoration: none;
       font-weight: bold;
+      border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      font-size: clamp(0.9rem, 2vw, 1rem);
       transition: background-color 0.3s ease;
-      text-align: center;
     }
 
-    .button-container a:hover {
+    .btn-group a:hover {
       background-color: #4752c4;
-    }
-
-    .close-message {
-      margin-top: 12px;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 400;
-    }
-
-    @media (max-width: 768px) {
-      .button-container {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        margin: 24px;
-      }
-
-      .button-container a {
-        font-size: 1rem;
-        padding: 14px 24px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .button-container a {
-        font-size: 0.95rem;
-        padding: 12px 20px;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="button-container">
-    <a href="https://sejin-1457.github.io/discord-bot-landingpages/">🏠 홈페이지로 돌아가기</a>
-    <a href="https://sejin-1457.github.io/discord-bot-landingpages/guidebook.html">📘 가이드북 보기</a>
-    <div class="close-message">이제 창을 닫으셔도 됩니다.</div>
+  <div class="modal-box">
+    <h1>디스코드봇 구성 완료</h1>
+    <p>이제 창을 닫으셔도 됩니다.</p>
+    <div class="btn-group">
+      <a href="/">🏠 홈페이지로 돌아가기</a>
+      <a href="/case">📘 가이드북 보기</a>
+    </div>
   </div>
 </body>
 </html>

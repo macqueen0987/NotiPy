@@ -1,49 +1,220 @@
-.background {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  background-image: url('/static/img/discord-bot-main.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-attachment: scroll;
-  aspect-ratio: 1425 / 4100;
+/* 기본 설정 */
+* {
+  box-sizing: border-box;
 }
 
-/* ✅ 네비게이션 및 버튼 공통 스타일 */
-.nav-link, .cta-button {
-  position: absolute;
-  transform: translate(-50%, -50%);
+html {
+  font-size: clamp(14px, 1.2vw, 18px);
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
   color: white;
-  font-weight: bold;
+  overflow-x: hidden;
+  background-image: url('/static/img/discord-main.png');
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+}
+
+/* 네비게이션 */
+.navbar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 20px 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar a {
+  color: white;
   text-decoration: none;
-  white-space: nowrap;
-  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: color 0.3s;
 }
 
-.cta-button {
-  padding: 12px 24px;
+.navbar a:hover {
+  color: #ddd;
+}
+
+/* Hero */
+.hero {
+  padding: 80px 5% 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.hero-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1280px;
+  width: 95%;
+  gap: 40px;
+}
+
+.hero-text {
+  flex: 1 1 50%;
+  max-width: 720px;
+}
+
+.hero-text h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  opacity: 0.9;
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+.hero-image {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* 버튼 */
+.btn-primary {
   background-color: #5865F2;
+  color: white;
+  font-size: clamp(1rem, 1.8vw, 1.1rem);
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 28px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: white;
+  color: #5865F2;
+}
+
+/* 기능 박스 */
+.features {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 60px 0 40px;
+  gap: 120px;
+}
+
+.glass-box {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 24px;
-  font-size: clamp(14px, 1.4vw, 18px);
+  padding: 40px;
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  width: 95%;
+  max-width: 1280px;
 }
 
-.cta-button:hover {
-  background-color: #4752c4;
+.feature-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
-/* ✅ 맨 위로 스크롤 버튼 */
+.feature-row.reverse {
+  flex-direction: row-reverse;
+}
+
+.feature-text {
+  flex: 1 1 50%;
+  max-width: 720px;
+  width: 100%;
+}
+
+.feature-text h3 {
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.feature-text p {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.7;
+  color: #f0f0f0;
+  text-align: justify;
+  max-width: 720px;
+}
+
+.feature-image {
+  flex: 1 1 50%;
+  max-width: 720px;
+}
+
+.feature-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  padding: 30px 20px 100px;
+  margin-top: -40px;
+}
+
+.cta h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-bottom: 12px;
+}
+
+/* 푸터 */
+footer {
+  background-color: #2f3dcf;
+  text-align: center;
+  padding: 40px;
+  font-size: 0.9rem;
+  color: white;
+}
+
+/* 위로 가기 버튼 */
 #scrollToTopBtn {
   position: fixed;
   bottom: 30px;
   right: 30px;
   z-index: 999;
-  background-color: #5865F2;
+  background-color: white;
+  color: #5865F2;
   border: none;
   border-radius: 50%;
   width: 48px;
   height: 48px;
-  padding: 10px;
+  font-size: 22px;
+  font-weight: bold;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   opacity: 0;
@@ -56,52 +227,22 @@
   visibility: visible;
 }
 
-#scrollToTopBtn svg {
-  display: block;
-  margin: 0 auto;
-}
-
-/* ✅ 반응형 설정 */
-@media (max-width: 1024px) {
-  .nav-link {
-    font-size: 14px !important;
+/* 반응형 - 글+이미지 나란히 고정 */
+@media (max-width: 768px) {
+  .hero-container, .feature-row {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .cta-button[data-pos="top"] {
-    top: 24% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
+  .hero-text, .hero-image, .feature-text, .feature-image {
+    max-width: 50%;
+    width: 50%;
+    text-align: left;
   }
 
-  .cta-button[data-pos="bottom"] {
-    top: 95% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@media (max-width: 600px) {
-  .nav-link {
-    font-size: 12px !important;
-    top: auto !important;
-    bottom: 3% !important;
-    position: fixed !important;
-  }
-
-  .cta-button[data-pos="top"] {
-    top: 28% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
-  }
-
-  .cta-button[data-pos="bottom"] {
-    top: 93% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%);
-  }
-
-  .background {
-    background-size: cover; /* contain → cover 로 모바일 가독성 향상 */
-    aspect-ratio: auto;
+  .feature-text h3, .feature-text p, .hero-text h1, .hero-text p {
+    text-align: left;
   }
 }

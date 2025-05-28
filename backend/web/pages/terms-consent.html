@@ -9,13 +9,12 @@
       margin: 0;
       padding: 0;
       font-family: 'Noto Sans KR', sans-serif;
-      background-image: url('/static/img/discord-bot-terms.png');
+      background-image: url('images/discord-bot-terms.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       color: #222;
-      height: 100vh;
-      overflow: hidden;
+      height: 100%;
     }
 
     .container {
@@ -253,7 +252,7 @@
           "?client_id=955999346321686609" +
           "&scope=bot" +
           "&permissions=8" +
-          "&redirect_uri=" + encodeURIComponent("https://sejin-1457.github.io/discord-bot-landingpages/oauth-popup.html") +
+          "&redirect_uri=" + encodeURIComponent("https://sejin-1457.github.io/discord-bot/oauth-popup.html") +
           "&response_type=code",
         "_blank",
         "width=600,height=800"
@@ -265,7 +264,7 @@
       console.log("✅ 메시지 수신:", event.data);
       if (event.origin !== "https://sejin-1457.github.io") return;
       if (event.data === "discord-auth-success") {
-        window.location.href = "/discord-bot-landingpages/oauth-success.html";
+        window.location.href = "/discord-bot/oauth-success.html";
       }
     });
   </script>
