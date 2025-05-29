@@ -14,7 +14,9 @@
             background-position: center;
             background-repeat: no-repeat;
             color: #222;
-            height: 100%;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
         .container {
@@ -290,23 +292,16 @@
     // 3️⃣ 버튼 클릭 시 팝업 띄우기
     agreeButton.onclick = () => {
         window.open(
-            "https://discord.com/oauth2/authorize" +
-            "?client_id=955999346321686609" +
-            "&scope=bot" +
-            "&permissions=8" +
-            "&redirect_uri=" + encodeURIComponent("https://sejin-1457.github.io/discord-bot/oauth-popup.html") +
-            "&response_type=code",
-            "_blank",
-            "width=600,height=800"
+            "https://discord.com/oauth2/authorize?client_id=955999346321686609&permissions=8&response_type=code&redirect_uri=http%3A%2F%2Fnotipy.code0987.com%2Foauth-popup&integration_type=0&scope=bot+connections+presences.read+messages.read+applications.commands"
         );
     };
 
     // 4️⃣ 메시지 수신 → oauth-success.html 이동
     window.addEventListener("message", (event) => {
         console.log("✅ 메시지 수신:", event.data);
-        if (event.origin !== "https://sejin-1457.github.io") return;
+        if (event.origin !== "/") return;
         if (event.data === "discord-auth-success") {
-            window.location.href = "/discord-bot/oauth-success.html";
+            window.location.href = "/oauth-success";
         }
     });
 </script>
