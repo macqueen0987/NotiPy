@@ -286,9 +286,12 @@ async def get_project_members(
             {"githubid": member.user_id, "discordid": discord_id})
     return JSONResponse(status_code=200, content={"members": returndict})
 
+
 @router.get("/project/participating/{user_id}/{serverid}")
 @checkInternalServer
-async def get_participated_projects(request: Request, user_id: int, serverid: int, conn=Depends(get_db)):
+async def get_participated_projects(
+    request: Request, user_id: int, serverid: int, conn=Depends(get_db)
+):
     """
     주어진 사용자 ID에 해당하는 사용자가 참여한 프로젝트 목록을 JSON 형식으로 반환합니다.
     """
@@ -298,6 +301,7 @@ async def get_participated_projects(request: Request, user_id: int, serverid: in
 
     project_list = [project.todict() for project in projects]
     return JSONResponse(status_code=200, content={"projects": project_list})
+
 
 @router.post("/project/{owner_id}/{projectid}/member")
 @checkInternalServer

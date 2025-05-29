@@ -4,95 +4,127 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>로드맵</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%; /* ★ 추가 */
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrapper {
+      min-height: calc(100vh - 60px); /* ★ 추가: footer 높이만큼 제외한 최소 높이 */
     }
 
     body {
       font-family: 'Noto Sans KR', sans-serif;
       background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     header {
       background-color: #5865F2;
-      padding: 20px;
       color: white;
       text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 28px 20px;
+      font-size: 1.8rem;
+      font-weight: bold;
       position: relative;
     }
 
     .back-button {
       position: absolute;
-      top: 20px;
       left: 20px;
-      font-size: 1.5em;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.6rem;
       color: white;
       cursor: pointer;
-      transition: color 0.3s;
     }
 
-    .back-button:hover {
-      color: #ddd;
+    .diagram-container {
+      max-width: 1200px;
+      margin: 60px auto 40px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      align-items: center;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.5em;
-    }
-
-    .content {
-      padding: 40px 20px;
+    .category-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
       width: 100%;
-      max-width: 960px;
-      margin: 0 auto;
+      justify-content: center;
+    }
+
+    .category-title {
+      width: 180px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #222;
+      text-align: right;
+      padding-top: 16px;
+    }
+
+    .category-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      padding: 32px;
+      border-radius: 16px;
+      min-height: 140px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+    .category-box.tech { background-color: #e9f0ff; }
+    .category-box.deploy { background-color: #ddfbee; }
+    .category-box.collab { background-color: #fff2e2; }
+
+    .node {
       background-color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      flex-grow: 1;
-      overflow-y: auto;
-      margin-bottom: 100px;
+      padding: 20px 26px;
+      border-radius: 12px;
+      text-align: center;
+      min-width: 180px;
+      min-height: 100px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      flex: 1 0 auto;
+      cursor: pointer;
     }
 
-    .content h2 {
-      color: #333;
-      margin-top: 24px;
+    .node:hover {
+      transform: translateY(-4px);
     }
 
-    .content p {
-      font-size: 1.1em;
-      line-height: 1.6;
+    .node strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #111;
+    }
+
+    .node span {
+      font-size: 1rem;
       color: #555;
     }
 
-    ul {
-      list-style: disc;
-      padding-left: 20px;
-      color: #555;
-      margin-bottom: 24px;
-    }
-
-    .section-title {
-      font-weight: bold;
-      margin-top: 24px;
-      font-size: 1.2em;
-      color: #444;
-    }
-
-    .sub-section {
-      margin-bottom: 24px;
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      max-width: 320px;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      line-height: 1.5;
     }
 
     footer {
@@ -100,106 +132,136 @@
       color: white;
       text-align: center;
       padding: 15px;
-      position: fixed;
-      width: 100%;
+      position: relative;
       bottom: 0;
-      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* 📱 반응형 모바일 대응 */
     @media (max-width: 768px) {
-      .content {
+      header {
+        font-size: 1.4rem;
         padding: 24px 16px;
-        border-radius: 0;
-        margin-bottom: 120px;
-      }
-
-      header h1 {
-        font-size: 1.2em;
-      }
-
-      .section-title {
-        font-size: 1.1em;
-      }
-
-      .content p,
-      .content ul li {
-        font-size: 1em;
       }
 
       .back-button {
-        font-size: 1.3em;
-        top: 16px;
+        font-size: 1.4rem;
         left: 16px;
+      }
+
+      .category-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .category-title {
+        text-align: center;
+        width: auto;
+        padding-top: 0;
+      }
+
+      .category-box {
+        justify-content: center;
+        padding: 24px;
+        gap: 20px;
+      }
+
+      .node {
+        min-width: 140px;
+        padding: 16px 20px;
+      }
+
+      .node strong {
+        font-size: 1.1rem;
+      }
+
+      .node span {
+        font-size: 0.95rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
-    <h1>로드맵</h1>
-  </header>
+  <div class="wrapper">
+    <header>
+      <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+      로드맵
+    </header>
 
-  <div class="content">
-    <h2>프로젝트 목표 및 기술 스택</h2>
-    <p>본 프로젝트의 목표는 협업 흐름을 자동화하여 디스코드, GitHub, Notion 등의 다양한 플랫폼 간에 효율적인 정보 공유와 관리 시스템을 제공하는 것입니다.</p>
+    <div class="diagram-container">
+      <div class="category-section">
+        <div class="category-title">기술 스택</div>
+        <div class="category-box tech">
+          <div class="node" data-key="Python"><strong>Python</strong><span>백엔드 언어</span></div>
+          <div class="node" data-key="API"><strong>API</strong><span>시스템 연동</span></div>
+          <div class="node" data-key="도구"><strong>도구</strong><span>운영 환경</span></div>
+        </div>
+      </div>
 
-    <div class="section-title">기술 스택</div>
-    <div class="sub-section">
-      <p><strong>1. Python 3.12</strong></p>
-      <ul>
-        <li><strong>Discord-py-interactions</strong>: 디스코드 챗봇 개발용</li>
-        <li><strong>SQLAlchemy</strong>: ORM 기반 DB 연동</li>
-        <li><strong>FastAPI</strong>: Python 기반 고속 웹 프레임워크</li>
-        <li><strong>Alembic</strong>: DB 마이그레이션 관리 도구</li>
-      </ul>
+      <div class="category-section">
+        <div class="category-title">배포 환경</div>
+        <div class="category-box deploy">
+          <div class="node" data-key="GitHub"><strong>GitHub</strong><span>버전 관리</span></div>
+          <div class="node" data-key="Docker"><strong>Docker</strong><span>배포 자동화</span></div>
+          <div class="node" data-key="Nginx"><strong>Nginx</strong><span>트래픽 제어</span></div>
+        </div>
+      </div>
+
+      <div class="category-section">
+        <div class="category-title">협업 도구</div>
+        <div class="category-box collab">
+          <div class="node" data-key="Notion"><strong>Notion</strong><span>문서 & 일정</span></div>
+          <div class="node" data-key="Discord"><strong>Discord</strong><span>실시간 소통</span></div>
+          <div class="node" data-key="GitHub 협업"><strong>GitHub 협업</strong><span>코드 기반</span></div>
+        </div>
+      </div>
     </div>
-
-    <div class="sub-section">
-      <p><strong>2. APIs</strong></p>
-      <ul>
-        <li><strong>Discord API</strong>: 챗봇 기능 연동</li>
-        <li><strong>Notion API</strong>: 페이지 정보 입출력</li>
-        <li><strong>GitHub API</strong>: 사용자 및 저장소 정보 조회</li>
-      </ul>
-    </div>
-
-    <div class="sub-section">
-      <p><strong>3. 기타 도구</strong></p>
-      <ul>
-        <li><strong>Nginx</strong>: Reverse Proxy 운영</li>
-        <li><strong>Docker</strong>: 컨테이너 기반 테스트/배포</li>
-        <li><strong>MySQL</strong>: 관계형 데이터 저장소</li>
-      </ul>
-    </div>
-
-    <div class="section-title">배포 환경 및 협업 도구</div>
-    <div class="sub-section">
-      <p><strong>1. 배포 환경</strong></p>
-      <ul>
-        <li><strong>GitHub</strong>: 코드 배포 및 버전 관리</li>
-        <li><strong>Docker</strong>: 일관된 테스트 및 배포 환경</li>
-        <li><strong>Nginx</strong>: 프록시 및 트래픽 처리</li>
-      </ul>
-    </div>
-
-    <div class="sub-section">
-      <p><strong>2. 협업 도구</strong></p>
-      <ul>
-        <li><strong>Notion</strong>: 문서화 및 일정 관리</li>
-        <li><strong>Discord</strong>: 커뮤니케이션 및 실시간 피드백</li>
-        <li><strong>GitHub</strong>: 개발 협업 및 코드 공유</li>
-      </ul>
-    </div>
-
-    <p>이 프로젝트는 오픈소스로 제공되며, 누구나 자유롭게 활용할 수 있도록 설계되었습니다.</p>
   </div>
 
+  <div id="tooltip"></div>
+
   <footer>
-    <p>&copy; 2025 Discord Bot. All Rights Reserved.</p>
+    &copy; 2025 Discord Bot. All Rights Reserved.
   </footer>
+
+  <script>
+    const tooltip = document.getElementById("tooltip");
+
+    const explanations = {
+      "Python": "FastAPI, SQLAlchemy로 백엔드 구성. Alembic으로 DB 마이그레이션 관리.",
+      "API": "Notion, GitHub, Discord API로 외부 시스템 실시간 연동.",
+      "도구": "Docker, MySQL, Nginx 기반의 안정적인 배포 환경.",
+      "GitHub": "코드 버전 관리 및 협업 도구로 PR 리뷰와 이슈 관리 가능.",
+      "Docker": "컨테이너 기반으로 일관된 환경에서 배포 자동화.",
+      "Nginx": "트래픽 라우팅, 정적 파일 제공 및 로드 밸런싱 수행.",
+      "Notion": "업무 일정 및 문서 협업에 활용. 페이지 기반 관리.",
+      "Discord": "봇 기반 알림, 스레드, DM 등 실시간 커뮤니케이션.",
+      "GitHub 협업": "Pull Request 기반의 팀 협업 구조 구축."
+    };
+
+    document.querySelectorAll('.node').forEach(node => {
+      node.addEventListener('mouseenter', (e) => {
+        const key = e.currentTarget.dataset.key;
+        if (!key || !explanations[key]) return;
+
+        tooltip.textContent = explanations[key];
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        tooltip.style.left = `${rect.left + window.scrollX}px`;
+        tooltip.style.top = `${rect.bottom + 10 + window.scrollY}px`;
+        tooltip.style.display = "block";
+      });
+
+      node.addEventListener('mouseleave', () => {
+        tooltip.style.display = "none";
+      });
+    });
+  </script>
 
 </body>
 </html>

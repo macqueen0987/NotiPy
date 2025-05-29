@@ -3,10 +3,12 @@ from functools import wraps
 
 from aiohttp import BasicAuth, ClientSession
 from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
 from llm_axe import Agent, OllamaChat
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from var import *
 
+templates = Jinja2Templates(directory="web/pages")
 engine = create_async_engine(
     f"mysql+aiomysql://{dbuser}:{dbpassword}@{dbhost}:{dbport}/{dbname}",
     echo=False,

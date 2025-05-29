@@ -151,6 +151,7 @@
     "select_edit_field_prompt": "어떤 항목을 수정하시겠습니까?",
     "select_edit_field_placeholder": "수정할 항목 선택",
 
+    "project_id": "프로젝트 ID",
     "category": "카테고리",
     "team_size": "팀 규모",
     "core_features": "핵심 기능",
