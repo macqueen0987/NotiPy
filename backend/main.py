@@ -2,45 +2,60 @@ import logging
 import os
 import pkgutil
 import sys
-from datetime import datetime
-from threading import Thread
 
-import aiohttp
-import db.models as models
 import uvicorn
-from common import get_db
-from fastapi import BackgroundTasks, Depends, FastAPI, Request, status
-from fastapi.exceptions import RequestValidationError
+from common import templates
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.responses import JSONResponse
-from interactions.client.errors import BadRequest
-from routers.notion import router as notion_router
-from services import userservice as crud
-from sqlalchemy import select
+from fastapi.staticfiles import StaticFiles
 
 # from tasks.notion_poller import poll_notion_projects
-
+os.makedirs("log", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler("log/app.log", "a", "utf-8"),
+    ],
 )
 logger = logging.getLogger("NoityPy-Backend")
 logger.info("Starting NotiPy Backend...")
 
 # 1) fastapi 메인앱, api 용 서브앱 선언
-app = FastAPI()
-api = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+api = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
-# TODO: 지금 API URL 구조가 굉장히 난라닜는데 url 에 막 동사 넣고 그러는게 좋지 않음
-# 이런 구조는 RESTful 하지 않음, 추후 수정 필요
+app.mount("/static", StaticFiles(directory="web/static"), name="static")
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello, NotiPy!"}
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
-# @api.exception_handler(RequestValidationError)
+@app.get("/{page}")
+async def page_handler(request: Request, page: str):
+    """
+    Handles requests for pages that are not explicitly defined.
+    This will render the page if it exists, otherwise it will return a 404 error.
+    대에충 페이지 있으면 알아서 갔다 줌, 일일이 구현하기 싫어서 만듬
+    """
+    try:
+        return templates.TemplateResponse(f"{page}.html", {"request": request})
+    except Exception as e:
+        logger.error(f"Error rendering page {page}: {e}")
+        raise HTTPException(status_code=404, detail="Page not found")
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request, __):
+    return templates.TemplateResponse(
+        "404.html", {"request": request}, status_code=404)
+
+
+@api.exception_handler(RequestValidationError)
 async def validation_exception_handler(
         request: Request,
         exc: RequestValidationError):
@@ -50,16 +65,6 @@ async def validation_exception_handler(
     return JSONResponse(
         content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
     )
-
-
-# @api.exception_handler(BadRequest)
-async def bad_request_exception_handler(request: Request, exc: BadRequest):
-    exc_str = f"{exc}".replace("\n", " ").replace("   ", " ")
-    logging.error(f"{request}: {exc_str}")
-    content = {"status_code": 10422, "message": exc_str, "data": None}
-    return JSONResponse(
-        content=content,
-        status_code=status.HTTP_400_BAD_REQUEST)
 
 
 # 3) 메인 실행부: 자동으로 routers 폴더 내에 존재하는 모든 라우터 api에 장착

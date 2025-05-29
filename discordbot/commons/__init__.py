@@ -11,6 +11,7 @@ from interactions import (ActionRow, BaseComponent, BaseContext,
                           StringSelectMenu)
 from interactions.api.events import Component
 
+from .cache import BiDirectionalTTLCache
 from .locale import *
 from .Options import *
 from .var import *
@@ -40,10 +41,11 @@ async def is_moderator(ctx: BaseContext) -> bool:
     if member.guild_permissions.ADMINISTRATOR:
         return True
     member_role_ids = [int(role.id) for role in member.roles]
-    cached_modrole_id = modcache.get(guild.id)
-    if cached_modrole_id is not None:
-        return cached_modrole_id in member_role_ids
-    status, response = await apirequest(f"/discord/getmodrole?serverid={guild.id}")
+    # TODO: use cache, 나중에 cachetools로 캐시 구현 예정
+    # cached_modrole_id = modcache.get(guild.id)
+    # if cached_modrole_id is not None:
+    #     return cached_modrole_id in member_role_ids
+    status, response = await apirequest(f"/discord/{guild.id}/modrole")
     if status != 200:
         return False
     modrole = response.get("modrole")
@@ -52,15 +54,6 @@ async def is_moderator(ctx: BaseContext) -> bool:
     modrole_id = int(modrole)
     modcache[guild.id] = modrole_id
     return modrole_id in member_role_ids
-
-
-async def server_only(ctx) -> bool:
-    """
-    Check if the command is used in a server.
-    """
-    if ctx.guild is None:
-        return False
-    return True
 
 
 async def wait_for_component_interaction(
@@ -84,12 +77,14 @@ async def wait_for_component_interaction(
         used_component: Component = await ctx.bot.wait_for_component(
             components=component, timeout=timeout, check=check
         )
-        return (
-            used_component.ctx,
-            used_component.ctx.values[0],
-        )  # 보통 Select 메뉴일 경우
+        returnval = None
+        try:
+            returnval = used_component.ctx.values[0]
+        except IndexError:  # Button 같은 경우
+            pass
+        return (used_component.ctx, returnval)  # 보통 Select 메뉴일 경우
     except TimeoutError:
-        await message.delete()
+        await message.delete(context=ctx)
         return None
 
 
@@ -149,7 +144,7 @@ async def apirequest(
     method: str = "GET",
     params: dict = None,
     data: dict = None,
-    json: dict = None,
+    json: any = None,
     headers: dict = None,
     auth: aiohttp.BasicAuth = None,
 ) -> tuple[int, dict | None]:
@@ -163,7 +158,7 @@ async def makerequest(
     method: str = "GET",
     params: dict = None,
     data: dict = None,
-    json: dict = None,
+    json: any = None,
     headers: dict = None,
     auth: aiohttp.BasicAuth = None,
 ) -> tuple[int, dict | None]:
@@ -173,6 +168,7 @@ async def makerequest(
     headers["X-Internal-Request"] = (
         "true"  # this is a custom header to identify internal requests
     )
+    headers["Content-Type"] = "application/json"
     async with aiohttp.ClientSession() as session:
         async with session.request(
             method,

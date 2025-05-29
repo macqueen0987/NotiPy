@@ -2,8 +2,8 @@ import json
 import os
 from datetime import datetime, timezone
 
-from aimodels import Base, Project  # 미리 정의해 둔 SQLAlchemy 모델
 from llm_axe import OllamaChat
+from models import Base, Project  # 미리 정의해 둔 SQLAlchemy 모델
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -98,7 +98,6 @@ def save_project(record: dict):
         notifications=record.get("notifications", False),
         map_integration=record.get("map_integration", False),
         auth_required=record.get("auth_required", False),
-        owner_id=None,
     )
 
     with Session(engine) as session:

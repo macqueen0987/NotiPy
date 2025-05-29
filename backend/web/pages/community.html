@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>커뮤니티</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #5865F2;
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0 auto;
+            font-size: 1.5rem;
+        }
+
+        .back-button, .admin-icon {
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            position: static;
+        }
+
+        .back-button {
+            margin-right: auto;
+        }
+
+        .admin-icon {
+            margin-left: auto;
+        }
+
+        .content {
+            max-width: 960px;
+            margin: 0 auto 50px;
+            padding: 40px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .section {
+            flex: 1 1 45%;
+            min-width: 300px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        ul.notice li, ul.faq li {
+            background: #e6f2ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        ul.notice, ul.faq {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul.notice li h3, ul.faq li h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        ul.notice li h3 small, ul.faq li h3 small {
+            margin-left: 8px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        ul.notice li p, ul.faq li p {
+            color: #555;
+            margin: 4px 0;
+        }
+
+        .admin-controls input, .admin-controls textarea,
+        .faq-form textarea, .faq-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        .admin-controls button, .faq-form button {
+            width: 100%;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .admin-controls button:hover, .faq-form button:hover {
+            background-color: #4752c4;
+        }
+
+        .answer-status {
+            color: #5865F2;
+            font-weight: bold;
+        }
+
+        .waiting-status {
+            color: #a6a5a4;
+            font-weight: bold;
+        }
+
+        .admin-answer textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .admin-answer button {
+            width: 100%;
+            margin-top: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #5865F2;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .answer-text-block {
+            margin-top: 8px;
+            background: #f0f0ff;
+            padding: 10px;
+            border-radius: 6px;
+            color: #333;
+            max-width: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                padding: 24px 16px;
+            }
+
+            .section {
+                flex: 1 1 100%;
+            }
+
+            header h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* HTML: <div class="loader"></div> */
+        .loader {
+            width: 40px;
+            aspect-ratio: 1;
+            --c: linear-gradient(#000 0 0);
+            --m: radial-gradient(farthest-side, #000 92%, #0000);
+            background: var(--c), var(--m),
+            var(--c), var(--m),
+            var(--c), var(--m);
+            background-size: 8px 15px, 8px 8px;
+            background-repeat: no-repeat;
+            animation: l15 2s infinite;
+        }
+
+        @keyframes l15 {
+            0% {
+                background-position: 0 0, 0 100%, 50% 0, 50% 100%, 100% 0, 100% 100%
+            }
+            11.11% {
+                background-position: 0 calc(100% - 8px), 0 100%, 50% 0, 50% 100%, 100% 0, 100% 100%
+            }
+            22.22% {
+                background-position: 0 calc(100% - 8px), 0 100%, 50% calc(100% - 8px), 50% 100%, 100% 0, 100% 100%
+            }
+            33.33% {
+                background-position: 0 calc(100% - 8px), 0 100%, 50% calc(100% - 8px), 50% 100%, 100% calc(100% - 8px), 100% 100%
+            }
+            44.44% {
+                background-position: 0 0, 0 15px, 50% calc(100% - 8px), 50% 100%, 100% calc(100% - 8px), 100% 100%
+            }
+            55.55% {
+                background-position: 0 0, 0 15px, 50% 0, 50% 15px, 100% calc(100% - 8px), 100% 100%
+            }
+            66.66% {
+                background-position: 0 0, 0 15px, 50% 0, 50% 15px, 100% 0, 100% 15px
+            }
+            77.77% {
+                background-position: 0 0, 0 100%, 50% 0, 50% 15px, 100% 0, 100% 15px
+            }
+            88.88% {
+                background-position: 0 0, 0 100%, 50% 0, 50% 100%, 100% 0, 100% 15px
+            }
+            100% {
+                background-position: 0 0, 0 100%, 50% 0, 50% 100%, 100% 0, 100% 100%
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <i class="fas fa-arrow-left back-button" onclick="history.back()"></i>
+    <h1>커뮤니티</h1>
+    <i class="fas fa-user-shield admin-icon" onclick="document.getElementById('admin-modal').style.display='flex'"></i>
+</header>
+
+<div class="admin-modal" id="admin-modal"
+     style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
+    <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; max-width: 300px;" ,
+         id="admin-modal-content">
+        <p style="margin-bottom: 10px;">관리자 토큰를 입력하세요</p>
+        <input type="password" id="admin-pass" placeholder="토큰 입력"
+               style="width: 100%; padding: 10px; margin-bottom: 10px;">
+        <button onclick="verifyAdmin()"
+                style="width: 100%; padding: 10px; background: #5865F2; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem;">
+            확인
+        </button>
+    </div>
+</div>
+
+<div class="content">
+    <div class="section">
+        <h2>공지사항</h2>
+        <ul class="notice" id="notice-list" hx-get="/api/web/notification" hx-trigger="load" hx-swap="innerHTML">
+            <div style="max-width: 100%; display: flex; justify-content: center; align-items: center; height: 100%; margin: auto;">
+                <div class="loader"></div>
+            </div>
+        </ul>
+        <div class="admin-controls" id="admin-controls" style="display:none">
+            <input id="notice-title" placeholder="공지 제목">
+            <textarea id="notice-body" placeholder="공지 내용"></textarea>
+            <button onclick="postNotice()">공지 등록</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>FAQ</h2>
+        <ul class="faq" id="faq-list">
+            <li class="answered" data-answer="Notion 연동을 위해 사용자가 직접 Notion Integration을 생성하고 해당 토큰을 발급해야 합니다.">
+                <h3>Notion 연동은 어떻게 하나요? <small>2025-05-28</small></h3>
+                <p>개인 Notion 워크스페이스를 연동하려면 어떻게 해야 하나요?</p>
+                <span class="answer-status">[답변완료]</span>
+                <div class="faq-answer" style="display: none; margin-top: 8px; color: #333;"></div>
+            </li>
+            <!-- 다른 항목들... -->
+        </ul>
+
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Discord Bot. All Rights Reserved.</p>
+</footer>
+
+<!-- 외부 JavaScript 파일 추가 -->
+<script src="/static/js/script.js"></script>
+<script src="/static/js/admin.js"></script>
+
+</body>
+</html>

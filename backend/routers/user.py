@@ -2,9 +2,9 @@ from datetime import datetime
 from functools import partial, wraps
 
 from common import *
-from fastapi import (APIRouter, BackgroundTasks, Depends, Request, Response,
-                     status)
-from fastapi.responses import JSONResponse
+from fastapi import (APIRouter, BackgroundTasks, Body, Depends, Request,
+                     Response, status)
+from fastapi.responses import JSONResponse, RedirectResponse
 from services import userservice as crud
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -18,23 +18,38 @@ async def root(request: Request):
 
 @router.get("/get")
 @checkInternalServer
-async def get(request: Request, discordid: int, conn=Depends(get_db)):
+async def get(
+    request: Request, discordid: int, other: bool = False, conn=Depends(get_db)
+):
     """
     Get user information by discord id
     :param discordid: Discord ID of the user
+    :param other: If the user requested is not the same as the user making the request
     :param conn: Database connection
     :return: JSON response with user information
     """
+    if other:
+        res = await crud.get_git_show(conn, discordid)
+        if res is None:  # if res is None, it means the user does not exist
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
+        if not res:  # if res is false
+            return Response(status_code=status.HTTP_403_FORBIDDEN)
     res = await crud.get_user(conn, discordid)
     if res is None:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     user, github, notion = res
-    returnval = {"user": user.todict()}
-    if github is not None:
+    returnval = {
+        "user": user.todict(),
+        "github": None,
+        "notion": None,
+        "repos": None}
+    if github:
         returnval["github"] = github.todict()
-    if notion is not None:
+        if github.primary_languages:
+            repos = await crud.get_repositories(conn, github.github_id)
+            returnval["repos"] = [repo.todict() for repo in repos]
+    if notion:
         returnval["notion"] = notion.todict()
-    print(returnval)
     return JSONResponse(content=returnval)
 
 
@@ -69,7 +84,7 @@ async def auth(
     :return: JSON response with the access token and user information
     """
     background_tasks.add_task(exchange_code, conn=conn, code=code)
-    return JSONResponse(content={"message": "Success!"})
+    return RedirectResponse(url="/oauth-success")
 
 
 async def exchange_code(conn, code: str):
@@ -161,3 +176,105 @@ async def get_user_info(conn, tokens: crud.Tokens, refreshed: bool = False):
     gitlogin = response["login"]
     await crud.link_github(conn, discordid, githubid, gitlogin)
     return response
+
+
+@router.get("/forumthread")
+@checkInternalServer
+async def get_forum_channel(
+        request: Request,
+        userid: int,
+        conn=Depends(get_db)):
+    """
+    Get the forum channel for a user.
+    :param userid: Discord ID of the user
+    :param conn: Database connection
+    :return: JSON response with forum channel information
+    """
+    channel = await crud.get_forum_channel(conn, userid)
+    return JSONResponse({"success": True, "channel": channel.channel_id})
+
+
+@router.put("/forumthread/{userid}/block")
+@checkInternalServer
+async def toggle_block_forum_channel(
+    request: Request, userid: int, conn=Depends(get_db)
+):
+    """
+    Block the forum thread for a user.
+    :param userid: Discord ID of the user
+    :param conn: Database connection
+    :return: JSON response indicating success
+    """
+    await crud.toggle_block_forum_channel(conn, userid)
+    return JSONResponse({"success": True, "message": "Forum thread blocked"})
+
+
+@router.put("/forumthread/{userid}/channelid")
+@checkInternalServer
+async def set_forum_thread_channel(
+        request: Request,
+        userid: int,
+        channelid: int = Body(...),
+        conn=Depends(get_db)):
+    """
+    Set the forum thread channel for a user.
+    :param userid: Discord ID of the user
+    :param channelid: Channel ID to set for the forum thread
+    :param conn: Database connection
+    :return: JSON response indicating success
+    """
+    await crud.set_forum_thread_channel(conn, userid, channelid)
+    return JSONResponse(
+        {"success": True, "message": "Forum thread channel set"})
+
+
+@router.get("/forumthread/bychannel")
+@checkInternalServer
+async def get_forum_thread_by_channel(
+    request: Request, channelid: int, conn=Depends(get_db)
+):
+    """
+    Get the forum thread by channel ID.
+    :param channelid: Channel ID of the forum thread
+    :param conn: Database connection
+    :return: JSON response with forum thread information
+    """
+    thread = await crud.get_forum_thread_by_channel(conn, channelid)
+    if not thread:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return JSONResponse({"success": True, "userid": thread.user_id})
+
+
+@router.delete("/forumthread/{userid}")
+@checkInternalServer
+async def delete_forum_thread(
+        request: Request,
+        userid: int,
+        conn=Depends(get_db)):
+    """
+    Delete the forum thread for a user.
+    :param userid: Discord ID of the user
+    :param conn: Database connection
+    :return: JSON response indicating success
+    """
+    await crud.delete_forum_thread(conn, userid)
+    return JSONResponse({"success": True, "message": "Forum thread deleted"})
+
+
+@router.put("/github/{userid}/toggle")
+@checkInternalServer
+async def toggle_github(
+        request: Request,
+        userid: int,
+        serverid: int = Body(...),
+        conn=Depends(get_db)):
+    """
+    Toggle the GitHub connection for a user.
+    :param userid: Discord ID of the user
+    :param conn: Database connection
+    :return: JSON response indicating success
+    """
+    show = await crud.toggle_github_show(conn, serverid, userid)
+    if show is None:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return JSONResponse({"success": True, "data": show.show})

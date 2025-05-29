@@ -14,3 +14,4 @@ uvicorn==0.34.0
 dotenv==0.9.9
 cachetools==5.5.2
 llm_axe==1.1.9
+PyGithub==2.6.1

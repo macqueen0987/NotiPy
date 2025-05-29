@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <title>디스코드 인증 완료</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #1e1e2f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 16px;
+        }
+
+        .message-box {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .message-box {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            const parentOrigin = "https://sejin-1457.github.io";
+
+            if (window.opener) {
+                window.opener.postMessage("discord-auth-success", parentOrigin);
+                setTimeout(() => {
+                    window.close();
+                }, 500);
+            } else {
+                document.body.innerHTML = "<p>이 페이지는 인증 완료 후 자동으로 닫힙니다.<br>직접 창을 닫아주세요.</p>";
+            }
+        };
+    </script>
+</head>
+<body>
+<div class="message-box">
+    <h1>디스코드 인증 완료</h1>
+    <p>잠시 후 창이 자동으로 닫힙니다...</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로드맵</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%; /* ★ 추가 */
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrapper {
+      min-height: calc(100vh - 60px); /* ★ 추가: footer 높이만큼 제외한 최소 높이 */
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    header {
+      background-color: #5865F2;
+      color: white;
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.6rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .diagram-container {
+      max-width: 1200px;
+      margin: 60px auto 40px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .category-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .category-title {
+      width: 180px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #222;
+      text-align: right;
+      padding-top: 16px;
+    }
+
+    .category-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      padding: 32px;
+      border-radius: 16px;
+      min-height: 140px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+    .category-box.tech { background-color: #e9f0ff; }
+    .category-box.deploy { background-color: #ddfbee; }
+    .category-box.collab { background-color: #fff2e2; }
+
+    .node {
+      background-color: white;
+      padding: 20px 26px;
+      border-radius: 12px;
+      text-align: center;
+      min-width: 180px;
+      min-height: 100px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      flex: 1 0 auto;
+      cursor: pointer;
+    }
+
+    .node:hover {
+      transform: translateY(-4px);
+    }
+
+    .node strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #111;
+    }
+
+    .node span {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    #tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      max-width: 320px;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      line-height: 1.5;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        font-size: 1.4rem;
+        padding: 24px 16px;
+      }
+
+      .back-button {
+        font-size: 1.4rem;
+        left: 16px;
+      }
+
+      .category-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .category-title {
+        text-align: center;
+        width: auto;
+        padding-top: 0;
+      }
+
+      .category-box {
+        justify-content: center;
+        padding: 24px;
+        gap: 20px;
+      }
+
+      .node {
+        min-width: 140px;
+        padding: 16px 20px;
+      }
+
+      .node strong {
+        font-size: 1.1rem;
+      }
+
+      .node span {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <header>
+      <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+      로드맵
+    </header>
+
+    <div class="diagram-container">
+      <div class="category-section">
+        <div class="category-title">기술 스택</div>
+        <div class="category-box tech">
+          <div class="node" data-key="Python"><strong>Python</strong><span>백엔드 언어</span></div>
+          <div class="node" data-key="API"><strong>API</strong><span>시스템 연동</span></div>
+          <div class="node" data-key="도구"><strong>도구</strong><span>운영 환경</span></div>
+        </div>
+      </div>
+
+      <div class="category-section">
+        <div class="category-title">배포 환경</div>
+        <div class="category-box deploy">
+          <div class="node" data-key="GitHub"><strong>GitHub</strong><span>버전 관리</span></div>
+          <div class="node" data-key="Docker"><strong>Docker</strong><span>배포 자동화</span></div>
+          <div class="node" data-key="Nginx"><strong>Nginx</strong><span>트래픽 제어</span></div>
+        </div>
+      </div>
+
+      <div class="category-section">
+        <div class="category-title">협업 도구</div>
+        <div class="category-box collab">
+          <div class="node" data-key="Notion"><strong>Notion</strong><span>문서 & 일정</span></div>
+          <div class="node" data-key="Discord"><strong>Discord</strong><span>실시간 소통</span></div>
+          <div class="node" data-key="GitHub 협업"><strong>GitHub 협업</strong><span>코드 기반</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <footer>
+    &copy; 2025 Discord Bot. All Rights Reserved.
+  </footer>
+
+  <script>
+    const tooltip = document.getElementById("tooltip");
+
+    const explanations = {
+      "Python": "FastAPI, SQLAlchemy로 백엔드 구성. Alembic으로 DB 마이그레이션 관리.",
+      "API": "Notion, GitHub, Discord API로 외부 시스템 실시간 연동.",
+      "도구": "Docker, MySQL, Nginx 기반의 안정적인 배포 환경.",
+      "GitHub": "코드 버전 관리 및 협업 도구로 PR 리뷰와 이슈 관리 가능.",
+      "Docker": "컨테이너 기반으로 일관된 환경에서 배포 자동화.",
+      "Nginx": "트래픽 라우팅, 정적 파일 제공 및 로드 밸런싱 수행.",
+      "Notion": "업무 일정 및 문서 협업에 활용. 페이지 기반 관리.",
+      "Discord": "봇 기반 알림, 스레드, DM 등 실시간 커뮤니케이션.",
+      "GitHub 협업": "Pull Request 기반의 팀 협업 구조 구축."
+    };
+
+    document.querySelectorAll('.node').forEach(node => {
+      node.addEventListener('mouseenter', (e) => {
+        const key = e.currentTarget.dataset.key;
+        if (!key || !explanations[key]) return;
+
+        tooltip.textContent = explanations[key];
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        tooltip.style.left = `${rect.left + window.scrollX}px`;
+        tooltip.style.top = `${rect.bottom + 10 + window.scrollY}px`;
+        tooltip.style.display = "block";
+      });
+
+      node.addEventListener('mouseleave', () => {
+        tooltip.style.display = "none";
+      });
+    });
+  </script>
+
+</body>
+</html>
