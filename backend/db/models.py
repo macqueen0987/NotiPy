@@ -20,6 +20,7 @@ class User(Base):
     token_expires = Column(DateTime, nullable=True)
     last_check = Column(TIMESTAMP, nullable=True, default=datetime.now)
 
+    coding_style = Column(Text, nullable=True)  # LLM 분석 결과 저장
     github_account = relationship(
         "Github", back_populates="user", cascade="all, delete-orphan"
     )

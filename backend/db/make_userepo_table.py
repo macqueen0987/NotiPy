@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 from github import Github
 from llm_axe import OllamaChat
-from aimodels import Base, Repository, User
+from models import Base, Repository, User
 from sqlalchemy import (JSON, Column, DateTime, Float, ForeignKey, Integer,
                         String, create_engine)
 from sqlalchemy.orm import Session, declarative_base, relationship
