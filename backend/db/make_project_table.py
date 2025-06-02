@@ -12,7 +12,7 @@ llm = OllamaChat(model="llama3:instruct")
 
 # 2) 프로젝트 설명 (설명만 제공)
 project_description = """
-I am planning to create a travel destination recommendation website.
+I am planning to create a travel destination recommendation website and mobile application.
 Please help me identify the category of this project and extract its core features.
 
 The goal of the project is to allow users to receive personalized travel destination suggestions based on their preferences and behavior.
@@ -38,7 +38,7 @@ Respond ONLY with valid JSON. The response MUST include ALL of the following key
 - tech_stack (a list)
 - complexity (low/medium/high)
 - database (string)
-- platform (web/mobile/both)
+- platform (web/mobile/web&mobile)
 - notifications (true/false)
 - map_integration (true/false)
 - auth_required (true/false)
@@ -109,7 +109,7 @@ def save_project(record: dict):
 if __name__ == "__main__":
     # LLM 분석
     project_data = analyze_project(project_description)
-    print("🔍 LLM이 채워준 프로젝트 필드:")
+    print("프로젝트 필드:")
     print(json.dumps(project_data, indent=2, ensure_ascii=False))
 
     # DB 저장
