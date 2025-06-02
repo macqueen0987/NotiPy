@@ -299,9 +299,9 @@
     // 4️⃣ 메시지 수신 → oauth-success.html 이동
     window.addEventListener("message", (event) => {
         console.log("✅ 메시지 수신:", event.data);
-        if (event.origin !== "/") return;
+        if (event.origin !== "https://notipy.code0987.com") return;
         if (event.data === "discord-auth-success") {
-            window.location.href = "/oauth-success";
+            window.location.href = "/oauth-success.html";
         }
     });
 </script>
