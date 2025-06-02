@@ -11,6 +11,7 @@ from interactions import (ActionRow, BaseComponent, BaseContext,
                           StringSelectMenu)
 from interactions.api.events import Component
 
+from .cache import BiDirectionalTTLCache
 from .locale import *
 from .Options import *
 from .var import *
@@ -55,15 +56,6 @@ async def is_moderator(ctx: BaseContext) -> bool:
     return modrole_id in member_role_ids
 
 
-async def server_only(ctx) -> bool:
-    """
-    Check if the command is used in a server.
-    """
-    if ctx.guild is None:
-        return False
-    return True
-
-
 async def wait_for_component_interaction(
     ctx,
     component: StringSelectMenu | ChannelSelectMenu | RoleSelectMenu | BaseComponent,
@@ -92,7 +84,7 @@ async def wait_for_component_interaction(
             pass
         return (used_component.ctx, returnval)  # 보통 Select 메뉴일 경우
     except TimeoutError:
-        await message.delete()
+        await message.delete(context=ctx)
         return None
 
 

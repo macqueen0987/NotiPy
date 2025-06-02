@@ -26,7 +26,7 @@ Respond ONLY with valid JSON. The response MUST include ALL of the following key
 - tech_stack (a list)
 - complexity (low/medium/high)
 - database (string)
-- platform (web/mobile/web&mobile)
+- platform (web/mobile/both)
 - notifications (true/false)
 - map_integration (true/false)
 - auth_required (true/false)
@@ -211,44 +211,6 @@ async def analyze_github_user(
         content={
             "data": git.todict(),
             "repos": None})
-
-
-async def analyze_coding_style(llm, user):
-    repo_details = []
-    for r in user.repositories[:5]:  # 상위 5개 레포만 분석
-        try:
-            readme_content = r.get_readme().decoded_content.decode("utf-8")
-        except Exception:
-            readme_content = "내용이 없거나 불러오기 실패"
-
-        repo_details.append(
-            {
-                "name": r.name,
-                "description": readme_content,
-                "primary_language": r.primary_language,
-                "stars": r.stars,
-                "forks": r.forks,
-            }
-        )
-
-    coding_prompt = (
-        "You are a data scientist specialized in analyzing code patterns. "
-        "Evaluate the following GitHub repository details and summarize the user's coding style "
-        "(e.g., readability, use of comments, complexity, preference for object-oriented vs. functional programming, etc.). "
-        "Return ONLY the summary text (no JSON wrapper needed).\n"
-        "Repository Details: " +
-        json.dumps(
-            repo_details,
-            ensure_ascii=False))
-
-    response = await llm.ask_async(
-        [
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": coding_prompt},
-        ],
-        format="text",
-    )
-    return response.strip()  # 분석된 코딩 스타일을 텍스트 형태로 반환
 
 
 def fill_repo_metadata(name: str, url: str, readme: str, llm) -> dict:
