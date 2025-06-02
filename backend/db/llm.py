@@ -26,7 +26,7 @@ Respond ONLY with valid JSON. The response MUST include ALL of the following key
 - tech_stack (a list)
 - complexity (low/medium/high)
 - database (string)
-- platform (web/mobile/both)
+- platform (web/mobile/web&mobile)
 - notifications (true/false)
 - map_integration (true/false)
 - auth_required (true/false)
