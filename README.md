@@ -4,11 +4,27 @@
 
 <h1 align="center">Notipy</h1>
 <p align="center">Notion과 Discord를 연결하는 실시간 알림 시스템</p>
-<p align="center"> ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) </p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL">
+  <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
+  <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python">
+</p>
+<p align="center">
+  <a href="README.md">
+    <img src="https://img.shields.io/badge/lang-한국어-blue" alt="Korean">
+  </a>
+  <a href="README.en.md">
+    <img src="https://img.shields.io/badge/lang-English-lightgrey" alt="English">
+  </a>
+</p>
+
 ---
 
+## 해당 프로젝트는 아직 개발중입니다!
 Notipy는 Notion 데이터베이스를 모니터링하여 특정 조건이 충족되면 Discord 채널에 알림을 전송하는 Python 기반 Discord 봇입니다. 일정, 태스크 관리, 이슈 트래킹 등 다양한 협업 시나리오에서 실시간 알림 도구로 활용할 수 있습니다.     
 FastAPI 기반의 백엔드 서버와 SQLAlchemy ORM을 통해 구조적으로 관리되며, Notion API 및 Discord 인터랙션 시스템과의 연계를 지원합니다.    
+**현재 개발중인 프로젝트로 일부 서비스가 불안정하거나 공지 없이 서비스가 중단될 수 있습니다**
 
 ## ✨ 주요 기능
 ### Notion 
@@ -141,3 +157,16 @@ Notipy는 오픈소스 프로젝트로, 누구든지 기여할 수 있습니다.
     - PR은 `dev/main` 브랜치로 생성합니다.
 5. 기여한 내용을 설명하는 PR 템플릿을 작성합니다.   
     - 이때 코드는 자동으로 포맷팅됩니다.
+
+---
+
+## 커뮤니티
+각종 공지사항 및 봇에대한 도움을 받을 수 있는 곳입니다.
+- 공식 홈페이지 : [링크](https://notipy.code0987.com)
+- 디스코드 지원서버: [초대링크](https://discord.com/invite/Y7v493UHBQ)
+- 또는 봇에게 DM 하세요!
+
+---
+
+## License
+본 프로젝트는 Apache 2.0 라이센스를 따릅니다.
