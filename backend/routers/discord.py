@@ -3,7 +3,7 @@ from fastapi import (APIRouter, BackgroundTasks, Body, Depends, HTTPException,
                      Request, Response, status)
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from services import discordservice, notionservice
+from services import discordservice, notionservice, webservice
 
 router = APIRouter(prefix="/discord", tags=["Discord"])
 
@@ -172,7 +172,15 @@ async def add_notion_tag(
     if len(current_tags) >= 3:
         raise HTTPException(
             status_code=429,
-            detail="You can assign up to 3 Notion tags per server.")
+            detail="max_tags_exceeded",
+        )
+    # 태그가 이미 존재하는지 확인
+    existing_tag = next((t for t in current_tags if t.tag == tag), None)
+    if existing_tag:
+        raise HTTPException(
+            status_code=429,
+            detail="duplicate_tag",
+        )
     # 태그 추가
     tag_obj = await discordservice.add_notion_tag(conn, serverid, tag)
     if not tag_obj:
@@ -190,3 +198,21 @@ async def remove_notion_tag(
     """
     await discordservice.remove_notion_tag(conn, serverid, tagname)
     return JSONResponse({"success": True})
+
+
+class notificationClass(BaseModel):
+    title: str
+    body: str
+
+
+@router.post("/notification")
+@checkInternalServer
+async def post_notification(
+    request: Request, notification: notificationClass, conn=Depends(get_db)
+):
+    """
+    create a notification for the webpabe.
+    """
+    await webservice.notification_post(conn, notification.title, notification.body)
+    return JSONResponse(
+        {"success": True, "message": "Notification sent successfully"})

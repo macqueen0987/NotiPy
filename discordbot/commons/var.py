@@ -5,7 +5,11 @@ notion_api_url = os.environ["NOTION_API_URL"]  # Notion API URL
 # notion_token = os.environ["NOTION_TOKEN"]  # Notion API token
 notion_api_version = os.environ["NOTION_API_VERSION"]
 
-devserver = os.environ["DISCORD_DEVSERVER"]  # Replace with actual server ID
+# Replace with actual server ID
+devserver = int(os.environ["DISCORD_DEVSERVER"])
+supportchannelid = int(
+    os.environ.get("DISCORD_SUPPORT_CHANNEL")
+)  # Replace with actual support channel ID
 
 # Replace with actual developer IDs
 developers = os.environ["DISCORD_DEVELOPERS"]
