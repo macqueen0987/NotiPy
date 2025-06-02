@@ -4,7 +4,7 @@
 
 <h1 align="center">Notipy</h1>
 <p align="center">Notion과 Discord를 연결하는 실시간 알림 시스템</p>
-
+<p align="center"> ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) </p>
 ---
 
 Notipy는 Notion 데이터베이스를 모니터링하여 특정 조건이 충족되면 Discord 채널에 알림을 전송하는 Python 기반 Discord 봇입니다. 일정, 태스크 관리, 이슈 트래킹 등 다양한 협업 시나리오에서 실시간 알림 도구로 활용할 수 있습니다.     
