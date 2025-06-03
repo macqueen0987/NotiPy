@@ -40,6 +40,26 @@
         .btn-primary:hover {
             background-color: #404bba;
         }
+
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: none;
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #scrollToTopBtn.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -137,10 +157,12 @@
     <button onclick="location.href='terms-consent'" class="btn-primary">디스코드 봇 불러오기</button>
 </section>
 
-<footer>
-    &copy; 2025 Discord Bot. All Rights Reserved.
+<!-- ✅ 이미지 푸터 -->
+<footer style="text-align: center; padding: 0;">
+    <img src="/static/img/footer-banner.png" alt="푸터 이미지" style="width: 100%; max-width: 1200px;">
 </footer>
 
+<!-- 맨 위로 버튼 -->
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">⬆</button>
 
 <script>
