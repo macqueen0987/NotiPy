@@ -19,17 +19,18 @@ async def root(request: Request):
 @router.get("/get")
 @checkInternalServer
 async def get(
-    request: Request, discordid: int, other: bool = False, conn=Depends(get_db)
+    request: Request, discordid: int, serverid: int = None, other: int = 0, conn=Depends(get_db)
 ):
     """
     Get user information by discord id
     :param discordid: Discord ID of the user
+    :param serverid: Server ID to check if the user is allowed to see the information
     :param other: If the user requested is not the same as the user making the request
     :param conn: Database connection
     :return: JSON response with user information
     """
     if other:
-        res = await crud.get_git_show(conn, discordid)
+        res = await crud.get_git_show(conn, discordid, serverid)
         if res is None:  # if res is None, it means the user does not exist
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         if not res:  # if res is false

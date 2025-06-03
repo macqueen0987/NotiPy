@@ -47,7 +47,7 @@ class User(Extension):
         gitbuttons = []
         if user:
             discordid = int(user.id)
-            params = {"discordid": discordid, "other": True}
+            params = {"discordid": discordid, "other": 1, "serverid": ctx.guild_id}
             status, response = await apirequest(f"/user/get", params=params)
             if status == 204:
                 await ctx.send(_("not_linked_github_other"), ephemeral=True)

@@ -26,7 +26,7 @@ Respond ONLY with valid JSON. The response MUST include ALL of the following key
 - tech_stack (a list)
 - complexity (low/medium/high)
 - database (string)
-- platform (web/mobile/both)
+- platform (web/mobile/web&mobile)
 - notifications (true/false)
 - map_integration (true/false)
 - auth_required (true/false)
@@ -213,6 +213,44 @@ async def analyze_github_user(
             "repos": None})
 
 
+async def analyze_coding_style(llm, user):
+    repo_details = []
+    for r in user.repositories[:5]:  # 상위 5개 레포만 분석
+        try:
+            readme_content = r.get_readme().decoded_content.decode("utf-8")
+        except Exception:
+            readme_content = "내용이 없거나 불러오기 실패"
+
+        repo_details.append(
+            {
+                "name": r.name,
+                "description": readme_content,
+                "primary_language": r.primary_language,
+                "stars": r.stars,
+                "forks": r.forks,
+            }
+        )
+
+    coding_prompt = (
+        "You are a data scientist specialized in analyzing code patterns. "
+        "Evaluate the following GitHub repository details and summarize the user's coding style "
+        "(e.g., readability, use of comments, complexity, preference for object-oriented vs. functional programming, etc.). "
+        "Return ONLY the summary text (no JSON wrapper needed).\n"
+        "Repository Details: " +
+        json.dumps(
+            repo_details,
+            ensure_ascii=False))
+
+    response = await llm.ask_async(
+        [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": coding_prompt},
+        ],
+        format="text",
+    )
+    return response.strip()  # 분석된 코딩 스타일을 텍스트 형태로 반환
+
+
 def fill_repo_metadata(name: str, url: str, readme: str, llm) -> dict:
     prompt = (
         "You are a data engineer. Given the following GitHub repository metadata, "
@@ -317,11 +355,6 @@ async def add_member_to_project(
     주어진 사용자 ID를 프로젝트에 추가합니다.
     """
     user = await userservice.get_user(conn, discordid=user_id)
-    if not user:
-        return JSONResponse(
-            status_code=400,
-            content={"message": "User does not have a linked GitHub account"},
-        )
     discord, github, notion = user
     if not github:
         return JSONResponse(
