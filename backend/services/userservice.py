@@ -317,14 +317,14 @@ async def get_repositories(
     return result.scalars().all()
 
 
-async def get_git_show(conn: AsyncSession, discord_id: int) -> Optional[bool]:
+async def get_git_show(conn: AsyncSession, discord_id: int, serverid: int) -> Optional[bool]:
     """
     Get the GitHub show status for a Discord server.
     :param conn: Database connection
     :param discord_id: Discord ID of the server
     :return: True if GitHub show is enabled, False if disabled, None if not found
     """
-    query = select(ShowGithub).where(ShowGithub.server_id == discord_id)
+    query = select(ShowGithub).where(ShowGithub.server_id == serverid).where(ShowGithub.user_id == discord_id)
     result = await conn.execute(query)
     show_github = result.scalars().first()
     if show_github is None:
@@ -342,7 +342,7 @@ async def toggle_github_show(
     :param discord_id: Discord ID of the server
     :return: Updated ShowGithub object
     """
-    query = select(ShowGithub).where(ShowGithub.server_id == discord_id)
+    query = select(ShowGithub).where(ShowGithub.server_id == serverid).where(ShowGithub.user_id == discord_id)
     result = await conn.execute(query)
     show_github = result.scalars().first()
     if not show_github:

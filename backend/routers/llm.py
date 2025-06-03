@@ -317,6 +317,11 @@ async def add_member_to_project(
     주어진 사용자 ID를 프로젝트에 추가합니다.
     """
     user = await userservice.get_user(conn, discordid=user_id)
+    if not user:
+        return JSONResponse(
+            status_code=400,
+            content={"message": "User does not have a linked GitHub account"},
+        )
     discord, github, notion = user
     if not github:
         return JSONResponse(
