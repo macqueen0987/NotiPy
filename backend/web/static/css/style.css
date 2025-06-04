@@ -192,34 +192,6 @@ body {
   margin-bottom: 12px;
 }
 
-/* 푸터 */
-footer {
-  background-color: rgba(255, 255, 255, 0.08); /* 반투명 유리 느낌 */
-  backdrop-filter: blur(12px); /* ✅ 이게 핵심! */
-  -webkit-backdrop-filter: blur(12px); /* ✅ Safari 호환 */
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 1.5rem 2rem;
-  font-size: 0.9rem;
-  text-align: left;
-}
-
-footer .footer-container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-footer .footer-container p {
-  margin: 0.3rem 0;
-}
-
-footer .footer-container p:first-child {
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-
 
 /* 위로 가기 버튼 */
 #scrollToTopBtn {
