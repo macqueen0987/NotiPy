@@ -79,6 +79,33 @@ This prevents external actors from spoofing internal API calls.
 
 ---
 
+## 🧭 Getting Started as a User
+
+You can use **Notipy without self-hosting**. Simply invite the bot to your Discord server and start using its features immediately. Here's a quick guide:
+
+### ✅ Step 1. Invite the Bot
+
+* You can invite the bot from the [official website](https://notipy.code0987.com) or directly via this [invite link](https://discord.com/oauth2/authorize?client_id=955999346321686609).
+* After inviting the bot, we recommend using the `/settings set-modrole` command to ensure smooth operation.
+
+## 📋 Commonly Used Commands
+
+| Command                        | Description                                   |
+| ----------------------------- | --------------------------------------------- |
+| `/settings view`              | View the current settings for the server      |
+| `/notion set-token`           | Register your Notion integration token        |
+| `/notion connect-db`          | Connect a Notion database to a channel        |
+| `/notion list-db`             | View the list of connected databases          |
+| `/notion remove-token`        | Disconnect your Notion integration            |
+| `/create-ticket`              | Create a support ticket within Discord        |
+| `/github link`                | Link your GitHub account                      |
+| `/create-project`             | Create and manage a collaborative project     |
+
+If you want to configure the environment and host the bot yourself, refer to the section below titled “Running with Docker”.
+
+
+---
+
 ## 🐳 Running with Docker
 
 `Dockerfile` and `docker-compose.yml` are provided for easy deployment in a Docker environment.
