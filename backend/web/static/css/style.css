@@ -195,7 +195,9 @@ body {
 /* 푸터 */
 footer {
   background-color: rgba(255, 255, 255, 0.08); /* 반투명 유리 느낌 */
-  border-top: 1px solid rgba(255, 255, 255, 0.3); /* 하얀 얇은 선 */
+  backdrop-filter: blur(12px); /* ✅ 이게 핵심! */
+  -webkit-backdrop-filter: blur(12px); /* ✅ Safari 호환 */
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   padding: 1.5rem 2rem;
   font-size: 0.9rem;
