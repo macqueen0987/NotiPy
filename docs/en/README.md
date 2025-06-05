@@ -11,10 +11,10 @@
   <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python">
 </p>
 <p align="center">
-  <a href="README.md">
+  <a href="/README.md">
     <img src="https://img.shields.io/badge/lang-한국어-blue" alt="Korean">
   </a>
-  <a href="README.en.md">
+  <a href="/docs/en/README.md">
     <img src="https://img.shields.io/badge/lang-English-lightgrey" alt="English">
   </a>
 </p>
