@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FAQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #5865F2;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0 auto;
+            font-size: 1.5rem;
+        }
+        .back-button {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .faq-section {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .faq-item + .faq-item {
+            margin-top: 20px;
+        }
+        .faq-item h2 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .faq-item p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
+    <h1>FAQ</h1>
+</header>
+<p style="text-align: center;">For other languages, check the <a href="https://github.com/macqueen0987/notipy">GitHub page</a>.</p>
+<div class="faq-section">
+    <div class="faq-item">
+        <h2>Notion 연동은 어떻게 하나요?</h2>
+        <p>사용자가 직접 Notion Integration을 생성하고 발급된 토큰을 봇에 등록해야 합니다.</p>
+    </div>
+    <div class="faq-item">
+        <h2>How do I invite the bot?</h2>
+        <p>Use the official invite link provided in the README and set a management role with <code>/설정 관리자역할 설정</code> after inviting.</p>
+    </div>
+    <div class="faq-item">
+        <h2>What commands are available?</h2>
+        <p>Commands like <code>/notion set-token</code>, <code>/notion connect-db</code> and <code>/create-ticket</code> are supported. See the README for a full list.</p>
+    </div>
+    <div class="faq-item">
+        <h2>Where can I ask questions or get support?</h2>
+        <p>Join the Discord support server or DM the bot directly.</p>
+    </div>
+    <div class="faq-item">
+        <h2>Is the project open source?</h2>
+        <p>Yes, visit <a href="https://github.com/macqueen0987/notipy">macqueen0987/notipy</a> on GitHub for the source code.</p>
+    </div>
+</div>
+</body>
+</html>
