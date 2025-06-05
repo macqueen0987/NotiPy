@@ -14,7 +14,7 @@
   <a href="README.md">
     <img src="https://img.shields.io/badge/lang-한국어-blue" alt="Korean">
   </a>
-  <a href="README.en.md">
+  <a href="docs/en/README.md">
     <img src="https://img.shields.io/badge/lang-English-lightgrey" alt="English">
   </a>
 </p>
@@ -191,6 +191,7 @@ Notipy는 오픈소스 프로젝트로, 누구든지 기여할 수 있습니다.
 - 공식 홈페이지 : [링크](https://notipy.code0987.com)
 - 디스코드 지원서버: [초대링크](https://discord.com/invite/Y7v493UHBQ)
 - 또는 봇에게 DM 하세요!
+- 공식 GitHub 저장소: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
 ---
 
