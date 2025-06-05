@@ -203,6 +203,7 @@ You can get announcements and support through the following:
 * Official website: [link](https://notipy.code0987.com)
 * Discord support server: [Invite link](https://discord.com/invite/Y7v493UHBQ)
 * Or send a DM to the bot!
+* GitHub repository: [NotiPy/NotiPy](https://github.com/NotiPy/NotiPy)
 
 ---
 
