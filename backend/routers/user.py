@@ -19,7 +19,11 @@ async def root(request: Request):
 @router.get("/get")
 @checkInternalServer
 async def get(
-    request: Request, discordid: int, serverid: int = None, other: int = 0, conn=Depends(get_db)
+    request: Request,
+    discordid: int,
+    serverid: int = None,
+    other: int = 0,
+    conn=Depends(get_db),
 ):
     """
     Get user information by discord id
