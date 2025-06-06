@@ -113,6 +113,74 @@
       color: #555;
     }
 
+    /* Timeline styles */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 40px auto;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 60px;
+      width: 4px;
+      background-color: #5865F2;
+    }
+
+    .timeline ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .timeline li {
+      position: relative;
+      margin-bottom: 40px;
+      padding-left: 40px;
+    }
+
+    .timeline li::before {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #5865F2;
+    }
+
+    .timeline .time {
+      color: #5865F2;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .timeline .content {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      width: 96%;
+    }
+
+    .timeline .content h3 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+      color: #111;
+    }
+
+    .timeline .content p {
+      margin: 0;
+      color: #555;
+      font-size: 1rem;
+    }
+
     #tooltip {
       position: absolute;
       background: rgba(0, 0, 0, 0.85);
@@ -182,6 +250,22 @@
       .node span {
         font-size: 0.95rem;
       }
+
+      .timeline {
+        padding-left: 30px;
+      }
+
+      .timeline::before {
+        left: 15px;
+      }
+
+      .timeline li {
+        padding-left: 34px;
+      }
+
+      .timeline li::before {
+        left: 9px;
+      }
     }
   </style>
 </head>
@@ -220,6 +304,75 @@
           <div class="node" data-key="GitHub 협업"><strong>GitHub 협업</strong><span>코드 기반</span></div>
         </div>
       </div>
+    </div>
+<hr style="width: 70%; margin: 40px auto; border: none; border-top: 2px solid #ccc; opacity: 0.6;" />
+    <h2 style="text-align: center;">타임라인</h2>
+    <div class="timeline">
+      <ul>
+        <li>
+          <span class="time">2025-06-06</span>
+          <div class="content">
+            <h3>타임라인 UI 적용</h3>
+            <p>로드맵 페이지에 vertical timeline 형태의 UI를 도입했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-06-05</span>
+          <div class="content">
+            <h3>FAQ 및 커뮤니티 확장</h3>
+            <p>FAQ 통합, Contributor 가이드, 커뮤니티 페이지 구조 확장 작업이 이루어졌습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-06-02</span>
+          <div class="content">
+            <h3>다국어 정책 페이지 추가</h3>
+            <p>Terms of Use, Privacy Policy 등을 영문화하고 실제 배포 도메인을 적용했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-05-29</span>
+          <div class="content">
+            <h3>최종 발표 버전 릴리즈</h3>
+            <p>최종 보고 및 발표용으로 프로젝트를 안정화하고 UI를 정리했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-05-26</span>
+          <div class="content">
+            <h3>LLM 역할 분석 기능 추가</h3>
+            <p>깃허브 사용자 데이터를 기반으로 LLM이 역할을 추천하는 기능을 추가했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-05-24</span>
+          <div class="content">
+            <h3>디스코드 봇 MVP 기능 완성</h3>
+            <p>프로젝트 알림, 커뮤니티, FAQ 페이지를 포함한 기본 기능들을 구현했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-05-20</span>
+          <div class="content">
+            <h3>노션 연동 기능 완성</h3>
+            <p>노션 웹훅 기반 알림 시스템을 구축하고, 내부 API 요청 검증 로직을 추가했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-04-08</span>
+          <div class="content">
+            <h3>깃허브-디스코드 연동 기능 구현</h3>
+            <p>깃허브와 디스코드 사용자 정보 연동 기능을 구현했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025-04-02</span>
+          <div class="content">
+            <h3>프로젝트 초기화</h3>
+            <p>Initial Commit과 함께 개발 환경과 리포지토리를 구성했습니다.</p>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 
