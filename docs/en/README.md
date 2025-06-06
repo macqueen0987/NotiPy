@@ -205,6 +205,11 @@ You can get announcements and support through the following:
 * Or send a DM to the bot!
 * GitHub repository: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
+## 📃 Terms of Service and Privacy Policy
+You can read the full terms and privacy policy within this repository.
+- [English version](terms-policy.md)
+- [Korean version](../ko/terms-policy.md)
+
 ---
 
 ## License

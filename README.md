@@ -193,6 +193,11 @@ Notipy는 오픈소스 프로젝트로, 누구든지 기여할 수 있습니다.
 - 또는 봇에게 DM 하세요!
 - 공식 GitHub 저장소: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
+## 📃 이용약관 및 개인정보 처리방침
+서비스 이용약관과 개인정보 처리방침 전문은 다음 문서에서 확인할 수 있습니다.
+- [이용약관 및 개인정보 처리방침 (한국어)](docs/ko/terms-policy.md)
+- [Terms of Service and Privacy Policy (English)](docs/en/terms-policy.md)
+
 ---
 
 ## License
