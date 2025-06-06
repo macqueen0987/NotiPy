@@ -46,7 +46,7 @@ The team will investigate and take action within **3 business days** of receivin
 Depending on the severity of the violation, actions may include warnings, temporary channel restrictions, or revocation of contribution privileges.
 
 **Contact Information:**  
-- [**Discord:** @Admin](https://discord.com/invite/Y7v493UHBQ)
+- [**Discord:** @Admin](https://discord.gg/HzAnBSCN7t)
 
 ## Attribution
 
