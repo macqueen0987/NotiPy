@@ -118,19 +118,19 @@
       position: relative;
       max-width: 800px;
       margin: 40px auto;
-      padding-left: 30px; /* 기존보다 좁게 */
+      padding-left: 40px;
     }
-
 
     .timeline::before {
       content: '';
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 20px;  /* 이 값을 기준으로 */
+      left: 60px;
       width: 4px;
       background-color: #5865F2;
     }
+
     .timeline ul {
       list-style: none;
       padding: 0;
@@ -146,13 +146,12 @@
     .timeline li::before {
       content: '';
       position: absolute;
-      left: 18px; /* 여기서 ★ 중요: 선(left:20px) 중심에 맞춰 조절 */
-      top: 4px;   /* 정렬 위치 보정 */
-      width: 14px;
-      height: 14px;
+      left: 14px;
+      top: 0;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background-color: #5865F2;
-      z-index: 1;
     }
 
     .timeline .time {
@@ -265,7 +264,7 @@
       }
 
       .timeline li::before {
-        left: 8px;
+        left: 9px;
       }
     }
   </style>
@@ -306,7 +305,7 @@
         </div>
       </div>
     </div>
-
+<hr style="width: 70%; margin: 40px auto; border: none; border-top: 2px solid #ccc; opacity: 0.6;" />
     <h2 style="text-align: center;">타임라인</h2>
     <div class="timeline">
       <ul>
