@@ -113,6 +113,73 @@
       color: #555;
     }
 
+    /* Timeline styles */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 40px auto;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: 4px;
+      background-color: #5865F2;
+    }
+
+    .timeline ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .timeline li {
+      position: relative;
+      margin-bottom: 40px;
+      padding-left: 40px;
+    }
+
+    .timeline li::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #5865F2;
+    }
+
+    .timeline .time {
+      color: #5865F2;
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .timeline .content {
+      background-color: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .timeline .content h3 {
+      margin: 0 0 6px;
+      font-size: 1.2rem;
+      color: #111;
+    }
+
+    .timeline .content p {
+      margin: 0;
+      color: #555;
+      font-size: 1rem;
+    }
+
     #tooltip {
       position: absolute;
       background: rgba(0, 0, 0, 0.85);
@@ -182,6 +249,22 @@
       .node span {
         font-size: 0.95rem;
       }
+
+      .timeline {
+        padding-left: 30px;
+      }
+
+      .timeline::before {
+        left: 15px;
+      }
+
+      .timeline li {
+        padding-left: 34px;
+      }
+
+      .timeline li::before {
+        left: 8px;
+      }
     }
   </style>
 </head>
@@ -220,6 +303,39 @@
           <div class="node" data-key="GitHub 협업"><strong>GitHub 협업</strong><span>코드 기반</span></div>
         </div>
       </div>
+    </div>
+
+    <div class="timeline">
+      <ul>
+        <li>
+          <span class="time">2024 Q1</span>
+          <div class="content">
+            <h3>프로젝트 착수</h3>
+            <p>기초 설계와 개발 환경을 구축했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2024 Q3</span>
+          <div class="content">
+            <h3>핵심 기능 구현</h3>
+            <p>Notion과 Discord 연동 및 데이터베이스 구조를 완성했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025 Q1</span>
+          <div class="content">
+            <h3>베타 테스트</h3>
+            <p>초기 사용자에게 기능을 공개하고 피드백을 수집했습니다.</p>
+          </div>
+        </li>
+        <li>
+          <span class="time">2025 Q3</span>
+          <div class="content">
+            <h3>정식 출시</h3>
+            <p>안정화 및 추가 기능을 포함한 첫 정식 버전을 배포했습니다.</p>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 
