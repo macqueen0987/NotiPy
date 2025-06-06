@@ -20,6 +20,9 @@
 </p>
 
 ---
+<p align="center">
+This page was translated with the help of ChatGPT. Some elements may not perfectly reflect the original content.
+</p>
 
 ## 🚧 This project is currently under development!
 
