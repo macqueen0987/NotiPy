@@ -33,4 +33,5 @@ Notipy 디스코드 봇은 Notion과 GitHub 등의 플랫폼과 연동하여 알
 
 ---
 
+자세한 사항은 [홈페이지의 이용약관 페이지](https://notipy.code0987.com/policy)를 참고해주세요.
 문의: [지원 서버](https://discord.com/invite/Y7v493UHBQ)에서 문의하거나 봇에게 DM 하세요
