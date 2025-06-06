@@ -12,7 +12,7 @@ We provide security updates for the following branches and releases:
 
 Please report security issues **privately** via Discord to out admins
 
-https://discord.gg/Y7v493UHBQ
+https://discord.gg/HzAnBSCN7t
 
 
 Include the following information:

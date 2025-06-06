@@ -18,7 +18,7 @@ Users must not attempt unauthorized access, tamper with systems or use illegal p
 The code, features and documents of this service are released under the Apache License 2.0. Logos of Discord, GitHub and Notion belong to their respective owners; this service is not an official product of those platforms.
 
 ## Article 6 (Contact)
-For inquiries, join the [Discord support server](https://discord.gg/Y7v493UHBQ) or send the bot a DM. No separate email is provided.
+For inquiries, join the [Discord support server](https://discord.gg/HzAnBSCN7t) or send the bot a DM. No separate email is provided.
 
 _Last updated: May 14, 2025_
 
@@ -87,6 +87,6 @@ We do not provide personal data to third parties or outsource its processing.
 Users connect with a self‑created Notion integration token that has access only to databases they designate. **For security, grant only page read access. Do not grant permissions to edit, delete or share pages.** The company is not liable for issues caused by incorrect permission settings.
 
 ## Article 16 (Inquiries)
-For questions about this policy, join the [official support server](https://discord.gg/Y7v493UHBQ) or DM the bot on Discord. Any information provided for inquiries is not stored and is used solely to respond.
+For questions about this policy, join the [official support server](https://discord.gg/HzAnBSCN7t) or DM the bot on Discord. Any information provided for inquiries is not stored and is used solely to respond.
 
 _Last updated: May 30, 2025_

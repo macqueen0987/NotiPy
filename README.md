@@ -189,7 +189,7 @@ Notipy는 오픈소스 프로젝트로, 누구든지 기여할 수 있습니다.
 ## 커뮤니티
 각종 공지사항 및 봇에대한 도움을 받을 수 있는 곳입니다.
 - 공식 홈페이지 : [링크](https://notipy.code0987.com)
-- 디스코드 지원서버: [초대링크](https://discord.com/invite/Y7v493UHBQ)
+- 디스코드 지원서버: [초대링크](https://discord.gg/HzAnBSCN7t)
 - 또는 봇에게 DM 하세요!
 - 공식 GitHub 저장소: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
