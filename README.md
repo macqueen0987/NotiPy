@@ -42,6 +42,7 @@ FastAPI 기반의 백엔드 서버와 SQLAlchemy ORM을 통해 구조적으로 �
 - [License](#license)
 
 <a id="주요-기능"></a>
+
 ## ✨ 주요 기능
 ### Notion 
 - 사용자는 자신의 Notion 워크스페이스에 대해 **개별적으로 Notion Integration을 생성하고, 해당 토큰을 직접 제공**해야 합니다.
