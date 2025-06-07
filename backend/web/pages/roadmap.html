@@ -117,8 +117,9 @@
     .timeline {
       position: relative;
       max-width: 800px;
-      margin: 40px auto;
       padding-left: 40px;
+      padding-bottom: 40px;
+      margin: 40px auto 0;
     }
 
     .timeline::before {
@@ -271,7 +272,7 @@
 </head>
 <body>
 
-  <div class="wrapper">
+  <div class="wrapper" style="margin-bottom: 0;">
     <header>
       <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
       로드맵
@@ -305,7 +306,7 @@
         </div>
       </div>
     </div>
-<hr style="width: 70%; margin: 40px auto; border: none; border-top: 2px solid #ccc; opacity: 0.6;" />
+    <hr style="width: 70%; margin: 40px auto; border: none; border-top: 2px solid #ccc; opacity: 0.6;" />
     <h2 style="text-align: center;">타임라인</h2>
     <div class="timeline">
       <ul>
