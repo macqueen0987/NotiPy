@@ -143,7 +143,9 @@ If you want to configure the environment and host the bot yourself, refer to the
 <a id="running-with-docker"></a>
 ## 🐳 Running with Docker
 
-`Dockerfile` and `docker-compose.yml` are provided for easy deployment in a Docker environment.
+`Dockerfile` and `docker-compose.yml` are provided for easy deployment in a Docker environment.  
+To create a Discord bot, please refer to the [Discord-py-Interactions Guide](https://interactions-py.github.io/interactions.py/Guides/).  
+To create a Notion integration, please refer to the [Notion Developer Documentation](https://developers.notion.com/docs/getting-started).
 
 ### 1. Create a `.env` File
 
