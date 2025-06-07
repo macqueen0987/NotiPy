@@ -24,6 +24,22 @@
 This page was translated with the help of ChatGPT. Some elements may not perfectly reflect the original content.
 </p>
 
+## Table of Contents
+- [This project is currently under development](#this-project-is-currently-under-development)
+- [Key Features](#key-features)
+  - [Notion](#notion)
+  - [Database Integration](#database-integration)
+  - [GitHub Profile Analysis and Summary](#github-profile-analysis-and-summary)
+  - [Project Creation and Management](#project-creation-and-management)
+  - [Internal Request Validation and Security](#internal-request-validation-and-security)
+- [Getting Started as a User](#getting-started-as-a-user)
+- [Commonly Used Commands](#commonly-used-commands)
+- [Running with Docker](#running-with-docker)
+- [Contributing](#contributing)
+- [Community](#community)
+- [Terms of Service and Privacy Policy](#terms-of-service-and-privacy-policy)
+- [License](#license)
+
 ## 🚧 This project is currently under development!
 
 Notipy is a Python-based Discord bot that monitors a Notion database and sends notifications to a Discord channel when specific conditions are met.
