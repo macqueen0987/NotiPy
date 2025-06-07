@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <!-- 메타 설정 및 외부 아이콘 폰트 로딩 -->
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>이용정책</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     <style>
+        /* 전체 페이지 기본 스타일 설정 */
         html, body {
             margin: 0;
             padding: 0;
@@ -14,6 +16,7 @@
             height: 100%;
         }
 
+        /* 상단 헤더 (이용정책 제목 및 뒤로가기 버튼 포함) */
         header {
             background-color: #5865F2;
             padding: 20px;
@@ -28,6 +31,7 @@
             position: relative;
         }
 
+        /* 왼쪽 상단 뒤로가기 아이콘 */
         .back-button {
             position: absolute;
             top: 20px;
@@ -51,7 +55,7 @@
             color: black;
         }
 
-        /* 버튼 영역 */
+        /* ✅ 이용약관 / 개인정보 버튼 영역 */
         .buttons {
             text-align: center;
             margin: 20px;
@@ -117,6 +121,7 @@
             color: #555;
         }
 
+        /* 하단 푸터 */
         footer {
             background-color: #333;
             color: white;
@@ -127,6 +132,7 @@
             width: 100%;
         }
 
+        /* 모바일 반응형 스타일 */
         @media (max-width: 768px) {
             .content {
                 padding: 24px;
@@ -172,19 +178,22 @@
     </style>
 </head>
 <body>
-
+<!-- 상단 헤더 -->
 <header>
     <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
     <h1>이용정책</h1>
 </header>
 
+<!-- 영문 페이지 링크 안내 -->
 <p style="text-align: center;">For other languages, check the <a href="https://github.com/macqueen0987/NotiPy/blob/master/docs/en/terms-policy.md">GitHub page</a>.</p>
 
+<!-- 탭 버튼 -->
 <div class="buttons">
     <button onclick="showContent('terms', this)">이용약관</button>
     <button onclick="showContent('privacy', this)">개인정보처리방침</button>
 </div>
 
+<!-- 이용약관 본문 -->
 <div class="content" id="terms">
     <h2>제1조 (이용 목적)</h2>
     <p>본 서비스는 협업 플랫폼 간 정보 연동, 자동화 메시지 전송 및 구조화된 커뮤니케이션 흐름을 제공하여, 프로젝트 협업의 효율성을 높이는 데 목적이 있습니다.</p>
@@ -231,7 +240,8 @@
     <hr/>
 
 </div>
-
+    
+<!-- 개인정보처리방침 본문 (초기에는 숨김) -->
 <div class="content" id="privacy" style="display: none;">
     <h2>제1조 (목적)</h2>
     <p>본 방침은 서비스 이용 시 이용자의 개인정보를 어떻게 수집·이용·보호하는지에 대한 기준을 제시합니다. 본 디스코드 봇(이하 ‘회사’)은 관련 법령을 준수하고, 이용자의 개인정보를 안전하게
@@ -310,22 +320,25 @@
     <p>최종 업데이트일: 2025년 5월 30일</p>
 </div>
 
+<!-- 하단 푸터 -->
 <footer>
     <p>&copy; 2025 Notipy. Open-sourced under the Apache License 2.0.</p>
 </footer>
 
+<!-- 버튼 클릭 시 콘텐츠 전환 스크립트 -->
 <script>
     function showContent(content, button) {
         const termsContent = document.getElementById('terms');
         const privacyContent = document.getElementById('privacy');
         const buttons = document.querySelectorAll('.buttons button');
 
-        // 모든 버튼에서 active 클래스 제거
+        // 모든 버튼 비활성화
         buttons.forEach(btn => btn.classList.remove('active'));
 
-        // 선택된 버튼에 active 클래스 추가
+        // 현재 클릭한 버튼만 활성화
         button.classList.add('active');
 
+        // 콘텐츠 전환
         if (content === 'terms') {
             termsContent.style.display = 'block';
             privacyContent.style.display = 'none';

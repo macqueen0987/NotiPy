@@ -30,7 +30,8 @@
             align-items: center;
             gap: 30px;
         }
-
+        
+        /* ✅ 스크롤 가능한 약관 및 정책 영역 */
         .terms-box {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px);
@@ -42,7 +43,8 @@
             overflow-y: auto;
             box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
         }
-
+        
+        /* ✅ 제목 및 본문 텍스트 스타일 */
         h1 {
             font-size: 1.5em;
             font-weight: bold;
@@ -65,6 +67,7 @@
             padding-left: 20px;
         }
 
+        /* ✅ 체크박스 영역 */
         .checkbox-box {
             text-align: center;
         }
@@ -86,6 +89,7 @@
             color: white;
         }
 
+        /* ✅ 버튼 영역 */
         .button-box {
             text-align: center;
         }
@@ -118,8 +122,10 @@
             color: white;
         }
     </style>
+    
 </head>
 <body>
+<!-- ✅ 약관 및 정책을 출력하는 영역 -->
 <div class="container">
     <div class="terms-box" id="terms-box">
         <p style="text-align: center;">For other languages, check the <a href="https://github.com/macqueen0987/NotiPy/blob/master/docs/en/terms-policy.md" target="_blank">GitHub page</a>.</p>
@@ -249,12 +255,14 @@
         <p>최종 업데이트일: 2025년 5월 30일</p>
     </div>
 
+    <!-- ✅ 체크박스 및 경고 메시지 영역 -->
     <div class="checkbox-box">
         <input type="checkbox" id="agree-check" onclick="toggleButton()"/>
         <label for="agree-check" style="color: white;">모두 읽고 동의합니다</label>
         <div class="warning-text" id="warning-text">스크롤을 끝까지 확인하셔야 동의할 수 있습니다.</div>
     </div>
 
+    <!-- ✅ 디스코드 인증 버튼 -->
     <div class="button-box">
         <!-- OAuth 인증 URL로 이동 -->
         <button class="agree-btn" id="agree-button" disabled>디스코드봇 불러오기</button>
@@ -262,6 +270,7 @@
 </div>
 
 <script>
+    // ✅ 약관 영역 및 버튼 요소 참조
     const termsBox = document.getElementById('terms-box');
     const agreeCheckbox = document.getElementById('agree-check');
     const agreeButton = document.getElementById('agree-button');
@@ -294,7 +303,7 @@
         agreeButton.disabled = !(agreeCheckbox.checked && scrolledToBottom);
     }
 
-    // 3️⃣ 버튼 클릭 시 팝업 띄우기
+    // 3️⃣ 버튼 클릭 시 디스코드 인증 팝업 띄우기
     agreeButton.onclick = () => {
     const width = 600;
     const height = 800;
@@ -312,7 +321,7 @@
     }
     };
 
-    // 4️⃣ 메시지 수신 → oauth-success.html 이동
+    // 4️⃣ 팝업으로부터 인증 성공 메시지 수신 → oauth-success.html 이동
     window.addEventListener("message", (event) => {
     console.log("✅ 메시지 수신:", event.origin, event.data);
     if (event.origin !== "https://notipy.code0987.com") return;
