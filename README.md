@@ -133,7 +133,8 @@ Notipy는 **직접 서버에 설치하지 않아도** 사용할 수 있습니다
 <a id="docker로-실행하기"></a>
 ## 🐳 Docker로 실행하기
 
-도커 환경에서 쉽게 실행할 수 있도록 `Dockerfile`과 `docker-compose.yml`이 제공됩니다.
+도커 환경에서 쉽게 실행할 수 있도록 `Dockerfile`과 `docker-compose.yml`이 제공됩니다.  
+디스코드 봇을 생성하는 과정은 [Discord-py-Interactions](https://interactions-py.github.io/interactions.py/Guides/)에서, 노션 앱 생성은 [노션 개발자 페이지](https://developers.notion.com/docs/getting-started)를 참고해주세요.
 
 ### 1. `.env` 파일 생성
 
