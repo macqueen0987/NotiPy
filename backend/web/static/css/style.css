@@ -18,7 +18,7 @@ body {
   background-repeat: no-repeat;
 }
 
-/* 네비게이션 */
+/* 네비게이션 바 스타일 */
 .navbar {
   display: flex;
   justify-content: center;
@@ -43,7 +43,7 @@ body {
   color: #ddd;
 }
 
-/* Hero */
+/* Hero 섹션 */
 .hero {
   padding: 80px 5% 60px;
   display: flex;
@@ -94,7 +94,7 @@ body {
   border-radius: 12px;
 }
 
-/* 버튼 */
+/* 주요 버튼 스타일 */
 .btn-primary {
   background-color: #5865F2;
   color: white;
@@ -180,7 +180,7 @@ body {
   border-radius: 16px;
 }
 
-/* CTA */
+/* CTA 섹션 */
 .cta {
   text-align: center;
   padding: 30px 20px 100px;
