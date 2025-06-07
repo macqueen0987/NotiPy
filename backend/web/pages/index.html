@@ -4,7 +4,11 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Discord Bot Landing</title>
+    
+    <!-- 🌐 외부 스타일시트 연결 -->
     <link rel="stylesheet" href="/static/css/style.css"/>
+
+    <!-- 🎨 내부 스타일 정의 -->
     <style>
         .hero-container {
             max-width: 1200px;
@@ -23,7 +27,8 @@
             max-width: 100%;
             height: auto;
         }
-
+        
+        /* 📌 주요 버튼 스타일 */
         .btn-primary {
             background-color: #5865F2;
             color: white;
@@ -41,6 +46,7 @@
             background-color: #404bba;
         }
 
+        /* ⬆️ 스크롤 탑 버튼 스타일 */
         #scrollToTopBtn {
             position: fixed;
             bottom: 30px;
@@ -64,6 +70,7 @@
 </head>
 <body>
 
+<!-- 🚀 상단 네비게이션바 -->
 <div class="navbar">
     <a href="#features">주요기능</a>
     <a href="policy">이용정책</a>
@@ -72,6 +79,7 @@
     <a href="community">커뮤니티</a>
 </div>
 
+<!-- 💡 Hero 섹션: 메인 메시지 및 CTA 버튼 -->
 <section class="hero">
     <div class="hero-container">
         <div class="hero-text">
@@ -91,8 +99,11 @@
         </div>
     </div>
 </section>
-
+    
+<!-- 🔧 주요 기능 섹션 -->
 <section id="features" class="features">
+
+    <!-- 📌 기능 1: 노션 → 포럼 스레드 자동 생성 -->
     <div class="glass-box">
         <div class="feature-row">
             <div class="feature-text">
@@ -113,6 +124,7 @@
         </div>
     </div>
 
+    <!-- 📌 기능 2: 변경사항 자동 알림 -->
     <div class="glass-box">
         <div class="feature-row reverse">
             <div class="feature-text">
@@ -132,6 +144,7 @@
         </div>
     </div>
 
+    <!-- 📌 기능 3: GitHub 맥락 기반 요약 -->
     <div class="glass-box">
         <div class="feature-row">
             <div class="feature-text">
@@ -151,12 +164,13 @@
     </div>
 </section>
 
+<!-- 📣 하단 CTA 섹션 -->
 <section class="cta">
     <h2>지금 체험해보세요!</h2>
     <button onclick="location.href='terms-consent'" class="btn-primary">디스코드 봇 불러오기</button>
 </section>
 
-<!-- 푸터 -->
+<!-- 📎 푸터 정보 -->
 <footer style="
     background-color: rgba(255, 255, 255, 0.08);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -178,9 +192,10 @@
 </footer>
 
 
-<!-- 맨 위로 버튼 -->
+<!-- ⬆️ 스크롤 최상단 이동 버튼 -->
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">⬆</button>
 
+<!-- 📜 스크롤 제어 스크립트 -->
 <script>
     function scrollToTop() {
         window.scrollTo({top: 0, behavior: 'smooth'});
