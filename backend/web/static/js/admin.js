@@ -1,5 +1,7 @@
+// 🔐 관리자 인증 상태 저장
 let isAdmin = false;
 
+// ✅ 관리자 모드 활성화 함수
 function setAdmin() {
     isAdmin = true;
     document.getElementById("admin-controls").style.display = "block";
@@ -7,12 +9,14 @@ function setAdmin() {
     alert("관리자 모드가 활성화되었습니다.");
 }
 
+// 🚫 관리자 모드 비활성화 함수
 function disableAdmin() {
     isAdmin = false;
     document.getElementById("admin-controls").style.display = "none";
     document.getElementById("admin-modal").style.display = "flex";
 }
 
+// 🔍 관리자 인증 검증 함수
 async function verifyAdmin() {
     const pass = document.getElementById("admin-pass").value;
 
@@ -37,7 +41,7 @@ async function verifyAdmin() {
 }
 
 
-// 공지사항을 디스코드 봇으로 전송하는 함수
+// 📨 공지사항을 디스코드 봇 및 웹에 등록하는 함수
 async function postNotice() {
     const title = document.getElementById("notice-title").value.trim();
     const body = document.getElementById("notice-body").value.trim();
@@ -62,7 +66,7 @@ async function postNotice() {
 }
 
 
-// 디스코드 봇에 HTML 형식 공지사항을 보내는 함수
+// 🤖 디스코드 봇에게 공지사항 전송 요청 함수
 async function sendNoticeToDiscord(title, body) {
     try {
         const response = await fetch('/api/web/notification', {
@@ -95,7 +99,7 @@ async function sendNoticeToDiscord(title, body) {
     }
 }
 
-
+// 🔓 로그아웃 요청 함수
 async function logout() {
     try {
         await fetch('/api/web/logout', {
