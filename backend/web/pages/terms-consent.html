@@ -162,7 +162,7 @@
         <h2>제6조 (문의처)</h2>
         <p>서비스 관련 문의는 아래 방법 중 하나를 통해 가능하며, 별도의 이메일 수신은 운영하지 않습니다:</p>
         <ul>
-            <li>디스코드 지원 서버 참여: <a href="https://discord.gg/Y7v493UHBQ">https://discord.gg/Y7v493UHBQ</a></li>
+            <li>디스코드 지원 서버 참여: <a href="https://discord.gg/HzAnBSCN7t">https://discord.gg/HzAnBSCN7t</a></li>
             <li>또는 디스코드에서 봇에게 직접 DM</li>
         </ul>
 
@@ -243,7 +243,7 @@
 
         <h2>제16조 (문의 안내)</h2>
         <p>본 방침과 관련된 문의사항은 디스코드 공식 지원 서버를 통해 접수해주시거나 디스코드 상에서 봇에게 DM 보내시기 바랍니다.</p>
-        <p>📍 지원 서버: <a href="https://discord.gg/Y7v493UHBQ">https://discord.gg/Y7v493UHBQ</a></p>
+        <p>📍 지원 서버: <a href="https://discord.gg/HzAnBSCN7t">https://discord.gg/HzAnBSCN7t</a></p>
         <p>문의 시 개인정보는 별도로 저장되지 않으며, 문의 처리 목적 외로 사용되지 않습니다.</p>
 
         <p>최종 업데이트일: 2025년 5월 30일</p>
@@ -296,18 +296,29 @@
 
     // 3️⃣ 버튼 클릭 시 팝업 띄우기
     agreeButton.onclick = () => {
-        window.open(
-            "https://discord.com/oauth2/authorize?client_id=955999346321686609"
-        );
+    const width = 600;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    const popup = window.open(
+        "https://discord.com/oauth2/authorize?client_id=955999346321686609&redirect_uri=https%3A%2F%2Fnotipy.code0987.com%2Foauth-popup.html&response_type=code&scope=identify",
+        "discordOAuth",
+        `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    if (!popup) {
+        alert("팝업 차단을 해제해주세요!");
+    }
     };
 
     // 4️⃣ 메시지 수신 → oauth-success.html 이동
     window.addEventListener("message", (event) => {
-        console.log("✅ 메시지 수신:", event.origin, event.data);
-        if (event.origin !== "https://notipy.code0987.com") return;
-        if (event.data === "discord-auth-success") {
-            window.location.href = "/oauth-success";
-        }
+    console.log("✅ 메시지 수신:", event.origin, event.data);
+    if (event.origin !== "https://notipy.code0987.com") return;
+    if (event.data === "discord-auth-success") {
+        window.location.href = "/oauth-success";
+    }
     });
 </script>
 </body>

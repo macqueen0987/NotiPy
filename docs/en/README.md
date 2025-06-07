@@ -20,6 +20,9 @@
 </p>
 
 ---
+<p align="center">
+This page was translated with the help of ChatGPT. Some elements may not perfectly reflect the original content.
+</p>
 
 ## 🚧 This project is currently under development!
 
@@ -201,7 +204,7 @@ Notipy is an open-source project — contributions are welcome!
 You can get announcements and support through the following:
 
 * Official website: [link](https://notipy.code0987.com)
-* Discord support server: [Invite link](https://discord.com/invite/Y7v493UHBQ)
+* Discord support server: [Invite link](https://discord.gg/HzAnBSCN7t)
 * Or send a DM to the bot!
 * GitHub repository: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
