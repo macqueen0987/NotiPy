@@ -25,7 +25,6 @@ This page was translated with the help of ChatGPT. Some elements may not perfect
 </p>
 
 ## Table of Contents
-- [This project is currently under development](#this-project-is-currently-under-development)
 - [Key Features](#key-features)
   - [Notion](#notion)
   - [Database Integration](#database-integration)
@@ -40,12 +39,14 @@ This page was translated with the help of ChatGPT. Some elements may not perfect
 - [Terms of Service and Privacy Policy](#terms-of-service-and-privacy-policy)
 - [License](#license)
 
+<a id="this-project-is-currently-under-development"></a>
 ## 🚧 This project is currently under development!
 
 Notipy is a Python-based Discord bot that monitors a Notion database and sends notifications to a Discord channel when specific conditions are met.
 It can be used as a real-time alert tool in various collaboration scenarios, such as scheduling, task management, and issue tracking.
 It is structured using a FastAPI-based backend server and SQLAlchemy ORM, supporting seamless integration with the Notion API and Discord interaction system.
 **Note: As this project is under active development, some services may be unstable or temporarily unavailable without prior notice.**
+<a id="key-features"></a>
 
 ## ✨ Key Features
 
@@ -58,6 +59,7 @@ It is structured using a FastAPI-based backend server and SQLAlchemy ORM, suppor
 
 * Receives events such as page creation, updates, and deletion via webhook and relays this information to the Discord channel.
 * Supports creating threads in forum channels or updating existing messages.
+<a id="database-integration"></a>
 * Stores linkage data between Notion pages and Discord threads in the database to maintain persistent alert tracking.
 
 ### 🗃️ Database Integration
@@ -75,17 +77,20 @@ It is structured using a FastAPI-based backend server and SQLAlchemy ORM, suppor
 📖 **Notion Token Setup Guide:**
 👉 [How to create a Notion Integration and get the token](https://developers.notion.com/docs/create-a-notion-integration)
 
+<a id="github-profile-analysis-and-summary"></a>
 ### 🧠 GitHub Profile Analysis and Summary
 
 * Collects GitHub profile data based on user-provided URLs and summarizes key information using LLM.
 * Summaries can be accessed by other users on Discord if permission is granted.
 
+<a id="project-creation-and-management"></a>
 ### 🛠️ Project Creation and Management
 
 * Users can create new projects via Discord commands or interaction.
 * Projects are uniquely identified by server ID and user ID, allowing each user to manage their own list.
 * Each project has metadata like title, description, and category, and can be easily edited through the Discord UI.
 
+<a id="internal-request-validation-and-security"></a>
 ### 🔒 Internal Request Validation and Security
 
 All internal API requests are validated via the `X-Internal-Request` header in FastAPI.
@@ -98,6 +103,7 @@ This prevents external actors from spoofing internal API calls.
 
 ---
 
+<a id="getting-started-as-a-user"></a>
 ## 🧭 Getting Started as a User
 
 You can use **Notipy without self-hosting**. Simply invite the bot to your Discord server and start using its features immediately. Here's a quick guide:
@@ -107,6 +113,7 @@ You can use **Notipy without self-hosting**. Simply invite the bot to your Disco
 * You can invite the bot from the [official website](https://notipy.code0987.com) or directly via this [invite link](https://discord.com/oauth2/authorize?client_id=955999346321686609).
 * After inviting the bot, we recommend using the `/settings set-modrole` command to ensure smooth operation.
 
+<a id="commonly-used-commands"></a>
 ## 📋 Commonly Used Commands
 
 | Command                        | Description                                   |
@@ -125,6 +132,7 @@ If you want to configure the environment and host the bot yourself, refer to the
 
 ---
 
+<a id="running-with-docker"></a>
 ## 🐳 Running with Docker
 
 `Dockerfile` and `docker-compose.yml` are provided for easy deployment in a Docker environment.
@@ -195,6 +203,7 @@ docker compose up database backend discordbot -d
 
 ---
 
+<a id="contributing"></a>
 ## 🤝 Contributing
 
 Notipy is an open-source project — contributions are welcome!
@@ -215,6 +224,7 @@ Notipy is an open-source project — contributions are welcome!
 
 ---
 
+<a id="community"></a>
 ## 🧑‍🤝‍🧑 Community
 
 You can get announcements and support through the following:
@@ -224,6 +234,7 @@ You can get announcements and support through the following:
 * Or send a DM to the bot!
 * GitHub repository: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
 
+<a id="terms-of-service-and-privacy-policy"></a>
 ## 📃 Terms of Service and Privacy Policy
 You can read the full terms and privacy policy within this repository.
 - [English version](terms-policy.md)
@@ -231,6 +242,7 @@ You can read the full terms and privacy policy within this repository.
 
 ---
 
+<a id="license"></a>
 ## License
 
 This project is licensed under the Apache 2.0 License.
