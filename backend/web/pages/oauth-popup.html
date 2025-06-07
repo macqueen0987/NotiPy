@@ -4,6 +4,8 @@
     <meta charset="UTF-8"/>
     <title>디스코드 인증 완료</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- ✅ 스타일 정의: 배경, 박스, 반응형 등 -->
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -37,6 +39,7 @@
             line-height: 1.6;
         }
 
+        /* 📱 모바일 반응형 스타일 */
         @media (max-width: 480px) {
             .message-box {
                 padding: 20px;
@@ -51,22 +54,30 @@
             }
         }
     </style>
+
+     <!-- 📜 부모 창에 인증 성공 메시지 전송 및 자동 종료 -->
     <script>
         window.onload = function () {
             const parentOrigin = "https://notipy.code0987.com";
 
             if (window.opener) {
+                // 부모 창에게 인증 성공 메시지 전송
                 window.opener.postMessage("discord-auth-success", parentOrigin);
+
+                // 0.5초 후 자동으로 팝업 닫기
                 setTimeout(() => {
                     window.close();
                 }, 500);
             } else {
+                // 팝업이 아닌 단독 실행된 경우 사용자에게 안내
                 document.body.innerHTML = "<p>이 페이지는 인증 완료 후 자동으로 닫힙니다.<br>직접 창을 닫아주세요.</p>";
             }
         };
     </script>
 </head>
+    
 <body>
+<!-- ✅ 인증 완료 메시지 UI -->
 <div class="message-box">
     <h1>디스코드 인증 완료</h1>
     <p>잠시 후 창이 자동으로 닫힙니다...</p>
