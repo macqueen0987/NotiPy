@@ -1,21 +1,33 @@
+<!-- 
+  ✅ 로드맵 페이지 (roadmap.html)
+  주요 기능:
+  - 기술 스택, 배포 환경, 협업 도구를 시각화한 다이어그램
+  - 주요 개발 일정을 타임라인 형태로 정리
+  - 노드에 마우스를 올리면 툴팁으로 상세 설명 제공
+-->
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <!-- 메타 정보 및 아이콘 폰트 불러오기 -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>로드맵</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
   <style>
+    /* ===== 공통 기본 설정 ===== */
     * { box-sizing: border-box; }
 
     html, body {
-      height: 100%; /* ★ 추가 */
+      height: 100%; /* 전체 높이 채우기 */
       margin: 0;
       padding: 0;
     }
 
     .wrapper {
-      min-height: calc(100vh - 60px); /* ★ 추가: footer 높이만큼 제외한 최소 높이 */
+      min-height: calc(100vh - 60px); /* footer 높이만큼 제외한 최소 높이 */
     }
 
     body {
@@ -23,6 +35,7 @@
       background-color: #f4f4f4;
     }
 
+    /* ===== 상단 헤더 ===== */
     header {
       background-color: #5865F2;
       color: white;
@@ -43,6 +56,7 @@
       cursor: pointer;
     }
 
+    /* ===== 카테고리 다이어그램 ===== */
     .diagram-container {
       max-width: 1200px;
       margin: 60px auto 40px;
@@ -80,10 +94,12 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.1);
     }
 
+    /* 카테고리별 배경색 */
     .category-box.tech { background-color: #e9f0ff; }
     .category-box.deploy { background-color: #ddfbee; }
     .category-box.collab { background-color: #fff2e2; }
 
+    /* 노드(기술 요소) 박스 */
     .node {
       background-color: white;
       padding: 20px 26px;
@@ -113,7 +129,7 @@
       color: #555;
     }
 
-    /* Timeline styles */
+    /* ===== 타임라인 ===== */
     .timeline {
       position: relative;
       max-width: 800px;
@@ -182,6 +198,7 @@
       font-size: 1rem;
     }
 
+    /* 툴팁 설명 박스 */
     #tooltip {
       position: absolute;
       background: rgba(0, 0, 0, 0.85);
@@ -196,6 +213,7 @@
       line-height: 1.5;
     }
 
+    /* 푸터 */
     footer {
       background-color: #333;
       color: white;
@@ -210,6 +228,7 @@
       justify-content: center;
     }
 
+    /* 모바일 반응형 */
     @media (max-width: 768px) {
       header {
         font-size: 1.4rem;
@@ -270,15 +289,18 @@
     }
   </style>
 </head>
+  
 <body>
-
   <div class="wrapper" style="margin-bottom: 0;">
+    <!-- 상단 헤더 -->
     <header>
       <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
       로드맵
     </header>
 
+    <!-- 기술 / 배포 / 협업 분류 다이어그램 -->
     <div class="diagram-container">
+      <!-- 기술 스택 섹션 -->
       <div class="category-section">
         <div class="category-title">기술 스택</div>
         <div class="category-box tech">
@@ -287,7 +309,7 @@
           <div class="node" data-key="도구"><strong>도구</strong><span>운영 환경</span></div>
         </div>
       </div>
-
+      <!-- 배포 환경 섹션 -->
       <div class="category-section">
         <div class="category-title">배포 환경</div>
         <div class="category-box deploy">
@@ -296,7 +318,7 @@
           <div class="node" data-key="Nginx"><strong>Nginx</strong><span>트래픽 제어</span></div>
         </div>
       </div>
-
+      <!-- 협업 도구 섹션 -->
       <div class="category-section">
         <div class="category-title">협업 도구</div>
         <div class="category-box collab">
@@ -306,8 +328,12 @@
         </div>
       </div>
     </div>
+
+    <!-- 타임라인 구분선 및 제목 -->
     <hr style="width: 70%; margin: 40px auto; border: none; border-top: 2px solid #ccc; opacity: 0.6;" />
     <h2 style="text-align: center;">타임라인</h2>
+
+    <!-- 타임라인 리스트 -->
     <div class="timeline">
       <ul>
         <li>
@@ -377,12 +403,15 @@
     </div>
   </div>
 
+  <!-- 노드 설명 툴팁 영역 -->
   <div id="tooltip"></div>
 
+  <!-- 하단 푸터 -->
   <footer>
     &copy; 2025 Notipy. Open-sourced under the Apache License 2.0.
   </footer>
 
+  <!-- 툴팁 기능 구현 JS -->
   <script>
     const tooltip = document.getElementById("tooltip");
 
