@@ -4,6 +4,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>OAuth 인증 완료</title>
+    
+    <!-- ✅ 전체 페이지 및 모달 스타일 정의 -->
     <style>
         html, body {
             margin: 0;
@@ -13,6 +15,7 @@
         }
 
         body {
+            /* ✅ 배경 이미지를 중앙에 고정, 꽉 채우기 */
             background-image: url('/static/img/discord-bot-success2.png');
             background-size: cover; /* ✅ 꽉 채우되 잘리는 건 허용 */
             background-position: center center; /* ✅ 중심부 고정 */
@@ -20,6 +23,7 @@
             background-attachment: fixed;
             background-color: black;
 
+            /* ✅ 화면 중앙 정렬 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,6 +31,7 @@
         }
 
         .modal-box {
+            /* ✅ 어두운 투명 배경 + 블러 효과 */
             background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(4px);
             padding: 28px 24px;
@@ -49,6 +54,7 @@
         }
 
         .btn-group {
+            /* ✅ 버튼 그룹 정렬 및 간격 */
             display: flex;
             justify-content: center;
             gap: 16px;
@@ -57,6 +63,7 @@
         }
 
         .btn-group a {
+            /* ✅ 버튼 스타일 */
             padding: clamp(10px, 2vw, 14px) clamp(16px, 4vw, 28px);
             background-color: #5865F2;
             color: white;
@@ -69,18 +76,20 @@
         }
 
         .btn-group a:hover {
-            background-color: #4752c4;
+            background-color: #4752c4; /* ✅ hover 시 색상 변화 */
         }
     </style>
 </head>
+    
 <body>
-<div class="modal-box">
-    <h1>디스코드봇 구성 완료</h1>
-    <p>이제 창을 닫으셔도 됩니다.</p>
-    <div class="btn-group">
-        <a href="/">🏠 홈페이지로 돌아가기</a>
-        <a href="/case">📘 가이드북 보기</a>
+<!-- ✅ 인증 완료 메시지 및 버튼 영역 -->   
+    <div class="modal-box">
+        <h1>디스코드봇 구성 완료</h1>
+        <p>이제 창을 닫으셔도 됩니다.</p>
+        <div class="btn-group">
+            <a href="/">🏠 홈페이지로 돌아가기</a>
+            <a href="/case">📘 가이드북 보기</a>
+        </div>
     </div>
-</div>
 </body>
 </html>
