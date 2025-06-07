@@ -296,18 +296,29 @@
 
     // 3️⃣ 버튼 클릭 시 팝업 띄우기
     agreeButton.onclick = () => {
-        window.open(
-            "https://discord.com/oauth2/authorize?client_id=955999346321686609"
-        );
+    const width = 600;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    const popup = window.open(
+        "https://discord.com/oauth2/authorize?client_id=955999346321686609&redirect_uri=https%3A%2F%2Fnotipy.code0987.com%2Foauth-popup.html&response_type=code&scope=identify",
+        "discordOAuth",
+        `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    if (!popup) {
+        alert("팝업 차단을 해제해주세요!");
+    }
     };
 
     // 4️⃣ 메시지 수신 → oauth-success.html 이동
     window.addEventListener("message", (event) => {
-        console.log("✅ 메시지 수신:", event.origin, event.data);
-        if (event.origin !== "https://notipy.code0987.com") return;
-        if (event.data === "discord-auth-success") {
-            window.location.href = "/oauth-success";
-        }
+    console.log("✅ 메시지 수신:", event.origin, event.data);
+    if (event.origin !== "https://notipy.code0987.com") return;
+    if (event.data === "discord-auth-success") {
+        window.location.href = "/oauth-success";
+    }
     });
 </script>
 </body>
