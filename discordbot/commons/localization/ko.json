@@ -242,5 +242,9 @@
     "database.undeleted": "데이터베이스가 복원됨",
     "comment.created": "댓글이 생성됨",
     "comment.deleted": "댓글이 삭제됨",
-    "comment.updated": "댓글이 수정됨"
+    "comment.updated": "댓글이 수정됨",
+    "help": "도움말",
+    "help_desc": "자주 쓰는 명령어를 보여줍니다.",
+    "help_title": "📋 자주 사용하는 명령어 요약",
+    "help_description": "/설정 보기 - 현재 서버의 설정을 보여줍니다\n/노션 노션토큰 설정 - Notion 통합 토큰 등록\n/노션 데이터베이스 연결 - 데이터베이스와 채널 연결\n/노션 데이터베이스 목록 - 연결된 데이터베이스 목록 보기\n/노션 노션토큰 제거 - Notion 연결 해제\n/티켓생성 - 디스코드 내 티켓 생성\n/깃허브 연결 - GitHub 계정 연결\n/프로젝트 생성 - 프로젝트 생성 및 관리"
 }

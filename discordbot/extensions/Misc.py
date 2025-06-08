@@ -397,6 +397,14 @@ class Misc(Extension):
             inline=False)
         await ctx.send(embeds=embed, ephemeral=True)
 
+    @slash_command(name=getname("help"), description=getdesc("help"))
+    @localize(True)
+    async def send_help(self, ctx: SlashContext, _):
+        """Send common command list."""
+        embed = Embed(title=_("help_title"), color=0x5865F2)
+        embed.description = _("help_description")
+        await ctx.send(embeds=embed, ephemeral=True)
+
 
 def setup(bot, functions):
     Misc(bot)
