@@ -226,5 +226,5 @@
     "help": "help",
     "help_desc": "Show common commands.",
     "help_title": "Commonly Used Commands",
-    "help_description": "/settings view - View the current settings for the server\n/notion set-token - Register your Notion integration token\n/notion connect-db - Connect a Notion database to a channel\n/notion list-db - View the list of connected databases\n/notion remove-token - Disconnect your Notion integration\n/create-ticket - Create a support ticket within Discord\n/github link - Link your GitHub account\n/create-project - Create and manage a collaborative project"
+    "help_description": "/settings view - View the current settings for the server\n/notion set-token - Register your Notion integration token\n/notion connect-db - Connect a Notion database to a channel\n/notion list-db - View the list of connected databases\n/notion remove-token - Disconnect your Notion integration\n/create-ticket - Create a support ticket within Discord"
 }
