@@ -43,6 +43,42 @@ body {
     color: #ddd;
 }
 
+/* Language selector button inside navbar */
+.navbar .lang-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    cursor: pointer;
+}
+
+/* Popup for language options */
+.lang-popup {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: white;
+    color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.lang-popup a {
+    display: block;
+    padding: 4px 10px;
+    color: #5865F2;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.lang-popup a:hover {
+    background-color: #f0f0f0;
+}
+
 /* Hero 섹션 */
 .hero {
     padding: 80px 5% 60px;

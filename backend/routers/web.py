@@ -8,6 +8,12 @@ from services import webservice
 router = APIRouter(prefix="/web", tags=["Web"])
 
 
+@router.get("/lang-popup")
+async def lang_popup(request: Request):
+    """Return the language selection popup."""
+    return templates.TemplateResponse("lang-popup.html", {"request": request})
+
+
 class notificationClass(BaseModel):
     title: str
     body: str

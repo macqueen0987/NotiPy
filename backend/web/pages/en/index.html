@@ -15,6 +15,8 @@
     <a href="#">Use Cases</a>
     <a href="roadmap">Roadmap</a>
     <a href="community">Community</a>
+    <img id="lang-btn" class="lang-btn" src="/static/img/translation.png" alt="Language" onclick="toggleLangPopup()"/>
+    <div id="lang-popup" hx-get="/web/lang-popup" hx-trigger="load" class="lang-popup"></div>
 </div>
 
 <!-- 💡 Hero Section -->
@@ -129,5 +131,6 @@
 <button id="scrollToTopBtn" onclick="scrollToTop()" title="Back to top">⬆</button>
 
 <script src="/static/js/index.js"></script>
+<script src="/static/js/lang.js"></script>
 </body>
 </html>
