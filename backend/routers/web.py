@@ -35,7 +35,7 @@ class notificationClass(BaseModel):
 
 @router.post("/notification")
 async def post_notification(
-        request: Request, notification: notificationClass, conn=Depends(get_db)
+    request: Request, notification: notificationClass, conn=Depends(get_db)
 ):
     """
     create a notification for the webpabe.
