@@ -6,11 +6,11 @@ from functools import wraps
 from typing import Callable
 
 import uvicorn
-
 from common import templates
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import HTTPException, RequestValidationError
-from fastapi.responses import JSONResponse, RedirectResponse, Response, HTMLResponse
+from fastapi.responses import (HTMLResponse, JSONResponse, RedirectResponse,
+                               Response)
 from fastapi.staticfiles import StaticFiles
 
 # from tasks.notion_poller import poll_notion_projects
@@ -77,13 +77,19 @@ async def fallback_lang_redirect(request: Request, page: str):
 
 
 @app.get("/{lang}/{page}")
-async def page_handler(request: Request, lang: str = "ko", page: str = "index"):
+async def page_handler(
+        request: Request,
+        lang: str = "ko",
+        page: str = "index"):
     try:
         return templates.TemplateResponse(
-            f"{lang}/{page}.html", {"request": request}, status_code=200)
+            f"{lang}/{page}.html", {"request": request}, status_code=200
+        )
     except Exception as e:
         logging.error(f"Error rendering page {lang}/{page}: {e}")
-        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+        return templates.TemplateResponse(
+            "404.html", {"request": request}, status_code=404
+        )
 
 
 @app.post("/accept-cookies")
