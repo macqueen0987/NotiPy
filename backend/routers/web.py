@@ -14,6 +14,20 @@ async def lang_popup(request: Request):
     return templates.TemplateResponse("lang-popup.html", {"request": request})
 
 
+@router.post("/lang")
+async def change_lang(response: Response, lang: str = Body(...)):
+    # lang 쿠키 설정 (1년 유지)
+    response.set_cookie(
+        key="lang",
+        value=lang,
+        max_age=60 * 60 * 24 * 365,  # 1년
+        path="/",
+        httponly=False,  # JS에서 접근 가능
+    )
+
+    return {"status": "ok"}
+
+
 class notificationClass(BaseModel):
     title: str
     body: str
@@ -21,7 +35,7 @@ class notificationClass(BaseModel):
 
 @router.post("/notification")
 async def post_notification(
-    request: Request, notification: notificationClass, conn=Depends(get_db)
+        request: Request, notification: notificationClass, conn=Depends(get_db)
 ):
     """
     create a notification for the webpabe.

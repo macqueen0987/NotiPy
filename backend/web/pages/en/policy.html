@@ -14,7 +14,7 @@
     <h1>Terms and Privacy Policy</h1>
     <img id="lang-btn" class="lang-btn" src="/static/img/translation.png" alt="Language" onclick="toggleLangPopup()"/>
 </header>
-<div id="lang-popup" hx-get="/web/lang-popup" hx-trigger="load" class="lang-popup"></div>
+<div id="lang-popup" hx-get="/api/web/lang-popup" hx-trigger="load" class="lang-popup" hx-swap="outerHTML"></div>
 <p style="text-align: center;">
     For other languages, check the
     <a href="https://github.com/macqueen0987/NotiPy/blob/master/docs/en/terms-policy.md">GitHub page</a>.
