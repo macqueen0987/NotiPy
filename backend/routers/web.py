@@ -8,6 +8,12 @@ from services import webservice
 router = APIRouter(prefix="/web", tags=["Web"])
 
 
+@router.get("/lang-popup")
+async def lang_popup(request: Request):
+    """Return the language selection popup."""
+    return templates.TemplateResponse("lang-popup.html", {"request": request})
+
+
 class notificationClass(BaseModel):
     title: str
     body: str
@@ -46,6 +52,7 @@ async def get_notification(request: Request, conn=Depends(get_db)):
     return templates.TemplateResponse(
         "noticeitem.html", {"request": request, "notifications": notifications}
     )
+
 
 @router.get("/upcoming")
 async def get_upcoming(request: Request):

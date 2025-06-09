@@ -6,12 +6,15 @@
     <title>Terms and Privacy Policy</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
     <link href="/static/css/common.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body>
 <header>
     <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
     <h1>Terms and Privacy Policy</h1>
+    <img id="lang-btn" class="lang-btn" src="/static/img/translation.png" alt="Language" onclick="toggleLangPopup()"/>
 </header>
+<div id="lang-popup" hx-get="/web/lang-popup" hx-trigger="load" class="lang-popup"></div>
 <p style="text-align: center;">
     For other languages, check the
     <a href="https://github.com/macqueen0987/NotiPy/blob/master/docs/en/terms-policy.md">GitHub page</a>.
@@ -139,5 +142,6 @@
         }
     }
 </script>
+<script src="/static/js/lang.js"></script>
 </body>
 </html>

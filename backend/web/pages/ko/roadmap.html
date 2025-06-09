@@ -26,7 +26,9 @@
     <header>
         <i class="fas fa-arrow-left back-button" onclick="history.back();"></i>
         로드맵
+        <img id="lang-btn" class="lang-btn" src="/static/img/translation.png" alt="Language" onclick="toggleLangPopup()"/>
     </header>
+    <div id="lang-popup" hx-get="/web/lang-popup" hx-trigger="load" class="lang-popup"></div>
 
     <!-- 기술 / 배포 / 협업 분류 다이어그램 -->
     <div class="diagram-container">
@@ -193,6 +195,7 @@
         });
     });
 </script>
+<script src="/static/js/lang.js"></script>
 
 </body>
 </html>
