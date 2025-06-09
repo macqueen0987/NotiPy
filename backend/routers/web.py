@@ -8,6 +8,26 @@ from services import webservice
 router = APIRouter(prefix="/web", tags=["Web"])
 
 
+@router.get("/lang-popup")
+async def lang_popup(request: Request):
+    """Return the language selection popup."""
+    return templates.TemplateResponse("lang-popup.html", {"request": request})
+
+
+@router.post("/lang")
+async def change_lang(response: Response, lang: str = Body(...)):
+    # lang 쿠키 설정 (1년 유지)
+    response.set_cookie(
+        key="lang",
+        value=lang,
+        max_age=60 * 60 * 24 * 365,  # 1년
+        path="/",
+        httponly=False,  # JS에서 접근 가능
+    )
+
+    return {"status": "ok"}
+
+
 class notificationClass(BaseModel):
     title: str
     body: str
@@ -46,6 +66,14 @@ async def get_notification(request: Request, conn=Depends(get_db)):
     return templates.TemplateResponse(
         "noticeitem.html", {"request": request, "notifications": notifications}
     )
+
+
+@router.get("/upcoming")
+async def get_upcoming(request: Request):
+    """
+    Get all upcoming events for the webpage.
+    """
+    return templates.TemplateResponse("todo.html", {"request": request})
 
 
 @router.get("/token")

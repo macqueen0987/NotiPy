@@ -60,7 +60,7 @@ header h1 {
 /* ===== 공통 콘텐츠 박스 ===== */
 .wrapper {
     flex: 1;
-    min-height: calc(100vh - 60px);
+    /*min-height: calc(100vh - 60px);*/
 }
 
 .content-grid {
@@ -286,6 +286,42 @@ footer {
     font-size: 1.5rem;
     color: white;
     cursor: pointer;
+}
+
+/* Language selector inside header */
+header .lang-btn {
+    position: absolute;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-50%);
+    width: 24px;
+    cursor: pointer;
+}
+
+/* Popup for language options */
+.lang-popup {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: white;
+    color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.lang-popup a {
+    display: block;
+    padding: 4px 10px;
+    color: #5865F2;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.lang-popup a:hover {
+    background-color: #f0f0f0;
 }
 
 /* ===== 로딩 애니메이션 ===== */
