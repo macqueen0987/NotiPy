@@ -54,7 +54,6 @@ window.addEventListener("message", (event) => {
     console.log("✅ 메시지 수신:", event.origin, event.data);
     if (event.origin !== "https://notipy.code0987.com") return;
     if (event.data === "discord-auth-success") {
-        // '/ko/' 경로를 포함하여 리디렉션
-        window.location.href = "/ko/oauth-success";
+        window.location.href = "/ko/oauth-success.html";
     }
 });
