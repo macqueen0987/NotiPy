@@ -47,6 +47,13 @@ async def get_notification(request: Request, conn=Depends(get_db)):
         "noticeitem.html", {"request": request, "notifications": notifications}
     )
 
+@router.get("/upcoming")
+async def get_upcoming(request: Request):
+    """
+    Get all upcoming events for the webpage.
+    """
+    return templates.TemplateResponse("todo.html", {"request": request})
+
 
 @router.get("/token")
 @checkInternalServer

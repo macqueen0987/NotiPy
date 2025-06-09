@@ -4,9 +4,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Discord Bot Landing</title>
-    
+
     <!-- 🌐 외부 스타일시트 연결 -->
-    <link rel="stylesheet" href="/static/css/index.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
     <!-- 🎨 내부 스타일 정의 -->
     <link rel="stylesheet" href="/static/css/index.css"/>
@@ -42,7 +42,7 @@
         </div>
     </div>
 </section>
-    
+
 <!-- 🔧 주요 기능 섹션 -->
 <section id="features" class="features">
 
@@ -93,7 +93,7 @@
             <div class="feature-text">
                 <h3>
                     코드를 넘어, <br/>
-                    맥락까지 읽다 
+                    맥락까지 읽다
                 </h3>
                 <p>
                     GitHub 프로필을 요약하고 프로젝트를 Discord 내에서 손쉽게 관리하세요.
@@ -134,25 +134,22 @@
     </div>
 </footer>
 
+<div class="cookie-banner" id="cookie-banner">
+    <p>
+        본 홈페이지는 쿠키를 사용합니다.<br>
+        <a href="policy">자세히 알아보기</a>.
+    </p>
+    <button class="cookie-btn" onclick="acceptCookies();">
+        확인
+    </button>
+    <button class="cookie-btn cookie-deny" onclick="hideCookieBanner();">취소</button>
+</div>
 
 <!-- ⬆️ 스크롤 최상단 이동 버튼 -->
 <button onclick="scrollToTop()" id="scrollToTopBtn" title="맨 위로">⬆</button>
 
 <!-- 📜 스크롤 제어 스크립트 -->
-<script>
-    function scrollToTop() {
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    window.addEventListener("scroll", () => {
-        const btn = document.getElementById("scrollToTopBtn");
-        if (window.scrollY > window.innerHeight * 0.5) {
-            btn.classList.add("show");
-        } else {
-            btn.classList.remove("show");
-        }
-    });
-</script>
+<script src="/static/js/index.js"></script>
 
 </body>
 </html>
