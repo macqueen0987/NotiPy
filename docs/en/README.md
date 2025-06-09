@@ -127,10 +127,10 @@ You can use **Notipy without self-hosting**. Simply invite the bot to your Disco
 | Command                        | Description                                   |
 | ----------------------------- | --------------------------------------------- |
 | `/settings view`              | View the current settings for the server      |
-| `/notion set-token`           | Register your Notion integration token        |
-| `/notion connect-db`          | Connect a Notion database to a channel        |
-| `/notion list-db`             | View the list of connected databases          |
-| `/notion remove-token`        | Disconnect your Notion integration            |
+| `/notion notiontoken set`           | Register your Notion integration token        |
+| `/notion database connect`          | Connect a Notion database to a channel        |
+| `/notion database view`             | View the list of connected databases          |
+| `/notion notiontoken remove`        | Disconnect your Notion integration            |
 | `/create-ticket`              | Create a support ticket within Discord        |
 | `/github link`                | Link your GitHub account                      |
 | `/create-project`             | Create and manage a collaborative project     |
