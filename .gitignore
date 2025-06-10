@@ -180,3 +180,4 @@ env.py
 *.ini
 database
 var.env
+discordbot/used_translation_keys.json
