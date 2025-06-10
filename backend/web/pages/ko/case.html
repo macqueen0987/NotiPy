@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notipy 디스코드 봇 소개</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -142,10 +143,25 @@
       font-weight: 600;
     }
 
+    .back-button {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      font-size: 1.5rem;
+      color: #f2f3f5;
+      cursor: pointer;
+      transition: color 0.3s;
+      z-index: 1001;
+    }
+
+    .back-button:hover {
+      color: #ddd;
+    }
+
   </style>
 </head>
 <body>
-
+  <i class="fas fa-arrow-left back-button" onclick="location.href='index'"></i>
   <div class="dot-nav"></div>
   <div class="container">
     <div class="section active">
