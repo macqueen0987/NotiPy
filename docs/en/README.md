@@ -27,6 +27,8 @@
   </a>
 </p>
 
+> **Project moved**: The official repository has been relocated to [Notipy-DiscordBot/Notipy](https://github.com/Notipy-DiscordBot/Notipy).
+
 ---
 <p align="center">
 This page was translated with the help of ChatGPT. Some elements may not perfectly reflect the original content.
@@ -244,7 +246,7 @@ You can get announcements and support through the following:
 * Official website: [link](https://notipy.code0987.com)
 * Discord support server: [Invite link](https://discord.gg/HzAnBSCN7t)
 * Or send a DM to the bot!
-* GitHub repository: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
+* GitHub repository: [Notipy-DiscordBot](https://github.com/Notipy-DiscordBot/Notipy)
 
 <a id="terms-of-service-and-privacy-policy"></a>
 ## 📃 Terms of Service and Privacy Policy
