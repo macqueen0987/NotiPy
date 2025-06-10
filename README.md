@@ -27,6 +27,8 @@
   </a>
 </p>
 
+> **프로젝트 이동 안내**: 현재 저장소는 유지보수되지 않으며 [Notipy-DiscordBot/Notipy](https://github.com/Notipy-DiscordBot/Notipy) 로 이전되었습니다.
+
 ---
 
 ## 해당 프로젝트는 아직 개발중입니다!
@@ -228,7 +230,7 @@ Notipy는 오픈소스 프로젝트로, 누구든지 기여할 수 있습니다.
 - 공식 홈페이지 : [링크](https://notipy.code0987.com)
 - 디스코드 지원서버: [초대링크](https://discord.gg/HzAnBSCN7t)
 - 또는 봇에게 DM 하세요!
-- 공식 GitHub 저장소: [macqueen0987/notipy](https://github.com/macqueen0987/notipy)
+- 공식 GitHub 저장소: [Notipy-DiscordBot](https://github.com/Notipy-DiscordBot/Notipy)
 
 <a id="이용약관-및-개인정보-처리방침"></a>
 ## 📃 이용약관 및 개인정보 처리방침
