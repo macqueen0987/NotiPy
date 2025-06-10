@@ -232,6 +232,8 @@ Notipy is an open-source project — contributions are welcome!
 
    * Code formatting is handled automatically.
 
+For details pleas refer to [CONTRIBUTING.md](CONTRIBUTIING.md)
+
 ---
 
 <a id="community"></a>
